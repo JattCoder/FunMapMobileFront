@@ -63,7 +63,7 @@ const Home = (props) => {
                     showsPointsOfInterest={false}
                     showsBuildings={true}
                     showsTraffic={true}
-                    onUserLocationChange={position.latitude,position.longitude}
+                    //onUserLocationChange={position.latitude,position.longitude}
                     //onMapReady={map.fitToSuppliedMarkers()}
                     style={{ height: '100%', width: '100%', alignItems: 'center' }}
                     initialRegion={position}

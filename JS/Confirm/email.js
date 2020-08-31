@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { confirm } from '../../actions/confirmacc/confirm'
 import { resconfirm } from '../../actions/confirmacc/resconfirm'
 import { confirmcode } from '../../actions/confirmacc/confirmcode'
+import { resregister } from '../../actions/register/resregister'
+import { reslogin } from '../../actions/login/reslogin'
 import DeviceInfo from 'react-native-device-info';
 import Dialog from "react-native-dialog";
 
@@ -47,11 +49,18 @@ const Login = (props) => {
         }
     })
 
+    cancelConfirmation = () => {
+        dispatch(resregister())
+        dispatch(reslogin())
+        props.navigation.navigate('Login')
+    }
+
     return(
         <View style={Styles.Page}>
             <Text style={{color:'white',fontSize:30}}>Welcome</Text>
             <Text style={{color:'white',fontSize:20,marginTop:10}}>{props.route.params.user.name}</Text>
-            <Text style={{color:'white',fontSize:15,marginTop:100,alignContent:'center'}}>Email is not confirmed</Text>
+            <Text style={{marginTop:100,color:'white',fontSize:15}}>{props.route.params.user.email}</Text>
+            <Text style={{color:'white',fontSize:15,marginTop:5,alignContent:'center'}}>is not confirmed</Text>
             <Text style={{color:'white',fontSize:15}}>Please check your email for confirmation code</Text>
             <TouchableOpacity style={Styles.CodeBox}>
                 <Text style={{color:'white'}}>Code</Text>
@@ -64,7 +73,7 @@ const Login = (props) => {
             <TouchableOpacity style={Styles.Resent} onPress={()=>{sendCode()}}>
                 <Text style={Styles.GoogleText}>Resend New Code</Text>
             </TouchableOpacity>
-            <Text style={Styles.Cancel} onPress={()=>props.navigation.navigate('Login')}>Cancel</Text>
+            <Text style={Styles.Cancel} onPress={()=>cancelConfirmation()}>Cancel</Text>
         </View>
     )
 }
