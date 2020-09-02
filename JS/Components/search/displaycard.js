@@ -7,7 +7,7 @@ export default Displaycard = (props) => {
     return(
         <View style={Styles.Card}>
             <View style={{flexDirection:'row'}}>
-                <View style={{width:'70%'}}>
+                <View style={{width:'80%'}}>
                     <View style={{flexDirection:'row'}}>
                         <View style={{flexDirection:'row',height:30,width:'75%'}}>
                             <Image style={{height:20,width:20}} source={{uri:props.item.icon}}/>
@@ -15,7 +15,7 @@ export default Displaycard = (props) => {
                         </View>
                     </View>
                     <View>
-                        <Text style={{fontSize:11,width:'70%'}}>{props.item.address}</Text>
+                        <Text style={{fontSize:11,width:'80%'}}>{props.item.address}</Text>
                     </View>
                 </View>
                 <View style={{width:'25%'}}>
@@ -36,7 +36,7 @@ export default Displaycard = (props) => {
 
 const Styles = StyleSheet.create({
     Card:{
-        height:100,
+        height:120,
         width:300,
         padding:20,
     },
