@@ -3,20 +3,24 @@ import { useDispatch, useSelector } from 'react-redux'
 import { View, StyleSheet, TouchableOpacity, TextInput, Image, Text } from 'react-native'
 import { clearsearch } from '../../actions/submitsearch/clearsearch'
 import Uimage from './uimage'
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { AnimatedRegion, Marker } from 'react-native-maps';
 import Search from '../Components/search/search'
 import Geolocation from '@react-native-community/geolocation'
+import Geocoder from 'react-native-geocoder-reborn';
 import { Myposition } from '../Components/location/myposition'
 
 const Home = (props) => {
     const [user, setuser] = useState({})
     const [places,setplaces] = useState([])
+    const [follow,setfollow] = useState(true)
+    const [currentCity,setCity] = useState('')
     const dispatch = useDispatch()
+    const [drag,setdrag] = useState({})
     const [position, setposition] = useState({
         latitude: 0,
         longitude: 0,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421
+        latitudeDelta: 0.001,
+        longitudeDelta: 0.0001
     })
     let map = null
 
@@ -26,10 +30,11 @@ const Home = (props) => {
             let region = {
                 latitude: parseFloat(pos.coords.latitude),
                 longitude: parseFloat(pos.coords.longitude),
-                latitudeDelta: 5,
-                longitudeDelta: 5
+                latitudeDelta: 0.005,
+                longitudeDelta: 0.005
                 };
             setposition(region)
+            if(follow == true) setdrag(position)
             },
             error => console.log(error),
             {
@@ -48,31 +53,45 @@ const Home = (props) => {
     useSelector((state)=>{
         if(state.placesearch.length > 0){
             setplaces(state.placesearch)
-            console.log('Got Places here...',state.placesearch)
             dispatch(clearsearch())
         }
     })
+
+    regionChange = (e) => {
+        setfollow(false)
+        setdrag({
+            latitude: e.latitude,
+            longitude: e.longitude,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.0005
+        })
+    }
 
     return (
         <View style={{ height: '100%', width: '100%' }}>
             <View style={Styles.Page}>
                 <MapView showsBuildings
                     ref={ref => { map = ref }}
-                    followUserLocation={true}
+                    followUserLocation={follow}
                     showsUserLocation={true}
                     showsPointsOfInterest={false}
                     showsBuildings={true}
                     showsTraffic={true}
+                    region={drag}
+                    rotateEnabled={true}
+                    scrollEnabled={true}
+                    onRegionChange={(r)=>regionChange(r)}
                     //onUserLocationChange={position.latitude,position.longitude}
                     //onMapReady={map.fitToSuppliedMarkers()}
                     style={{ height: '100%', width: '100%', alignItems: 'center' }}
                     initialRegion={position}
                     onLayout={() => {
+                        //will have controll to move angel based on speed using hooks
                         map.animateToBearing(0);
-                        map.animateToViewingAngle(30);
+                        map.animateCamera(30);
                     }}>
                         {places.map((place)=>{
-                            return <Marker coordinate={{latitude: place.geo.lat, longitude: place.geo.lng}}/>
+                            return <MapView.Marker.Animated coordinate={{latitude: place.geo.lat, longitude: place.geo.lng}}/>
                          })}
                 </MapView>
             </View>
@@ -83,6 +102,11 @@ const Home = (props) => {
                 </View>
                 <TouchableOpacity style={Styles.ImageBox}>
                     {user.photo != '' ? <Image source={{ uri: user.image }} /> : <Uimage name={user.name} />}
+                </TouchableOpacity>
+            </View>
+            <View>
+                <TouchableOpacity>
+                    
                 </TouchableOpacity>
             </View>
         </View>

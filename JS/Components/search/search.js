@@ -24,7 +24,8 @@ export default Search = (props) => {
         let Geo = {
             lat: props.position.latitude,
             lng: props.position.longitude
-          };
+        };
+        console.log('Geo..'+props.position.latitude)
         Geocoder.geocodePosition(Geo).then(res => {
             !input.includes(' in ') ? search = `${input} in ${res[0].locality}` : search = input 
             console.log('Searching...'+search)
@@ -35,6 +36,7 @@ export default Search = (props) => {
                 fetch(url)
                     .then(res => { return res.json() })
                     .then(places => {
+                        console.log(places.length)
                         setplaces(places)
                     })
                     .catch(err => { console.log(err) })
