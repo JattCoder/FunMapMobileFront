@@ -6,7 +6,7 @@ import Uimage from './uimage'
 import MapView, { AnimatedRegion, Marker } from 'react-native-maps';
 import Search from '../Components/search/search'
 import Geolocation from '@react-native-community/geolocation'
-import Customarker from '../Components/marker/customarker'
+import CustomMarker from '../Components/marker/customMarker'
 import Geocoder from 'react-native-geocoder-reborn';
 import { Myposition } from '../Components/location/myposition'
 
@@ -15,10 +15,9 @@ const Home = (props) => {
     const [places,setplaces] = useState([])
     const [follow,setfollow] = useState(true)
     const [allowed,setallowed] = useState(false)
-    const [currentCity,setCity] = useState('')
+    const [showme,setshowme] = useState(false)
     let map = null
     const dispatch = useDispatch()
-    const [drag,setdrag] = useState({})
     const [position, setposition] = useState({
         latitude: 41.429960,
         longitude: -81.696900,
@@ -29,18 +28,18 @@ const Home = (props) => {
     getCurrentLocation = () => {
         //calling watchID and then if any getting current location details
         if(allowed == false){
+            console.log(map)
             Geolocation.getCurrentPosition(
                 pos => {
-                    console.log('allowed...',pos)
+                    setshowme(true)
                     setallowed(true)
-                let region = {
-                    latitude: parseFloat(pos.coords.latitude),
-                    longitude: parseFloat(pos.coords.longitude),
-                    latitudeDelta: 0.005,
-                    longitudeDelta: 0.005
+                    let region = {
+                        latitude: parseFloat(pos.coords.latitude),
+                        longitude: parseFloat(pos.coords.longitude),
+                        latitudeDelta: 0.005,
+                        longitudeDelta: 0.005
                     };
-                this.map.animateToRegion(region,1000)
-                setposition(region)
+                    setposition(region)
                 },
                 error => console.log(error),
                 {
@@ -54,22 +53,16 @@ const Home = (props) => {
             watchID => {
                 Geolocation.getCurrentPosition(
                     pos => {
-                        console.log('received pos...',pos)
-                    let region = {
-                        latitude: parseFloat(pos.coords.latitude),
-                        longitude: parseFloat(pos.coords.longitude),
-                        latitudeDelta: 0.005,
-                        longitudeDelta: 0.000
-                    };
-                    this.map.animateToRegion(region,1000)
-                    setposition(region)
+                        let region = {
+                            latitude: parseFloat(pos.coords.latitude),
+                            longitude: parseFloat(pos.coords.longitude),
+                            latitudeDelta: 0.005,
+                            longitudeDelta: 0.000
+                        };
+                        setposition(region)
                     },
                     error => console.log(error),
-                    {
-                        enableHighAccuracy: true,
-                        timeout: 20000,
-                        maximumAge: 1000
-                    }
+                    { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
                 );
             }
         }
@@ -106,9 +99,9 @@ const Home = (props) => {
             <View style={Styles.Page}>
                 <MapView showsBuildings
                     ref={ref => { map = ref }}
-                    followUserLocation={true}
-                    showsUserLocation={true}
-                    showsPointsOfInterest={false}
+                    followUserLocation={showme}
+                    showsUserLocation={showme}
+                    showsPointsOfInterest={true}
                     showsBuildings={true}
                     showsTraffic={true}
                     rotateEnabled={true}
@@ -125,7 +118,9 @@ const Home = (props) => {
 
                     }}>
                         {places.map((place)=>{
-                            return <Marker onPress={()=>alert('Pressed '+place.name)} image={source={uri:place.icon}} coordinate={{latitude: place.geo.lat, longitude: place.geo.lng}}/>
+                            return <Marker coordinate={{latitude: place.geo.lat, longitude: place.geo.lng}} >
+                                <CustomMarker place={place}/>
+                            </Marker>
                          })}
                 </MapView>
             </View>
