@@ -6,6 +6,7 @@ import Uimage from './uimage'
 import MapView, { AnimatedRegion, Marker } from 'react-native-maps';
 import Search from '../Components/search/search'
 import Geolocation from '@react-native-community/geolocation'
+import Customarker from '../Components/marker/customarker'
 import Geocoder from 'react-native-geocoder-reborn';
 import { Myposition } from '../Components/location/myposition'
 
@@ -13,36 +14,65 @@ const Home = (props) => {
     const [user, setuser] = useState({})
     const [places,setplaces] = useState([])
     const [follow,setfollow] = useState(true)
+    const [allowed,setallowed] = useState(false)
     const [currentCity,setCity] = useState('')
+    let map = null
     const dispatch = useDispatch()
     const [drag,setdrag] = useState({})
     const [position, setposition] = useState({
-        latitude: 0,
-        longitude: 0,
-        latitudeDelta: 0.001,
-        longitudeDelta: 0.0001
+        latitude: 41.429960,
+        longitude: -81.696900,
+        latitudeDelta: 0.005,
+        longitudeDelta: 0.0000
     })
-    let map = null
 
     getCurrentLocation = () => {
-        Geolocation.getCurrentPosition(
-            pos => {
-            let region = {
-                latitude: parseFloat(pos.coords.latitude),
-                longitude: parseFloat(pos.coords.longitude),
-                latitudeDelta: 0.005,
-                longitudeDelta: 0.005
-                };
-            setposition(region)
-            if(follow == true) setdrag(position)
-            },
-            error => console.log(error),
-            {
-                enableHighAccuracy: true,
-                timeout: 20000,
-                maximumAge: 1000
+        //calling watchID and then if any getting current location details
+        if(allowed == false){
+            Geolocation.getCurrentPosition(
+                pos => {
+                    console.log('allowed...',pos)
+                    setallowed(true)
+                let region = {
+                    latitude: parseFloat(pos.coords.latitude),
+                    longitude: parseFloat(pos.coords.longitude),
+                    latitudeDelta: 0.005,
+                    longitudeDelta: 0.005
+                    };
+                this.map.animateToRegion(region,1000)
+                setposition(region)
+                },
+                error => console.log(error),
+                {
+                    enableHighAccuracy: true,
+                    timeout: 20000,
+                    maximumAge: 1000
+                }
+            );
+        }
+        Geolocation.watchPosition = () => {
+            watchID => {
+                Geolocation.getCurrentPosition(
+                    pos => {
+                        console.log('received pos...',pos)
+                    let region = {
+                        latitude: parseFloat(pos.coords.latitude),
+                        longitude: parseFloat(pos.coords.longitude),
+                        latitudeDelta: 0.005,
+                        longitudeDelta: 0.000
+                    };
+                    this.map.animateToRegion(region,1000)
+                    setposition(region)
+                    },
+                    error => console.log(error),
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 20000,
+                        maximumAge: 1000
+                    }
+                );
             }
-        );
+        }
     }
 
     useEffect(() => {
@@ -67,31 +97,35 @@ const Home = (props) => {
         })
     }
 
+    findUser = () => {
+        setfollow(true)
+    }
+
     return (
         <View style={{ height: '100%', width: '100%' }}>
             <View style={Styles.Page}>
                 <MapView showsBuildings
                     ref={ref => { map = ref }}
-                    followUserLocation={follow}
+                    followUserLocation={true}
                     showsUserLocation={true}
                     showsPointsOfInterest={false}
                     showsBuildings={true}
                     showsTraffic={true}
-                    region={drag}
                     rotateEnabled={true}
                     scrollEnabled={true}
-                    onRegionChange={(r)=>regionChange(r)}
+                    region={position}
                     //onUserLocationChange={position.latitude,position.longitude}
                     //onMapReady={map.fitToSuppliedMarkers()}
                     style={{ height: '100%', width: '100%', alignItems: 'center' }}
                     initialRegion={position}
                     onLayout={() => {
                         //will have controll to move angel based on speed using hooks
-                        map.animateToBearing(0);
-                        map.animateCamera(30);
+                        map.animateCamera(45);
+                        map.animateToViewingAngle(180)
+
                     }}>
                         {places.map((place)=>{
-                            return <MapView.Marker.Animated coordinate={{latitude: place.geo.lat, longitude: place.geo.lng}}/>
+                            return <Marker onPress={()=>alert('Pressed '+place.name)} image={source={uri:place.icon}} coordinate={{latitude: place.geo.lat, longitude: place.geo.lng}}/>
                          })}
                 </MapView>
             </View>
@@ -104,11 +138,12 @@ const Home = (props) => {
                     {user.photo != '' ? <Image source={{ uri: user.image }} /> : <Uimage name={user.name} />}
                 </TouchableOpacity>
             </View>
-            <View>
-                <TouchableOpacity>
-                    
+            {follow == false ? 
+            <View style={{position:'absolute',bottom:0,right:0,marginRight:30,marginBottom:130}}>
+                <TouchableOpacity onPress={()=>findUser()} style={{borderWidth:0.5,borderColor:'black',borderRadius:25,height:50,width:50}}>
+                    <Text>Find Me</Text>
                 </TouchableOpacity>
-            </View>
+            </View> : null}
         </View>
     )
 }

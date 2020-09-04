@@ -94,7 +94,7 @@ const Login = (props) => {
             <TouchableOpacity style={Styles.EmailBox} activeOpacity={1}>
                 <Text style={{color:'white'}}>Email</Text>
                 <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:-4,borderColor:'black'}}/>
-                <TextInput style={Styles.EmailInput} autoCapitalize = 'none' onChangeText={(e)=>setemail(e)}/>
+                <TextInput style={[Styles.EmailInput, {height: Platform.OS == 'android' ? 40 : 20}]} autoCapitalize = 'none' onChangeText={(e)=>setemail(e)}/>
             </TouchableOpacity>
             <TouchableOpacity style={Styles.PassBox} activeOpacity={1}>
                 <Text style={{color:'white'}}>Pass </Text>
