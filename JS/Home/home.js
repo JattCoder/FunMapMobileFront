@@ -7,16 +7,20 @@ import MapView, { AnimatedRegion, Marker } from 'react-native-maps';
 import Search from '../Components/search/search'
 import Geolocation from '@react-native-community/geolocation'
 import CustomMarker from '../Components/marker/customMarker'
-import Geocoder from 'react-native-geocoder-reborn';
+import Placeinfo from '../Components/placeselect/placeinfo'
+import Geocoder from 'react-native-geocoder-reborn'
 import { Myposition } from '../Components/location/myposition'
 
 const Home = (props) => {
     const [user, setuser] = useState({})
     const [places,setplaces] = useState([])
-    const [follow,setfollow] = useState(true)
     const [allowed,setallowed] = useState(false)
     const [showme,setshowme] = useState(false)
-    let star = 3.5
+    const [placeSelection,setSelection] = useState({
+        name: '',
+        rating: '',
+        placeid: ''
+    })
     let map = null
     const dispatch = useDispatch()
     const [position, setposition] = useState({
@@ -119,7 +123,11 @@ const Home = (props) => {
 
                     }}>
                         {places.map((place)=>{
-                            return <Marker onPress={()=>alert(place.name)} style={{height:20}}  coordinate={{latitude: place.geo.lat, longitude: place.geo.lng}} >
+                            return <Marker onPress={()=>setSelection({
+                                        name: place.name,
+                                        rating: place.rating,
+                                        placeid: place.placeid
+                                    })} style={{height:20}}  coordinate={{latitude: place.geo.lat, longitude: place.geo.lng}} >
                                 <CustomMarker place={place}/>
                             </Marker>
                          })}
@@ -134,20 +142,11 @@ const Home = (props) => {
                     {user.photo != '' ? <Image source={{ uri: user.image }} /> : <Uimage name={user.name} />}
                 </TouchableOpacity>
             </View>
+            <TouchableOpacity style={Styles.CloseSelection}>
+                <Text style={{fontSize:20}}>X</Text>
+            </TouchableOpacity>
             <View style={Styles.PlaceSelection}>
-                <View style={{marginTop:'10%',marginLeft:'10%',flexDirection:'row'}}>
-                    <Text style={{fontSize:20}}>Starbucks</Text>
-                    {star < 1 ? <Image style={{marginLeft:'5%',height:'100%',width:'25%'}} source={require('../Stars/zero_star.png')}/>
-                    : star < 2 ? <Image style={{marginLeft:'5%',height:'100%',width:'25%'}} source={require('../Stars/one_star.png')}/>
-                    : star < 3 ? <Image style={{marginLeft:'5%',height:'100%',width:'25%'}} source={require('../Stars/two_star.png')}/>
-                    : star < 4 ? <Image style={{marginLeft:'5%',height:'100%',width:'25%'}} source={require('../Stars/three_star.png')}/>
-                    : star < 5 ? <Image style={{marginLeft:'5%',height:'100%',width:'25%'}} source={require('../Stars/four_star.png')}/>
-                    : star == 5 ? <Image style={{marginLeft:'5%',height:'100%',width:'25%'}} source={require('../Stars/five_star.png')}/>
-                    : null}
-                </View>
-                <View style={{marginLeft:'10%',marginTop:'2%'}}>
-                    <Text>4621 Broadview Rd, Cleveland, OH - 44109</Text>
-                </View>
+                {placeSelection.name != '' && placeSelection.placeid != '' ? <Placeinfo place={placeSelection} /> : null}
             </View>
         </View>
     )
@@ -210,14 +209,38 @@ const Styles = StyleSheet.create({
         backgroundColor: 'rgba(0,0,0,0.2)',
         alignItems: 'center'
     },
-    PlaceSelection: {
-        height:'35%',
-        width:'100%',
-        backgroundColor:'white',
+    PlaceSelection:{
         position:'absolute',
         bottom:0,
-        borderTopRightRadius:85,
-        shadowColor:'black'
+        height:'35%',
+        width:'100%',
+        shadowColor: "#000",
+        shadowOffset: {
+	        width: 0,
+	        height: 5,
+        },
+        shadowOpacity: 0.27,
+        shadowRadius: 30.65,
+        elevation: 8,
+    },
+    CloseSelection:{
+        height:40,
+        width:40,
+        backgroundColor:'white',
+        borderRadius:25,
+        position:'absolute',
+        bottom:300,
+        right:10,
+        shadowColor: "#000",
+        shadowOffset: {
+	        width: 0,
+	        height: 5,
+        },
+        shadowOpacity: 0.27,
+        shadowRadius: 30.65,
+        elevation: 8,
+        justifyContent:'center',
+        alignItems:'center'
     }
 })
 
