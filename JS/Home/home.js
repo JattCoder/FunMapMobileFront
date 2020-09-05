@@ -16,6 +16,7 @@ const Home = (props) => {
     const [follow,setfollow] = useState(true)
     const [allowed,setallowed] = useState(false)
     const [showme,setshowme] = useState(false)
+    let star = 3.5
     let map = null
     const dispatch = useDispatch()
     const [position, setposition] = useState({
@@ -112,13 +113,13 @@ const Home = (props) => {
                     style={{ height: '100%', width: '100%', alignItems: 'center' }}
                     initialRegion={position}
                     onLayout={() => {
-                        //will have controll to move angel based on speed using hooks
+                        //will have control to move angel based on speed using hooks
                         map.animateCamera(45);
                         map.animateToViewingAngle(180)
 
                     }}>
                         {places.map((place)=>{
-                            return <Marker coordinate={{latitude: place.geo.lat, longitude: place.geo.lng}} >
+                            return <Marker onPress={()=>alert(place.name)} style={{height:20}}  coordinate={{latitude: place.geo.lat, longitude: place.geo.lng}} >
                                 <CustomMarker place={place}/>
                             </Marker>
                          })}
@@ -133,12 +134,21 @@ const Home = (props) => {
                     {user.photo != '' ? <Image source={{ uri: user.image }} /> : <Uimage name={user.name} />}
                 </TouchableOpacity>
             </View>
-            {follow == false ? 
-            <View style={{position:'absolute',bottom:0,right:0,marginRight:30,marginBottom:130}}>
-                <TouchableOpacity onPress={()=>findUser()} style={{borderWidth:0.5,borderColor:'black',borderRadius:25,height:50,width:50}}>
-                    <Text>Find Me</Text>
-                </TouchableOpacity>
-            </View> : null}
+            <View style={Styles.PlaceSelection}>
+                <View style={{marginTop:'10%',marginLeft:'10%',flexDirection:'row'}}>
+                    <Text style={{fontSize:20}}>Starbucks</Text>
+                    {star < 1 ? <Image style={{marginLeft:'5%',height:'100%',width:'25%'}} source={require('../Stars/zero_star.png')}/>
+                    : star < 2 ? <Image style={{marginLeft:'5%',height:'100%',width:'25%'}} source={require('../Stars/one_star.png')}/>
+                    : star < 3 ? <Image style={{marginLeft:'5%',height:'100%',width:'25%'}} source={require('../Stars/two_star.png')}/>
+                    : star < 4 ? <Image style={{marginLeft:'5%',height:'100%',width:'25%'}} source={require('../Stars/three_star.png')}/>
+                    : star < 5 ? <Image style={{marginLeft:'5%',height:'100%',width:'25%'}} source={require('../Stars/four_star.png')}/>
+                    : star == 5 ? <Image style={{marginLeft:'5%',height:'100%',width:'25%'}} source={require('../Stars/five_star.png')}/>
+                    : null}
+                </View>
+                <View style={{marginLeft:'10%',marginTop:'2%'}}>
+                    <Text>4621 Broadview Rd, Cleveland, OH - 44109</Text>
+                </View>
+            </View>
         </View>
     )
 }
@@ -199,6 +209,15 @@ const Styles = StyleSheet.create({
         width: 250,
         backgroundColor: 'rgba(0,0,0,0.2)',
         alignItems: 'center'
+    },
+    PlaceSelection: {
+        height:'35%',
+        width:'100%',
+        backgroundColor:'white',
+        position:'absolute',
+        bottom:0,
+        borderTopRightRadius:85,
+        shadowColor:'black'
     }
 })
 
