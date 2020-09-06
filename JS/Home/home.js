@@ -33,7 +33,6 @@ const Home = (props) => {
     getCurrentLocation = () => {
         //calling watchID and then if any getting current location details
         if(allowed == false){
-            console.log(map)
             Geolocation.getCurrentPosition(
                 pos => {
                     setshowme(true)
@@ -41,8 +40,8 @@ const Home = (props) => {
                     let region = {
                         latitude: parseFloat(pos.coords.latitude),
                         longitude: parseFloat(pos.coords.longitude),
-                        latitudeDelta: 0.005,
-                        longitudeDelta: 0.005
+                        latitudeDelta: position.latitudeDelta,
+                        longitudeDelta: position.longitudeDelta
                     };
                     setposition(region)
                 },
@@ -81,6 +80,12 @@ const Home = (props) => {
     useSelector((state)=>{
         if(state.placesearch.length > 0){
             setplaces(state.placesearch)
+            setposition({
+                latitude: state.placesearch[0].geo.lat,
+                longitude: state.placesearch[0].geo.lat,
+                latitudeDelta: position.latitudeDelta,
+                longitudeDelta: position.longitudeDelta
+            })
             dispatch(clearsearch())
         }
     })
@@ -97,6 +102,29 @@ const Home = (props) => {
 
     findUser = () => {
         setfollow(true)
+    }
+
+    selectPlace = (place) => {
+        setSelection({
+            name: place.name,
+            rating: place.rating,
+            placeid: place.placeid
+        })
+        setposition({
+            latitude: place.geo.lat,
+            longitude: place.geo.lng,
+            latitudeDelta: position.latitudeDelta,
+            longitudeDelta: position.longitudeDelta
+        })
+    }
+
+    clearSelect = () => {
+        setSelection({
+            name: '',
+            rating: '',
+            placeid: ''
+        })
+        setallowed(false)
     }
 
     return (
@@ -123,11 +151,7 @@ const Home = (props) => {
 
                     }}>
                         {places.map((place)=>{
-                            return <Marker onPress={()=>setSelection({
-                                        name: place.name,
-                                        rating: place.rating,
-                                        placeid: place.placeid
-                                    })} style={{height:20}}  coordinate={{latitude: place.geo.lat, longitude: place.geo.lng}} >
+                            return <Marker onPress={()=>selectPlace(place)} style={{height:20}}  coordinate={{latitude: place.geo.lat, longitude: place.geo.lng}} >
                                 <CustomMarker place={place}/>
                             </Marker>
                          })}
@@ -142,9 +166,12 @@ const Home = (props) => {
                     {user.photo != '' ? <Image source={{ uri: user.image }} /> : <Uimage name={user.name} />}
                 </TouchableOpacity>
             </View>
-            <TouchableOpacity style={Styles.CloseSelection}>
-                <Text style={{fontSize:20}}>X</Text>
+            <TouchableOpacity onPress={()=>setallowed(false)} style={Styles.FindMe}>
+                <Image style={{height:'100%',width:'100%'}} source={require('../FindMe/find_me.png')} />
             </TouchableOpacity>
+            {placeSelection.name != '' ? <TouchableOpacity onPress={()=>clearSelect()} style={Styles.CloseSelection}>
+                <Text style={{fontSize:20}}>X</Text>
+            </TouchableOpacity> : null}
             <View style={Styles.PlaceSelection}>
                 {placeSelection.name != '' && placeSelection.placeid != '' ? <Placeinfo place={placeSelection} /> : null}
             </View>
@@ -241,6 +268,13 @@ const Styles = StyleSheet.create({
         elevation: 8,
         justifyContent:'center',
         alignItems:'center'
+    },
+    FindMe:{
+        height:'6%',
+        width:'12%',
+        position:'absolute',
+        bottom:160,
+        right:30
     }
 })
 
