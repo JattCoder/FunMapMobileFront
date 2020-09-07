@@ -9,25 +9,30 @@ import Geolocation from '@react-native-community/geolocation'
 import CustomMarker from '../Components/marker/customMarker'
 import Placeinfo from '../Components/placeselect/placeinfo'
 import Geocoder from 'react-native-geocoder-reborn'
-import { Myposition } from '../Components/location/myposition'
 
 const Home = (props) => {
     const [user, setuser] = useState({})
     const [places,setplaces] = useState([])
     const [allowed,setallowed] = useState(false)
     const [showme,setshowme] = useState(false)
+    const [map,setmap] = useState({})
+    const [userCam,setuserCam] = useState(45)
+    const [destination,setdestination] = useState({
+        latitude:0.00,
+        longitude:0.00
+    })
     const [placeSelection,setSelection] = useState({
         name: '',
         rating: '',
         placeid: ''
     })
-    let map = null
+    let markers = []
     const dispatch = useDispatch()
     const [position, setposition] = useState({
         latitude: 41.429960,
         longitude: -81.696900,
         latitudeDelta: 0.005,
-        longitudeDelta: 0.0000
+        longitudeDelta: 0.0003
     })
 
     getCurrentLocation = () => {
@@ -61,7 +66,7 @@ const Home = (props) => {
                             latitude: parseFloat(pos.coords.latitude),
                             longitude: parseFloat(pos.coords.longitude),
                             latitudeDelta: 0.005,
-                            longitudeDelta: 0.000
+                            longitudeDelta: 0.005
                         };
                         setposition(region)
                     },
@@ -79,13 +84,11 @@ const Home = (props) => {
 
     useSelector((state)=>{
         if(state.placesearch.length > 0){
+            map.fitToSuppliedMarkers(
+                markers,
+                false,
+              );
             setplaces(state.placesearch)
-            setposition({
-                latitude: state.placesearch[0].geo.lat,
-                longitude: state.placesearch[0].geo.lat,
-                latitudeDelta: position.latitudeDelta,
-                longitudeDelta: position.longitudeDelta
-            })
             dispatch(clearsearch())
         }
     })
@@ -105,16 +108,12 @@ const Home = (props) => {
     }
 
     selectPlace = (place) => {
+        console.warn('My Location: '+position.latitude+', '+position.longitude+'\nPlace: '+place.geo.lat+', '+place.geo.lng)
+        map.animateCamera({center: {latitude:place.geo.lat, longitude:place.geo.lng},heading: 0,zoom: 40},1000)
         setSelection({
             name: place.name,
             rating: place.rating,
             placeid: place.placeid
-        })
-        setposition({
-            latitude: place.geo.lat,
-            longitude: place.geo.lng,
-            latitudeDelta: position.latitudeDelta,
-            longitudeDelta: position.longitudeDelta
         })
     }
 
@@ -131,7 +130,7 @@ const Home = (props) => {
         <View style={{ height: '100%', width: '100%' }}>
             <View style={Styles.Page}>
                 <MapView showsBuildings
-                    ref={ref => { map = ref }}
+                    ref={ref => { setmap(ref) }}
                     followUserLocation={showme}
                     showsUserLocation={showme}
                     showsPointsOfInterest={true}
@@ -146,9 +145,8 @@ const Home = (props) => {
                     initialRegion={position}
                     onLayout={() => {
                         //will have control to move angel based on speed using hooks
-                        map.animateCamera(45);
-                        map.animateToViewingAngle(180)
-
+                        //map.animateCamera(userCam)
+                        map.animateCamera({center: {latitude:position.latitude, longitude:position.longitude},pitch: 2, heading: 20,altitude: 400, zoom: 100},1000)
                     }}>
                         {places.map((place)=>{
                             return <Marker onPress={()=>selectPlace(place)} style={{height:20}}  coordinate={{latitude: place.geo.lat, longitude: place.geo.lng}} >
@@ -239,7 +237,7 @@ const Styles = StyleSheet.create({
     PlaceSelection:{
         position:'absolute',
         bottom:0,
-        height:'35%',
+        height:'40%',
         width:'100%',
         shadowColor: "#000",
         shadowOffset: {
@@ -247,8 +245,8 @@ const Styles = StyleSheet.create({
 	        height: 5,
         },
         shadowOpacity: 0.27,
-        shadowRadius: 30.65,
-        elevation: 8,
+        shadowRadius: 305.65,
+        elevation: 10,
     },
     CloseSelection:{
         height:40,
@@ -256,7 +254,7 @@ const Styles = StyleSheet.create({
         backgroundColor:'white',
         borderRadius:25,
         position:'absolute',
-        bottom:300,
+        bottom:352,
         right:10,
         shadowColor: "#000",
         shadowOffset: {
