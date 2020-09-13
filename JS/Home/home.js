@@ -1,137 +1,94 @@
 import React, { useState, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { View, StyleSheet, TouchableOpacity, TextInput, Image, Text } from 'react-native'
-import { clearsearch } from '../../actions/submitsearch/clearsearch'
-import Uimage from './uimage'
-import MapView, { AnimatedRegion, Marker } from 'react-native-maps';
-import Search from '../Components/search/search'
-import Geolocation from '@react-native-community/geolocation'
-import CustomMarker from '../Components/marker/customMarker'
-import Placeinfo from '../Components/placeselect/placeinfo'
-import Geocoder from 'react-native-geocoder-reborn'
+import { useSelector, useDispatch } from 'react-redux'
+import Styles from './styles'
+import { selmarker } from '../../actions/marker/selmarker'
+import { View, TouchableOpacity } from 'react-native'
+import MapView,{Marker} from 'react-native-maps';
+import Mrker from '../Markers/marker'
+import Details from '../Markers/details'
+import Location from '../FindMe/location'
+import Header from './header'
 
 const Home = (props) => {
+    const dispatch = useDispatch()
     const [user, setuser] = useState({})
-    const [places,setplaces] = useState([])
-    const [allowed,setallowed] = useState(false)
     const [showme,setshowme] = useState(false)
     const [map,setmap] = useState({})
-    const [userCam,setuserCam] = useState(45)
-    const [destination,setdestination] = useState({
-        latitude:0.00,
-        longitude:0.00
-    })
-    const [placeSelection,setSelection] = useState({
-        name: '',
-        rating: '',
-        placeid: ''
-    })
-    let markers = []
-    const dispatch = useDispatch()
+    const [search,setsearch] = useState([])
     const [position, setposition] = useState({
-        latitude: 41.429960,
-        longitude: -81.696900,
-        latitudeDelta: 0.005,
-        longitudeDelta: 0.0003
+        latitude: 39.8283,
+        longitude: 98.5795,
+        latitudeDelta: 40.009,
+        longitudeDelta: 40.0009
     })
-
-    getCurrentLocation = () => {
-        //calling watchID and then if any getting current location details
-        if(allowed == false){
-            Geolocation.getCurrentPosition(
-                pos => {
-                    setshowme(true)
-                    setallowed(true)
-                    let region = {
-                        latitude: parseFloat(pos.coords.latitude),
-                        longitude: parseFloat(pos.coords.longitude),
-                        latitudeDelta: position.latitudeDelta,
-                        longitudeDelta: position.longitudeDelta
-                    };
-                    setposition(region)
-                },
-                error => console.log(error),
-                {
-                    enableHighAccuracy: true,
-                    timeout: 20000,
-                    maximumAge: 1000
-                }
-            );
-        }
-        Geolocation.watchPosition = () => {
-            watchID => {
-                Geolocation.getCurrentPosition(
-                    pos => {
-                        let region = {
-                            latitude: parseFloat(pos.coords.latitude),
-                            longitude: parseFloat(pos.coords.longitude),
-                            latitudeDelta: 0.005,
-                            longitudeDelta: 0.005
-                        };
-                        setposition(region)
-                    },
-                    error => console.log(error),
-                    { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-                );
-            }
-        }
+    const [mapCam,setCam] = useState({
+        pitch: 2,
+        altitude: 400,
+        heading: 0,
+        speed: 0
+    })
+    let lastposition = {
+        lat:0.00,
+        lng:0.00
     }
 
     useEffect(() => {
         setuser(props.route.params.user)
-        getCurrentLocation()
     })
 
+    whereAmI = () => {
+        map.animateToRegion({latitude:position.latitude,longitude:position.longitude,latitudeDelta:0.039,longitudeDelta:0.039},500)
+        setTimeout(()=>{
+            setposition({
+                latitude: position.latitude,
+                longitude: position.longitude,
+                latitudeDelta: 0.039,
+                longitudeDelta: 0.039
+            })
+        },600)
+    }
+
     useSelector((state)=>{
-        if(state.placesearch.length > 0){
-            map.fitToSuppliedMarkers(
-                markers,
-                false,
-              );
-            setplaces(state.placesearch)
-            dispatch(clearsearch())
+        let location = state.mylocation
+        if(location){
+            if(position.latitude != location.latitude && position.longitude != location.longitude){
+                setposition({
+                    latitude: location.latitude,
+                    longitude: location.longitude,
+                    latitudeDelta: position.latitudeDelta,
+                    longitudeDelta: position.longitudeDelta
+                })
+                if(showme == false) {
+                    setTimeout(()=>{
+                        whereAmI()
+                    },500)
+                    setshowme(true)
+                }
+            }
+            if(state.marker.name == '' && state.placesearch.length > 0){
+                setsearch(state.placesearch)
+                if(lastposition.lat == 0.00 && lastposition.lng == 0.00){
+                    map.animateToRegion({latitude:position.latitude,longitude:position.longitude,latitudeDelta:0.039,longitudeDelta:0.039},500)
+                }else{
+                    map.animateToRegion({latitude:lastposition.lat,longitude:lastposition.lng,latitudeDelta:0.039,longitudeDelta:0.039},500)
+                }
+            }else if(state.marker.name != '' && state.placesearch.length > 0) {
+                lastposition.lat = state.marker.lat
+                lastposition.lng = state.marker.lng
+                map.animateToRegion({latitude:lastposition.lat,longitude:lastposition.lng,latitudeDelta:0.039,longitudeDelta:0.039},500)
+            }else if(state.marker.name != ''){
+                map.animateToRegion({latitude:state.marker.lat,longitude:state.marker.lng,latitudeDelta:0.019,longitudeDelta:0.019},500)
+            }
         }
     })
 
-    regionChange = (e) => {
-        setfollow(false)
-        setdrag({
-            latitude: e.latitude,
-            longitude: e.longitude,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.0005
-        })
-    }
-
-    findUser = () => {
-        setfollow(true)
-    }
-
-    selectPlace = (place) => {
-        console.warn('My Location: '+position.latitude+', '+position.longitude+'\nPlace: '+place.geo.lat+', '+place.geo.lng)
-        map.animateCamera({center: {latitude:place.geo.lat, longitude:place.geo.lng},heading: 0,zoom: 40},1000)
-        setSelection({
-            name: place.name,
-            rating: place.rating,
-            placeid: place.placeid
-        })
-    }
-
-    clearSelect = () => {
-        setSelection({
-            name: '',
-            rating: '',
-            placeid: ''
-        })
-        setallowed(false)
-    }
-
     return (
         <View style={{ height: '100%', width: '100%' }}>
+            <Location />
             <View style={Styles.Page}>
                 <MapView showsBuildings
                     ref={ref => { setmap(ref) }}
-                    followUserLocation={showme}
+                    followUserLocation={true}
                     showsUserLocation={showme}
                     showsPointsOfInterest={true}
                     showsBuildings={true}
@@ -139,150 +96,28 @@ const Home = (props) => {
                     rotateEnabled={true}
                     scrollEnabled={true}
                     region={position}
-                    //onUserLocationChange={position.latitude,position.longitude}
-                    //onMapReady={map.fitToSuppliedMarkers()}
+                    showsMyLocationButton
+                    showsCompass={false}
                     style={{ height: '100%', width: '100%', alignItems: 'center' }}
-                    initialRegion={position}
-                    onLayout={() => {
-                        //will have control to move angel based on speed using hooks
-                        //map.animateCamera(userCam)
-                        map.animateCamera({center: {latitude:position.latitude, longitude:position.longitude},pitch: 2, heading: 20,altitude: 400, zoom: 100},1000)
-                    }}>
-                        {places.map((place)=>{
-                            return <Marker onPress={()=>selectPlace(place)} style={{height:20}}  coordinate={{latitude: place.geo.lat, longitude: place.geo.lng}} >
-                                <CustomMarker place={place}/>
+                    initialRegion={position}>
+                        {search.map((place)=>{
+                            return <Marker onPress={()=>dispatch(selmarker(place))} coordinate={{latitude: place.geo.lat, longitude: place.geo.lng}}>
+                                <Mrker place={place} style={style={width:25,height:35}}/>
                             </Marker>
-                         })}
+                        })}
                 </MapView>
             </View>
-            <View style={{ width: '100%', height:'10%', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row' }}>
-                <TouchableOpacity style={Styles.ContactBox}></TouchableOpacity>
-                <View style={Styles.SearchBox}>
-                    <Search position={position}/>
-                </View>
-                <TouchableOpacity style={Styles.ImageBox}>
-                    {user.photo != '' ? <Image source={{ uri: user.image }} /> : <Uimage name={user.name} />}
-                </TouchableOpacity>
+            <View style={{ width: '100%', height:'10%' }}>
+                <Header position={position} user={user}/>
             </View>
-            <TouchableOpacity onPress={()=>setallowed(false)} style={Styles.FindMe}>
-                <Image style={{height:'100%',width:'100%'}} source={require('../FindMe/find_me.png')} />
-            </TouchableOpacity>
-            {placeSelection.name != '' ? <TouchableOpacity onPress={()=>clearSelect()} style={Styles.CloseSelection}>
-                <Text style={{fontSize:20}}>X</Text>
-            </TouchableOpacity> : null}
-            <View style={Styles.PlaceSelection}>
-                {placeSelection.name != '' && placeSelection.placeid != '' ? <Placeinfo place={placeSelection} /> : null}
+            <View style={{position:'absolute',bottom:200,right:30,borderWidth:0.5,borderRadius:25,backgroundColor:'white',width:50,height:50}}>
+                <TouchableOpacity style={{width:'100%',height:'100%'}} onPress={()=>whereAmI()}/>
+            </View>
+            <View style={{position:'absolute',height:'35%',width:'100%',bottom:0,borderTopStartRadius:15,borderTopEndRadius:15}}>
+                <Details />
             </View>
         </View>
     )
 }
 
 export default Home
-
-const Styles = StyleSheet.create({
-    Page: {
-        height: '100%',
-        width: '100%',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#5810d8',
-        position: 'absolute'
-    },
-    SearchBox: {
-        marginTop: '20%',
-        borderRadius: 25,
-        borderColor: 'black',
-        borderWidth: 0.8,
-        width: 280,
-        height: 45,
-        padding: 13,
-        backgroundColor: 'rgba(0,0,0,0.2)'
-    },
-    SearchInput: {
-        paddingLeft: 1,
-        paddingRight: 1,
-        width: 210,
-        height: 20,
-        marginLeft: 10,
-        color: 'black'
-    },
-    ImageBox: {
-        marginTop: '20%',
-        width: 45,
-        height: 45,
-        borderRadius: 25,
-        borderColor: 'black',
-        borderWidth: 1,
-        marginLeft: '3%',
-        marginRight: '3%'
-    },
-    ContactBox: {
-        marginTop: '20%',
-        width: 45,
-        height: 45,
-        borderRadius: 25,
-        borderColor: 'black',
-        marginLeft: '1%',
-        marginRight: '3%'
-    },
-    SearchResults: {
-        borderRadius: 10,
-        borderColor: 'black',
-        borderWidth: 1,
-        marginTop: 14,
-        width: 250,
-        backgroundColor: 'rgba(0,0,0,0.2)',
-        alignItems: 'center'
-    },
-    PlaceSelection:{
-        position:'absolute',
-        bottom:0,
-        height:'40%',
-        width:'100%',
-        shadowColor: "#000",
-        shadowOffset: {
-	        width: 0,
-	        height: 5,
-        },
-        shadowOpacity: 0.27,
-        shadowRadius: 305.65,
-        elevation: 10,
-    },
-    CloseSelection:{
-        height:40,
-        width:40,
-        backgroundColor:'white',
-        borderRadius:25,
-        position:'absolute',
-        bottom:352,
-        right:10,
-        shadowColor: "#000",
-        shadowOffset: {
-	        width: 0,
-	        height: 5,
-        },
-        shadowOpacity: 0.27,
-        shadowRadius: 30.65,
-        elevation: 8,
-        justifyContent:'center',
-        alignItems:'center'
-    },
-    FindMe:{
-        height:'6%',
-        width:'12%',
-        position:'absolute',
-        bottom:160,
-        right:30
-    }
-})
-
-
-
-// {places.length > 0 ?
-                    
-//     places.map((place)=>{
-//         map.animateToBearing(0)
-//         map.animateToViewingAngle(180)
-//         return <Marker coordinate={{latitude: place.geo.lat, longitude: place.geo.lng}}/>
-//     }) : null}
-// {position.received == true ? <Marker coordinate={{ latitude: position.latitude, longitude: position.longitude }} /> : null}

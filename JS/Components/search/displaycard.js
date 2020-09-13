@@ -1,9 +1,10 @@
-import React from 'react'
-import { useDispatch } from 'react-redux'
+import React,{ useState } from 'react'
+import { useSelector } from 'react-redux'
 import { View, StyleSheet, Text, Image } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 
 export default Displaycard = (props) => {
+
     return(
         <View style={Styles.Card}>
             <View style={{flexDirection:'row'}}>

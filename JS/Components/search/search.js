@@ -5,18 +5,20 @@ import { TouchableOpacity } from 'react-native-gesture-handler'
 import Displaycard from './displaycard'
 import { submitsearch } from '../../../actions/submitsearch/submitsearch'
 import Geocoder from 'react-native-geocoder-reborn';
+import Styles from './styles'
+import { clearsearch } from '../../../actions/submitsearch/clearsearch'
 
 export default Search = (props) => {
     const [input, setinput] = useState('')
     const [oldinput, setoldinput] = useState('')
     const [places, setplaces] = useState([])
-    const [timer,settimer] = useState(0)
     const dispatch = useDispatch()
-    let timeout
+    
     doneSearch = (results) => {
         if(places.length > 0) setplaces([])
         if(input != '') setinput('')
         dispatch(submitsearch(results))
+        dispatch(clearsearch())
     }
 
     if (input != '' && input != oldinput) {
@@ -25,10 +27,8 @@ export default Search = (props) => {
             lat: props.position.latitude,
             lng: props.position.longitude
         };
-        console.log('Geo..'+props.position.latitude)
         Geocoder.geocodePosition(Geo).then(res => {
             !input.includes(' in ') ? search = `${input} in ${res[0].locality}` : search = input 
-            console.log('Searching...'+search)
             setTimeout(() => {
                 var url = new URL("http://localhost:3000/account/search"),
                     params = { input: search }
@@ -36,7 +36,6 @@ export default Search = (props) => {
                 fetch(url)
                     .then(res => { return res.json() })
                     .then(places => {
-                        console.log(places.length)
                         setplaces(places)
                     })
                     .catch(err => { console.log(err) })
@@ -70,39 +69,9 @@ export default Search = (props) => {
                                     <Displaycard item={item} />
                                 </TouchableOpacity>
                             })}
-                        </ScrollView> : <ActivityIndicator size='small' color='black' style={{ marginTop: '10%' }} /> : null}
+                        </ScrollView> : <ActivityIndicator size='small' color='black' style={{ marginTop: '10%' }} />
+                    : null}
             </View>
         </View>
     )
 }
-
-const Styles = StyleSheet.create({
-    Page: {
-        height: '100%',
-        width: '100%',
-        alignItems: 'center',
-    },
-    Clear: {
-        borderRadius: 25,
-        height: 20,
-        width: 20,
-        backgroundColor: 'rgba(0,0,0,0.2)',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginRight: 10
-    },
-    Input: {
-        paddingHorizontal: 15,
-        width: '100%',
-    },
-    List: {
-        width: 300,
-        borderRadius: 10,
-        borderWidth: 1,
-        marginTop: '6%',
-        backgroundColor: 'rgba(0,0,0,0.2)',
-        position: 'absolute',
-        maxHeight: 400,
-        minHeight: 110
-    }
-})

@@ -7,9 +7,10 @@ import confirmacc from './confirmacc'
 import mylocation from './mylocation'
 import placesearch from './placesearch'
 import navigate from './navigation'
+import marker from './marker'
 
 const rootreducers =  combineReducers({
-  login,recovery,register,recovered,confirmacc,mylocation,placesearch,navigate
+  login,recovery,register,recovered,confirmacc,mylocation,placesearch,navigate,marker
 })
 
 export default rootreducers

@@ -7,14 +7,13 @@ let initialState = {
     heading: 0,
     altitude: 0,
     altitudeAccuracy: 0,
-    accuracy: 0,
-    received: false
+    accuracy: 0
 }
 
 const mylocation = (mylocation = initialState, action) => {
     switch(action.type){
         case MYLOCATION:
-            return { ...mylocation, ...action.payload }
+            return action.mylocation
         default:
             return mylocation
     }
