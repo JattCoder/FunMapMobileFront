@@ -1,10 +1,10 @@
 import React from 'react'
 import { View, Image } from 'react-native'
-import { TouchableOpacity, StyleSheet } from 'react-native'
+import { TouchableOpacity, StyleSheet, Text } from 'react-native'
 
 export default Mrker = (props) =>{
     return(
-        <View style={{height:'100%',width:'100%'}}>
+        <View style={{height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}>
             <TouchableOpacity style={{height:'100%',width:'100%'}} onPress={()=>alert('clicked')}>
                 {props.place.status == true ? 
                     <Image onPress={()=>alert('ressed')} style={Styles.Icons} source={require('./open_marker.png')} />

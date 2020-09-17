@@ -1,14 +1,16 @@
-import React,{ useState } from 'react'
+import React,{ useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { clemarker } from '../../actions/marker/clemarker'
+import Hours from './hours'
 import { View, Text, Image, StyleSheet, TouchableOpacity, Linking } from 'react-native'
 
 export default Details = () => {
 
     const dispatch = useDispatch()
+    const place = useSelector(state => state.marker);
     const [details,setdetails] = useState({
         name: '',
-        rating: '',
+        rating: 0,
         placeid: '',
         lat: 0.00,
         lng: 0.00,
@@ -20,16 +22,22 @@ export default Details = () => {
         types: ''
     })
 
-    useSelector((state)=>{
-        if(state.marker.name != details.name) setdetails(state.marker)
+    useEffect(()=>{
+        setdetails(place)
     })
 
     return(
         details.name != '' ? <View style={Styles.Card}>
         {details.name != '' ? <View style={Styles.Details}>
-            <Text style={Styles.PlaceName}>{details.name}</Text>
+            <View style={Styles.Heading}>
+                <Text style={Styles.PlaceName}>{details.name}</Text>
+            </View>
             <Text style={Styles.PlaceAddress}>{details.formatted_address}</Text>
-            <Text style={Styles.PlaceHours}>{details.opening_hours}</Text>
+            <View style={Styles.PlaceHours}>
+                {details.opening_hours.map((day)=>{
+                    return <Hours style={Styles.PlaceHours} day={day}/>
+                })}
+            </View>
             <View style={Styles.Buttons}>
                 <TouchableOpacity style={Styles.Navigate}>
                     <Text style={{color:'white',fontSize:17}}>Navigate</Text>
@@ -76,6 +84,13 @@ const Styles = StyleSheet.create({
         fontSize:30,
         color:'white'
     },
+    Heading:{
+        flexDirection:'row'
+    },
+    Stars:{
+        height:'100%',
+        marginLeft:20
+    },
     CloseButton:{
         position:'absolute',
         top:0,
@@ -104,8 +119,6 @@ const Styles = StyleSheet.create({
         width:'80%'
     },
     PlaceHours:{
-        fontSize:14,
-        color:'white',
         marginTop:7,
         marginLeft:5
     },

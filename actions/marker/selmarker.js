@@ -8,8 +8,6 @@ export const selmarker = (place) => {
                 if(data == null){
                     setreceived(false)
                 }else{
-                    let hours = ''
-                    data.opening_hours.map((day)=>{hours += `${day}\n`})
                     info = {
                         name: place.name,
                         rating: place.rating,
@@ -18,7 +16,7 @@ export const selmarker = (place) => {
                         lng: place.geo.lng,
                         formatted_address: data.formatted_address,
                         formatted_phone_number: data.formatted_phone_number,
-                        opening_hours: hours,
+                        opening_hours: data.opening_hours,
                         open_now: data.open_now,
                         reviews: data.reviews,
                         types: data.types
