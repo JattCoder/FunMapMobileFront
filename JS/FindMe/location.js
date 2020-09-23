@@ -5,10 +5,12 @@ import Geolocation from '@react-native-community/geolocation'
 
 export default Location = () =>{
 
-    const dispatch = useDispatch()
+    let id;
+    let dispatch = useDispatch()
 
     success = (pos) => {
         dispatch(mylocation(pos.coords))
+        Geolocation.clearWatch(id);
     }
       
     error = (err) => {
@@ -21,6 +23,6 @@ export default Location = () =>{
       maximumAge: 5000
     };
 
-    Geolocation.watchPosition(success,error,options)
+    id = Geolocation.watchPosition(success,error,options)
     return null
 }

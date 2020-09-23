@@ -1,21 +1,18 @@
 import { NAVIGATION } from '../actions/navigation/navigation'
 
 let initialState = {
-    name: '',
-    geo: {
-        latitude: 0.00,
-        longitude: 0.00
-    },
-    hours: ''
+    stops: [],
+    destination: [],
+    status: ''
 }
 
-const navigate = (navigation = initialState, action) => {
+const navigation = (navigation = initialState, action) => {
     switch(action.type){
         case NAVIGATION:
-            return action.navigation
+            return action.navigate
         default:
             return navigation
     }
 }
 
-export default navigate
+export default navigation

@@ -1,13 +1,16 @@
 import React,{ useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { clemarker } from '../../actions/marker/clemarker'
+import { navigation } from '../../actions/navigation/navigation'
+import Navigation from '../Components/loading/navigation'
 import Hours from './hours'
 import { View, Text, Image, StyleSheet, TouchableOpacity, Linking } from 'react-native'
 
 export default Details = () => {
 
     const dispatch = useDispatch()
-    const place = useSelector(state => state.marker);
+    const place = useSelector(state => state.marker)
+    const [loading,setloading] = useState(false)
     const [details,setdetails] = useState({
         name: '',
         rating: 0,
@@ -26,20 +29,29 @@ export default Details = () => {
         setdetails(place)
     })
 
+    Navigate = () => {
+        setloading(true)
+        setTimeout(()=>{
+            setloading(false)
+        },30000)
+        dispatch(navigation([],[details.lat,details.lng],''))
+    }
+
     return(
-        details.name != '' ? <View style={Styles.Card}>
+        loading == false ? details.name != '' ? <View style={Styles.Card}>
         {details.name != '' ? <View style={Styles.Details}>
             <View style={Styles.Heading}>
                 <Text style={Styles.PlaceName}>{details.name}</Text>
             </View>
             <Text style={Styles.PlaceAddress}>{details.formatted_address}</Text>
             <View style={Styles.PlaceHours}>
+                {details.opening_hours.length == 0 ? <Text style={{color:'white',fontSize:10}}>Day and Time is not provided by Location</Text> : null}
                 {details.opening_hours.map((day)=>{
                     return <Hours style={Styles.PlaceHours} day={day}/>
                 })}
             </View>
             <View style={Styles.Buttons}>
-                <TouchableOpacity style={Styles.Navigate}>
+                <TouchableOpacity onPress={()=>Navigate()} style={Styles.Navigate}>
                     <Text style={{color:'white',fontSize:17}}>Navigate</Text>
                     <Image style={Styles.Arrow} source={require('../Arrow/arrow_marker.png')}/>
                 </TouchableOpacity>
@@ -54,7 +66,7 @@ export default Details = () => {
         <TouchableOpacity onPress={()=>dispatch(clemarker())} style={Styles.CloseButton}>
             <Image style={Styles.CloseImage} source={require('./close.png')} />
         </TouchableOpacity>
-    </View> : null
+    </View> : null : <View style={Styles.Card}><Navigation name={details.name}/></View>
     )
 }
 

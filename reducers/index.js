@@ -6,11 +6,11 @@ import recovered from './recovered'
 import confirmacc from './confirmacc'
 import mylocation from './mylocation'
 import placesearch from './placesearch'
-import navigate from './navigation'
 import marker from './marker'
+import navigation from './navigation'
 
 const rootreducers =  combineReducers({
-  login,recovery,register,recovered,confirmacc,mylocation,placesearch,navigate,marker
+  login,recovery,register,recovered,confirmacc,mylocation,placesearch,marker,navigation
 })
 
 export default rootreducers

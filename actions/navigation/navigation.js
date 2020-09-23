@@ -1,5 +1,5 @@
 export const NAVIGATION = 'NAVIGATION'
 
-export const mylocation = (currentlocation,destination) => {
-    return (dispatch) => {dispatch({type: NAVIGATION, navigation: {currentlocation,destination}})}
+export const navigation = (stops = [],destination,status) => {
+    return (dispatch) => {dispatch({type: NAVIGATION, navigate:{stops,destination,status}})}
 }
