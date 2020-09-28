@@ -9,12 +9,42 @@ export default Location = () =>{
     let dispatch = useDispatch()
 
     success = (pos) => {
-        dispatch(mylocation(pos.coords))
+        pos = pos.coords
+        dispatch(mylocation({
+            latitude: pos.latitude,
+            longitude: pos.longitude,
+            speed: 0,
+            heading: 0,
+            altitude: 0,
+            altitudeAccuracy: 0,
+            accuracy: 0,
+            complete: '',
+            street: '',
+            city: '',
+            state: '',
+            zip: '',
+            message:'Allowed'
+        }))
         Geolocation.clearWatch(id);
     }
       
     error = (err) => {
-        console.log('ERROR(' + err.code + '): ' + err.message);
+        dispatch(mylocation({
+            latitude: 0,
+            longitude: 0,
+            speed: 0,
+            heading: 0,
+            altitude: 0,
+            altitudeAccuracy: 0,
+            accuracy: 0,
+            complete: '',
+            street: '',
+            city: '',
+            state: '',
+            zip: '',
+            message: err.message
+        }))
+        Geolocation.clearWatch(id);
     }
       
     options = {
@@ -24,5 +54,6 @@ export default Location = () =>{
     };
 
     id = Geolocation.watchPosition(success,error,options)
+    console.log('Location ID: ',id)
     return null
 }

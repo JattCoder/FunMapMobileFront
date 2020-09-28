@@ -11,9 +11,6 @@ export default Header = (props) => {
             <View style={Styles.SearchBox}>
                 <Search position={props.position}/>
             </View>
-            <TouchableOpacity style={Styles.ImageBox}>
-                {props.user.photo != '' ? <Image source={{ uri: user.photo }} /> : <Uimage name={user.name} />}
-            </TouchableOpacity>
         </View>
     )
 }

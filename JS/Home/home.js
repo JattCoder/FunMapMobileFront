@@ -2,32 +2,41 @@ import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import Styles from './styles'
 import { selmarker } from '../../actions/marker/selmarker'
-import { View, TouchableOpacity, Image } from 'react-native'
+import { View, TouchableOpacity } from 'react-native'
 import MapView,{Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import Mrker from '../Markers/marker'
-import Infowindow from '../Markers/infowindow'
 import Details from '../Markers/details'
 import Location from '../FindMe/location'
 import Navigate from '../Components/navigation/navigate'
+import Locationame from '../FindMe/locationame'
 import Header from './header'
+import Bottom from './bottom'
 
 const Home = (props) => {
     const dispatch = useDispatch()
     const [user, setuser] = useState({})
     //this will turn on when getting location to be true from redux
     const [showme,setshowme] = useState(false)
-    const [showmeButton,setshowmeButton] = useState('')
     //this will be handled when pressed a button
     const [followme,setfollowme] = useState(false)
     const [map,setmap] = useState({})
     const [search,setsearch] = useState([])
     const [mrkrInfo,setmrkrInfo] = useState(false)
-    const [angle,setangle] = useState(0)
+    const [slimit,setspeed] = useState(10)
     const [regionPosition, setRegPosition] = useState({
-        latitude: 39.8283,
-        longitude: 98.5795,
-        latitudeDelta: 40.009,
-        longitudeDelta: 20.0009
+        latitude: 0,
+        longitude: 0,
+        speed: 0,
+        heading: 0,
+        altitude: 0,
+        altitudeAccuracy: 0,
+        accuracy: 0,
+        complete: '',
+        street: '',
+        city: '',
+        state: '',
+        zip: '',
+        message: ''
     })
     const [userPosition,setUserPosition] = useState({
         latitude: 0,
@@ -38,27 +47,23 @@ const Home = (props) => {
         heading: 0,
         speed: 0,
     })
+    let speed = 0
 
     useEffect(() => {
         setuser(props.route.params.user)
     })
 
     whereAmI = () => {
-        setfollowme(true)
-        map.animateToRegion({latitude:userPosition.latitude,longitude:userPosition.longitude,latitudeDelta:0.039,longitudeDelta:0.039},500)
-        setTimeout(()=>{
-          setshowmeButton('none')
-        },600)
-    }
-
-    regChange = (newlocation) => {
-        setshowmeButton('')
-        setRegPosition({
-          latitude: newlocation.latitude,
-          longitude: newlocation.longitude,
-          latitudeDelta: newlocation.latitudeDelta,
-          longitudeDelta: newlocation.longitudeDelta
-      })
+      setfollowme(true)
+      setspeed(1)
+      map.animateCamera({center: {
+        latitude: userPosition.latitude,
+        longitude: userPosition.longitude,
+      },
+      altitude: 500,
+      heading: userPosition.heading,
+      pitch: userPosition.speed,
+      zoom: 18})
     }
 
     useSelector((state)=>{
@@ -95,32 +100,55 @@ const Home = (props) => {
             <View style={Styles.Page}>
                 <MapView provider={PROVIDER_GOOGLE}
                     ref={ref => { setmap(ref) }}
+                    followsUserLocation={true}
                     showsUserLocation={showme}
-                    followsUserLocation={followme}
-                    showsTraffic={false}
+                    showsBuildings={true}
+                    showsPointsOfInterest={false}
+                    onPanDrag={()=> {if(speed > slimit){
+                      alert('You can not use this app while driving')
+                    }}}
                     onUserLocationChange={(userlocation)=>{
                         loc = userlocation.nativeEvent.coordinate
-                        if(loc.speed == 0){
-                          setangle(0)
-                        }else if(loc.speed < 21){
-                          setangle(20)
-                        }else if(loc.speed < 41){
-                          setangle(40)
-                        }else if(loc.speed < 100){
-                          setangle(90)
+                        speed = loc.speed
+                        zoom = 0
+                        if(loc.speed > slimit){
+                          if(followme == true){
+                            if(loc.speed > 10 && loc.speed <= 30) zoom = 18
+                            else if(loc.speed > 30 && loc.speed <= 65) zoom = 17
+                            else zoom = 16
+                            map.animateCamera({center: {
+                              latitude: loc.latitude,
+                              longitude: loc.longitude,
+                            },
+                            altitude: 500,
+                            heading: loc.heading,
+                            pitch: loc.speed,
+                            zoom: zoom})
+                            setRegPosition({
+                              latitude: loc.latitude,
+                              longitude: loc.longitude,
+                              speed: loc.speed,
+                              heading: loc.heading,
+                              altitude: loc.altitude,
+                              altitudeAccuracy: loc.altitudeAccuracy,
+                              accuracy: loc.accuracy,
+                              complete: '',
+                              street: '',
+                              city: '',
+                              state: '',
+                              zip: ''
+                            })
+                          }
                         }
-                        map.animateCamera({center: {
-                          latitude: loc.latitude,
-                          longitude: loc.longitude,
-                        },
-                        heading: loc.heading,
-                        pitch: angle,
-                        zoom: 18})
                     }}
-                    onRegionChange={(newlocation)=>regChange(newlocation)}
                     customMapStyle={mapStyle}
                     style={{ height: '100%', width: '100%'}}
-                    initialRegion={regionPosition}>
+                    initialRegion={{
+                      latitude:regionPosition.latitude,
+                      longitude:regionPosition.longitude,
+                      latitudeDelta: 100.009,
+                      longitudeDelta: 20.0009,
+                    }}>
                         {userPosition.latitude == 0 ? <Navigate /> : null}
                         {search.map((place)=>{
                             return <Marker key={place.id} style={{justifyContent:'center',alignItems:'center'}} onPress={()=>dispatch(selmarker(place))} coordinate={{latitude: place.geo.lat, longitude: place.geo.lng}}>
@@ -133,10 +161,13 @@ const Home = (props) => {
             <View style={{ width: '100%', height:'10%' }}>
                 <Header position={regionPosition} user={user}/>
             </View>
-            <View style={{display:showmeButton,position:'absolute',bottom:200,right:30,borderWidth:0.5,borderRadius:25,backgroundColor:'white',width:50,height:50}}>
+            {showme == true ? <View style={{display:'',position:'absolute',bottom:180,right:30,borderWidth:0.5,borderRadius:25,backgroundColor:'white',width:50,height:50,shadowColor: "#000",shadowOffset: { width: 0,height: 9 }, shadowOpacity: 0.48, shadowRadius: 11.95, elevation: 18}}>
                 <TouchableOpacity style={{width:'100%',height:'100%'}} onPress={()=>whereAmI()}/>
+            </View> : null}
+            <View style={{position:'absolute',bottom:0,width:'100%',height:'14%',shadowColor: "#000",shadowOffset: { width: 0,height: 9 }, shadowOpacity: 0.48, shadowRadius: 11.95, elevation: 18,}}>
+                <Bottom user={user} position={regionPosition}/>
             </View>
-            {mrkrInfo == true ? <View style={{position:'absolute',height:'35%',width:'100%',bottom:0,borderTopStartRadius:15,borderTopEndRadius:15}}>
+            {mrkrInfo == true ? <View style={{position:'absolute',height:'35%',width:'100%',bottom:0,borderTopStartRadius:15,borderTopRightRadius:15}}>
                 <Details />
             </View> : null}
         </View>
@@ -149,81 +180,40 @@ export default Home
 const mapStyle = [
     {
       elementType: "geometry",
-      stylers: [
-        {
-          color: "#039be5"
-        }
-      ]
+      stylers: [{ color: "#E8E8E8" }]
     },
     {
       elementType: "labels.text.fill",
-      stylers: [
-        {
-          color: "#01579b",
-        }
-      ]
+      stylers: [{ color: "#0b0e0f" }]
     },
-    // ...
+    {
+      featureType: "points of interest",
+      elementType: "visibility",
+      stylers: [{ color: "off"}]
+    },
     {
         featureType: "road",
         elementType: "geometry",
-        stylers: [{ color: "#e1f5fe" }]
+        stylers: [{ color: "#FFFFFF" }]
     },
     {
         featureType: "road.highway",
         elementType: "geometry",
-        stylers: [{ color: "#81d4fa" }]
+        stylers: [{ color: "#FFFFFF" }]
       },
       {
         featureType: "road.highway",
         elementType: "geometry.stroke",
-        stylers: [{ color: "#81d4fa" }]
+        stylers: [{ color: "#FFFFFF" }]
       },
       {
         featureType: "road.highway",
         elementType: "labels.text.fill",
-        stylers: [{ color: "#81d4fa" }]
+        stylers: [{ color: "#505050" }]
       },
       {
-        featureType: "poi",
-        elementType: "labels.text.fill",
-        stylers: [{ color: "rgba(100, 100, 100, 0.5)" }]
-      },
-      {
-        featureType: "poi.park",
-        elementType: "geometry",
-        stylers: [{ color: "rgba(100, 100, 100, 0.5)" }]
-      },
-      {
-        featureType: "poi.park",
-        elementType: "labels.text.fill",
-        stylers: [{ color: "rgba(100, 100, 100, 0.5)" }]
-      },
-    {
-        featureType: "Street",
+        featureType: "water",
         elementType: "geometry.fill",
-        stylers: [
-            {
-                color: '#FFFFFF'
-            }
-        ]
-    },
-    {
-      featureType: "water",
-      elementType: "geometry.fill",
-      stylers: [
-        {
-          color: "#e1f5fe"
-        }
-      ]
-    },
-    {
-      featureType: "water",
-      elementType: "labels.text.fill",
-      stylers: [
-        {
-          color: "#29b6f6"
-        }
-      ]
-    }
+        stylers: [{ color: "#e1f5fe" }]
+      },
   ];

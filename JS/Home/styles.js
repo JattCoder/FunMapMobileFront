@@ -8,7 +8,8 @@ export default Styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#5810d8',
-        position: 'absolute'
+        position: 'absolute',
+        top:0,
     },
     SearchBox: {
         marginTop: '20%',

@@ -99,7 +99,7 @@ const Login = (props) => {
             <TouchableOpacity style={Styles.PassBox} activeOpacity={1}>
                 <Text style={{color:'white'}}>Pass </Text>
                 <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:-4,borderColor:'black'}}/>
-                <TextInput style={Styles.PassInput} autoCapitalize = 'none' secureTextEntry={true} onChangeText={(e)=>setpass(e)}/>
+                <TextInput style={[Styles.PassInput, {height: Platform.OS == 'android' ? 40 : 20}]} autoCapitalize = 'none' secureTextEntry={true} onChangeText={(e)=>setpass(e)}/>
             </TouchableOpacity>
             <TouchableOpacity style={Styles.Login} onPress={()=>LoginAttempt()}>
                 {loginLoad == false ? <Text style={Styles.LoginText}>Login</Text> : <ActivityIndicator size='small' color='#5810d8'/>}
@@ -123,9 +123,9 @@ const Styles = StyleSheet.create({
         alignItems:'center'
     },
     Heading:{
-        fontSize:25,
+        fontSize:20,
         color:'white',
-        marginTop:150,
+        marginTop:'30%',
     },
     Google:{
         marginTop:20,
@@ -143,7 +143,7 @@ const Styles = StyleSheet.create({
         color:'black'
     },
     Login:{
-        marginTop:60,
+        marginTop:'10%',
         borderRadius:25,
         backgroundColor:'white',
         height:45,
@@ -158,14 +158,15 @@ const Styles = StyleSheet.create({
         color:'black',
     },
     EmailBox:{
-        marginTop:'70%',
+        marginTop:'60%',
         borderRadius:25,
         borderColor:'black',
         borderWidth:0.8,
         width:280,
         height:45,
         flexDirection:'row',
-        padding:13
+        padding:13,
+        alignItems:'center'
     },
     PassBox:{
         marginTop:20,
@@ -175,7 +176,8 @@ const Styles = StyleSheet.create({
         width:280,
         height:45,
         flexDirection:'row',
-        padding:13
+        padding:13,
+        alignItems:'center'
     },
     EmailInput:{
         paddingLeft:1,
@@ -183,7 +185,7 @@ const Styles = StyleSheet.create({
         width:190,
         height:20,
         marginLeft:10,
-        color:'white'
+        color:'white',
     },
     PassInput:{
         paddingLeft:1,

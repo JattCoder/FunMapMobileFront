@@ -11,7 +11,7 @@ export const login = (email,pass,method,mac) => {
         .catch(err => {
             let error = {
                 code: 'Error: Network',
-                message: 'Network Error, Please try again later.',
+                message: err.message,
                 result: false
             }
             dispatch({type: LOGIN, payload: error})})

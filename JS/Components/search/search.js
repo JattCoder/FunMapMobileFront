@@ -4,7 +4,7 @@ import { View, TextInput, StyleSheet, Text, ActivityIndicator, ScrollView } from
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import Displaycard from './displaycard'
 import { submitsearch } from '../../../actions/submitsearch/submitsearch'
-import Geocoder from 'react-native-geocoder-reborn';
+import Geocoder from 'react-native-geocoder-reborn'
 import Styles from './styles'
 import { clearsearch } from '../../../actions/submitsearch/clearsearch'
 
@@ -40,8 +40,7 @@ export default Search = (props) => {
                     })
                     .catch(err => { console.log(err) })
             }, 700)
-        })
-        .catch(err => console.log(err))
+        }).catch(err => console.log(err))
         setoldinput(input)
     } else if (input == '') {
         if (places.length > 0) setplaces([])
