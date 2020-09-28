@@ -158,12 +158,9 @@ const Home = (props) => {
                         })}
                 </MapView>
             </View>
-            <View style={{ width: '100%', height:'10%' }}>
-                <Header position={regionPosition} user={user}/>
-            </View>
-            {showme == true ? <View style={{display:'',position:'absolute',bottom:180,right:30,borderWidth:0.5,borderRadius:25,backgroundColor:'white',width:50,height:50,shadowColor: "#000",shadowOffset: { width: 0,height: 9 }, shadowOpacity: 0.48, shadowRadius: 11.95, elevation: 18}}>
+            {showme ? !followme ? <View style={{display:'',position:'absolute',bottom:180,right:30,borderWidth:0.5,borderRadius:25,backgroundColor:'white',width:50,height:50,shadowColor: "#000",shadowOffset: { width: 0,height: 9 }, shadowOpacity: 0.48, shadowRadius: 11.95, elevation: 18}}>
                 <TouchableOpacity style={{width:'100%',height:'100%'}} onPress={()=>whereAmI()}/>
-            </View> : null}
+            </View>: null : null}
             <View style={{position:'absolute',bottom:0,width:'100%',height:'14%',shadowColor: "#000",shadowOffset: { width: 0,height: 9 }, shadowOpacity: 0.48, shadowRadius: 11.95, elevation: 18,}}>
                 <Bottom user={user} position={regionPosition}/>
             </View>
