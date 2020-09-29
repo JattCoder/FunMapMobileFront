@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import Uimage from './uimage'
 import Location from '../FindMe/location'
 import Bottomweather from '../Components/bottomweather/bottomweather'
-import { View, StyleSheet, TouchableOpacity, Image, Text } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, Image, Animated } from 'react-native'
 import { TextInput } from 'react-native-gesture-handler'
 
 export default Bottom = (props) => {
@@ -11,6 +11,8 @@ export default Bottom = (props) => {
     const[action,setaction] = useState(false)
     const[locationName,setLocationName] = useState('')
     const[search,setsearch] = useState('')
+    const[sheight,setsheight] = useState(new Animated.Value(0))
+    const[opacity,setopacity] = useState(new Animated.Value(1))
     let timer;
 
     onSearch = () => {
@@ -35,6 +37,28 @@ export default Bottom = (props) => {
         if(state.mylocation.city != '' && state.mylocation.message == 'Allowed'){
             setLocationName(state.mylocation.city)
         }
+        if(state.sheet.result == true && state.sheet.type == 'Family & Settings'){
+            Animated.timing(opacity, {
+                toValue : 0,
+                timing : 500,
+                useNativeDriver: false
+              }).start()
+        }else if(state.sheet.result == true && state.sheet.type == 'Marker Selection'){
+            
+        }else if(state.sheet.result == true && state.sheet.type == 'Search'){
+
+        }else if(state.sheet.result == false){
+            Animated.timing(sheight, {
+                toValue : 0,
+                timing : 500,
+                useNativeDriver: false
+              }).start()
+            Animated.timing(opacity, {
+                toValue : 1,
+                timing : 500,
+                useNativeDriver: false
+              }).start()
+        }
     })
 
     checkPermission = () => {
@@ -48,7 +72,7 @@ export default Bottom = (props) => {
     return(
         <View style={{height:'100%', width:'100%'}}>
             <View style={Styles.Bottom}>
-                <View style={{flexDirection:'row',height:'100%',width:'100%',alignItems:'center',marginLeft:'5%'}}>
+                <View style={{flexDirection:'row',height:'100%',width:'100%',marginTop:'7%',marginLeft:'5%'}}>
                     <TouchableOpacity style={Styles.ImageBox}>
                         {props.user.photo != '' ? <Image source={{ uri: props.user.photo }} /> : <Uimage name={user.name} />}
                     </TouchableOpacity>
@@ -57,7 +81,7 @@ export default Bottom = (props) => {
                     </View>
                 </View>
             </View>
-            <View style={{width:'100%',alignItems:'center'}}>
+            <Animated.View style={{width:'100%',alignItems:'center',marginTop: sheight,opacity: opacity}}>
                 <TouchableOpacity activeOpacity={1} onPress={()=>checkPermission()} style={{width:action?'75%':'12%',height:50,borderRadius:25,backgroundColor:'#2a9df4',justifyContent:!action?'center':null,alignItems:'center',flexDirection:'row'}}>
                     <Image source={require('../GPS/search.png')} style={{height:25,width:25,marginLeft:'5%'}}/>
                     {action == true ? <View style={{height:'100%',width:'85%',alignItems:'center',flexDirection:'row'}}>
@@ -68,7 +92,7 @@ export default Bottom = (props) => {
                         </TouchableOpacity>
                     </View> : null}
                 </TouchableOpacity>
-            </View>
+            </Animated.View>
         </View>
     )
 }
@@ -76,12 +100,12 @@ export default Bottom = (props) => {
 const Styles = StyleSheet.create({
     Bottom:{
         width:'100%',
-        height:'75%',
+        height:'80%',
         backgroundColor: 'white',
-        borderRadius:50,
+        borderTopLeftRadius:50,
+        borderTopRightRadius:50,
         position:'absolute',
         bottom:0,
-        alignItems:'center',
         flexDirection:'row'
     },
     ImageBox: {

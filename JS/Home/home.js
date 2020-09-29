@@ -8,6 +8,7 @@ import Mrker from '../Markers/marker'
 import Details from '../Markers/details'
 import Location from '../FindMe/location'
 import Navigate from '../Components/navigation/navigate'
+import Drawerr from './drawer'
 import Locationame from '../FindMe/locationame'
 import Header from './header'
 import Bottom from './bottom'
@@ -23,6 +24,7 @@ const Home = (props) => {
     const [search,setsearch] = useState([])
     const [mrkrInfo,setmrkrInfo] = useState(false)
     const [slimit,setspeed] = useState(10)
+    const [bottomheight,setBottomheight] = useState('14%')
     const [regionPosition, setRegPosition] = useState({
         latitude: 0,
         longitude: 0,
@@ -161,9 +163,7 @@ const Home = (props) => {
             {showme ? !followme ? <View style={{display:'',position:'absolute',bottom:180,right:30,borderWidth:0.5,borderRadius:25,backgroundColor:'white',width:50,height:50,shadowColor: "#000",shadowOffset: { width: 0,height: 9 }, shadowOpacity: 0.48, shadowRadius: 11.95, elevation: 18}}>
                 <TouchableOpacity style={{width:'100%',height:'100%'}} onPress={()=>whereAmI()}/>
             </View>: null : null}
-            <View style={{position:'absolute',bottom:0,width:'100%',height:'14%',shadowColor: "#000",shadowOffset: { width: 0,height: 9 }, shadowOpacity: 0.48, shadowRadius: 11.95, elevation: 18,}}>
-                <Bottom user={user} position={regionPosition}/>
-            </View>
+            <Drawerr user={user} regionPosition={regionPosition}/>
             {mrkrInfo == true ? <View style={{position:'absolute',height:'35%',width:'100%',bottom:0,borderTopStartRadius:15,borderTopRightRadius:15}}>
                 <Details />
             </View> : null}

@@ -61,7 +61,7 @@ export default Navigate = () => {
 
     return(
         <View>
-            <Text>Hello</Text>
+            
         </View>
     )
 }
