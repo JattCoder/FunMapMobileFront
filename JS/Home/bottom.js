@@ -13,6 +13,9 @@ export default Bottom = (props) => {
     const[search,setsearch] = useState('')
     const[sheight,setsheight] = useState(new Animated.Value(0))
     const[opacity,setopacity] = useState(new Animated.Value(1))
+    const[info,setinfo] = useState(new Animated.Value(30))
+    const[flex,setflex] = useState('row')
+    const[align,setalign] = useState('')
     let timer;
 
     onSearch = () => {
@@ -33,6 +36,18 @@ export default Bottom = (props) => {
         }
     }
 
+    sideInfo = () => {
+
+    }
+
+    hideInfo = () => {
+
+    }
+
+    showInfo = () => {
+
+    }
+
     useSelector((state)=>{
         if(state.mylocation.city != '' && state.mylocation.message == 'Allowed'){
             setLocationName(state.mylocation.city)
@@ -44,20 +59,23 @@ export default Bottom = (props) => {
                 useNativeDriver: false
               }).start()
         }else if(state.sheet.result == true && state.sheet.type == 'Marker Selection'){
-            
+            //hide Info
         }else if(state.sheet.result == true && state.sheet.type == 'Search'){
-
+            //hide Info
         }else if(state.sheet.result == false){
             Animated.timing(sheight, {
                 toValue : 0,
                 timing : 500,
                 useNativeDriver: false
-              }).start()
-            Animated.timing(opacity, {
-                toValue : 1,
-                timing : 500,
-                useNativeDriver: false
-              }).start()
+              }).start(()=>{
+                Animated.timing(opacity, {
+                    toValue : 1,
+                    timing : 500,
+                    useNativeDriver: false
+                  }).start(()=>{
+                    sideInfo()
+                  })
+              })
         }
     })
 
@@ -72,7 +90,7 @@ export default Bottom = (props) => {
     return(
         <View style={{height:'100%', width:'100%'}}>
             <View style={Styles.Bottom}>
-                <View style={{flexDirection:'row',height:'100%',width:'100%',marginTop:'7%',marginLeft:'5%'}}>
+                <View style={{height:'100%',width:'100%',marginTop:'7%',flexDirection:'row',marginLeft:'7%'}}>
                     <TouchableOpacity style={Styles.ImageBox}>
                         {props.user.photo != '' ? <Image source={{ uri: props.user.photo }} /> : <Uimage name={user.name} />}
                     </TouchableOpacity>
