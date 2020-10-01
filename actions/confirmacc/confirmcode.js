@@ -10,7 +10,7 @@ export const confirmcode = (email,code) => {
             body: JSON.stringify({email,code})
         })
         .then(res => {return res.json()})
-        .then(data => {dispatch({type: CONFIRM_CODE, payload: data})})
+        .then(data => {dispatch({type: CONFIRM_CODE, confirmacc: data})})
         .catch(err => {
             let error = {
                 code: 'Error: Network',

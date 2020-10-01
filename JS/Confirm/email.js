@@ -23,28 +23,46 @@ const Login = (props) => {
         }
     })
 
+    submitConfirm = async () => {
+        await fetch("http://localhost:3000/account/confirm/code",{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({email:props.route.params.user.email,code})
+        })
+        .then(res => {return res.json()})
+        .then(data => {
+            if(data.result == true && data.message == 'Account Confirmed'){
+                dispatch(resconfirm())
+                dispatch(resregister())
+                props.navigation.navigate('Home',{user: props.route.params.user})
+            }
+        })
+        .catch(err => console.log(err.message))
+    }
+
+
     sendCode = () => {
         dispatch(confirm(props.route.params.user.name,props.route.params.user.email))
     }
 
-    submitConfirm = () => {
-        if(code == '') {
-            alert('Please Enter Code')
-        }else{
-            if(submit != true){
-                setsubmit(true)
-                dispatch(confirmcode(props.route.params.user.email,code))
-            }
-        }
-    }
+    // submitConfirm = () => {
+    //     if(code == '') {
+    //         alert('Please Enter Code')
+    //     }else{
+    //         if(submit != true){
+    //             setsubmit(true)
+    //             dispatch(confirmcode(props.route.params.user.email,code))
+    //         }
+    //     }
+    // }
 
     useSelector((state)=>{
+        console.warn(state.confirmacc.message)
         if(state.confirmacc.result == false && state.confirmacc.message != ''){
             alert(state.confirmacc.message)
             if(submit)setsubmit(false)
-            dispatch(resconfirm())
-        }else if(state.confirmacc.result == true && state.confirmacc.message == 'Account Confirmed'){
-            props.navigation.navigate('Home',{user: props.route.params.user})
             dispatch(resconfirm())
         }
     })

@@ -2,6 +2,7 @@ import React,{ useState } from 'react'
 import { useSelector } from 'react-redux'
 import Uimage from './uimage'
 import Location from '../FindMe/location'
+import Contacts from './contacts'
 import Bottomweather from '../Components/bottomweather/bottomweather'
 import { View, StyleSheet, TouchableOpacity, Image, Animated } from 'react-native'
 import { TextInput } from 'react-native-gesture-handler'
@@ -14,8 +15,7 @@ export default Bottom = (props) => {
     const[sheight,setsheight] = useState(new Animated.Value(0))
     const[opacity,setopacity] = useState(new Animated.Value(1))
     const[info,setinfo] = useState(new Animated.Value(30))
-    const[flex,setflex] = useState('row')
-    const[align,setalign] = useState('')
+    const[actionType,setactionType] = useState('')
     let timer;
 
     onSearch = () => {
@@ -53,6 +53,9 @@ export default Bottom = (props) => {
             setLocationName(state.mylocation.city)
         }
         if(state.sheet.result == true && state.sheet.type == 'Family & Settings'){
+            setTimeout(()=>{
+                if(actionType == '') setactionType('Family & Settings')
+            },550)
             Animated.timing(opacity, {
                 toValue : 0,
                 timing : 500,
@@ -63,6 +66,7 @@ export default Bottom = (props) => {
         }else if(state.sheet.result == true && state.sheet.type == 'Search'){
             //hide Info
         }else if(state.sheet.result == false){
+            if(actionType != '') setactionType('')
             Animated.timing(sheight, {
                 toValue : 0,
                 timing : 500,
@@ -72,9 +76,7 @@ export default Bottom = (props) => {
                     toValue : 1,
                     timing : 500,
                     useNativeDriver: false
-                  }).start(()=>{
-                    sideInfo()
-                  })
+                  }).start()
               })
         }
     })
@@ -90,7 +92,7 @@ export default Bottom = (props) => {
     return(
         <View style={{height:'100%', width:'100%'}}>
             <View style={Styles.Bottom}>
-                <View style={{height:'100%',width:'100%',marginTop:'7%',flexDirection:'row',marginLeft:'7%'}}>
+                <View style={{height:'7%',width:'100%',marginTop:'7%',flexDirection:'row',marginLeft:'7%'}}>
                     <TouchableOpacity style={Styles.ImageBox}>
                         {props.user.photo != '' ? <Image source={{ uri: props.user.photo }} /> : <Uimage name={user.name} />}
                     </TouchableOpacity>
@@ -98,6 +100,9 @@ export default Bottom = (props) => {
                         <Bottomweather name={props.user.name} position={props.position}/>
                     </View>
                 </View>
+                {actionType == 'Family & Settings' ? <View>
+                    <Contacts user={props.user}/>
+                </View>:null}
             </View>
             <Animated.View style={{width:'100%',alignItems:'center',marginTop: sheight,opacity: opacity}}>
                 <TouchableOpacity activeOpacity={1} onPress={()=>checkPermission()} style={{width:action?'75%':'12%',height:50,borderRadius:25,backgroundColor:'#2a9df4',justifyContent:!action?'center':null,alignItems:'center',flexDirection:'row'}}>
@@ -123,8 +128,7 @@ const Styles = StyleSheet.create({
         borderTopLeftRadius:50,
         borderTopRightRadius:50,
         position:'absolute',
-        bottom:0,
-        flexDirection:'row'
+        bottom:0
     },
     ImageBox: {
         width: 45,

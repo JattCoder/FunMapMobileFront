@@ -1,5 +1,5 @@
 import React,{ useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import mylocation from '../../../actions/mylocation/mylocation'
 import Geocoder from 'react-native-geocoder-reborn'
 import { View, Text } from 'react-native'
@@ -12,11 +12,14 @@ export default Bottomweather = (props) => {
     const dispatch = useDispatch()
     let city = ''
 
+    useSelector((state)=>{if(state.mylocation.latitude != 0 && message == '') setmessage('Allowed')})
+
     useEffect(()=>{
         let Geo = {
             lat: props.position.latitude,
             lng: props.position.longitude
         }
+
         Geocoder.geocodePosition(Geo).then(res => {
             if(message == 'Allowed'){
                 position = props.position

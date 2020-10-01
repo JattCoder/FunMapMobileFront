@@ -15,7 +15,8 @@ const reducer = (confirmacc = initialState, action) => {
         case RESCONFIRM:
             return { ...confirmacc, ...action.payload }
         case CONFIRM_CODE:
-            return { ...confirmacc, ...action.payload }
+            console.log('Data: ',action.confirmacc)
+            return action.confirmacc
         default:
             return confirmacc
     }
