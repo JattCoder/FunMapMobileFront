@@ -92,7 +92,7 @@ export default Bottom = (props) => {
     return(
         <View style={{height:'100%', width:'100%'}}>
             <View style={Styles.Bottom}>
-                <View style={{height:'7%',width:'100%',marginTop:'7%',flexDirection:'row',marginLeft:'7%'}}>
+                <View style={{height:'10%',width:'100%',marginTop:'5%',flexDirection:'row',marginLeft:'7%'}}>
                     <TouchableOpacity style={Styles.ImageBox}>
                         {props.user.photo != '' ? <Image source={{ uri: props.user.photo }} /> : <Uimage name={user.name} />}
                     </TouchableOpacity>
@@ -123,7 +123,7 @@ export default Bottom = (props) => {
 const Styles = StyleSheet.create({
     Bottom:{
         width:'100%',
-        height:'80%',
+        height:'70%',
         backgroundColor: 'white',
         borderTopLeftRadius:50,
         borderTopRightRadius:50,
@@ -133,13 +133,10 @@ const Styles = StyleSheet.create({
     ImageBox: {
         width: 45,
         height: 45,
-        borderRadius: 25,
+        borderRadius: 50,
         borderColor: 'black',
         borderWidth: 1,
         marginLeft: '3%',
         marginRight: '3%'
-    },
-    NL:{
-        
     }
 })

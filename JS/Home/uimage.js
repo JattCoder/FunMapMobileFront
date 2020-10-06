@@ -20,7 +20,7 @@ export default Uimage = (props) => {
     })
 
     return(
-        <View style={{height:'100%',width:'100%',justifyContent:'center',alignItems:'center',backgroundColor:'rgba(0,0,0,0.2)',borderRadius:25}}>
+        <View style={{height:'100%',width:'100%',justifyContent:'center',alignItems:'center',backgroundColor:'rgba(0,0,0,0.2)',borderRadius:50}}>
             <Text style={{color:'black',backgroundColor:'rgba(0,0,0,0.0)',fontSize:20}}>{ini.toUpperCase()}</Text>
         </View>
     )

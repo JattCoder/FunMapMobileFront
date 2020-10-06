@@ -59,7 +59,6 @@ const Login = (props) => {
     // }
 
     useSelector((state)=>{
-        console.warn(state.confirmacc.message)
         if(state.confirmacc.result == false && state.confirmacc.message != ''){
             alert(state.confirmacc.message)
             if(submit)setsubmit(false)

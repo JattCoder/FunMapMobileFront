@@ -43,6 +43,6 @@ const Styles = StyleSheet.create({
   Sheet:{
     width:'100%',
     bottom:0,
-    position:'absolute'
+    position:'absolute',
   }
 })

@@ -24,7 +24,7 @@ export default Navigate = () => {
     //     destination: {lat:props.destination.latitude,lng:props.destination.longitude}
     // })
     getDirections = async () => {
-        await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${navigate.origin.latitude,navigate.origin.longitude}&destination=${navigation.destination.lat,navigation.destination.lng}&mode=driving&key=AIzaSyDMCLs_nBIfA8Bw9l50nSRwLOUByiDel9U`)
+        await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${navigate.origin.latitude,navigate.origin.longitude}&destination=${navigation.destination.lat,navigation.destination.lng}&mode=driving&departure_time=now&key=AIzaSyDMCLs_nBIfA8Bw9l50nSRwLOUByiDel9U`)
         .then(res => {return res.json()})
         .then(data => {
             if(data.geocoded_waypoints.status == OK){
