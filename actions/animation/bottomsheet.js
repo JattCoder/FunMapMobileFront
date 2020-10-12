@@ -5,11 +5,10 @@ export const BOTTOMSHEET = 'BOTTOMSHEET'
 
 const initialState = {
     type: '',//Family & Settings or Marker Selection
-    height: 0,
-    result: false
 }
 
 
 export const bottomsheet = (animation) => {
+    console.log('Recieving: ',animation)
     return (dispatch) => {dispatch({type: BOTTOMSHEET, sheet: animation})}
 }

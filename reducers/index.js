@@ -9,6 +9,7 @@ import placesearch from './placesearch'
 import marker from './marker'
 import navigation from './navigation'
 import sheet from './animation'
+import family from './family'
 
 const rootreducers =  combineReducers({
   login,recovery,register,recovered,confirmacc,mylocation,placesearch,marker,navigation,sheet

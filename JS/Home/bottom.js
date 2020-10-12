@@ -1,21 +1,22 @@
 import React,{ useState } from 'react'
 import { useSelector } from 'react-redux'
 import Uimage from './uimage'
-import Location from '../FindMe/location'
 import Contacts from './contacts'
 import Bottomweather from '../Components/bottomweather/bottomweather'
-import { View, StyleSheet, TouchableOpacity, Image, Animated } from 'react-native'
-import { TextInput } from 'react-native-gesture-handler'
+import { View, StyleSheet, TouchableOpacity, Image, Animated, TextInput, Linking, Dimensions, ScrollView } from 'react-native'
 
 export default Bottom = (props) => {
 
     const[action,setaction] = useState(false)
     const[locationName,setLocationName] = useState('')
     const[search,setsearch] = useState('')
-    const[sheight,setsheight] = useState(new Animated.Value(0))
-    const[opacity,setopacity] = useState(new Animated.Value(1))
-    const[info,setinfo] = useState(new Animated.Value(30))
+    const[sheight] = useState(new Animated.Value(-40))
+    const[opacity] = useState(new Animated.Value(1))
+    const[familyHeight] = useState(new Animated.Value(0))
+    const[familyWidth] = useState(new Animated.Value(0))
+    const[familyOpacity] = useState(new Animated.Value(0))
     const[actionType,setactionType] = useState('')
+    const[dimentions] = useState(Dimensions.get('window'))
     let timer;
 
     onSearch = () => {
@@ -36,48 +37,72 @@ export default Bottom = (props) => {
         }
     }
 
-    sideInfo = () => {
-
-    }
-
-    hideInfo = () => {
-
-    }
-
-    showInfo = () => {
-
-    }
-
     useSelector((state)=>{
         if(state.mylocation.city != '' && state.mylocation.message == 'Allowed'){
             setLocationName(state.mylocation.city)
         }
         if(state.sheet.result == true && state.sheet.type == 'Family & Settings'){
-            setTimeout(()=>{
-                if(actionType == '') setactionType('Family & Settings')
-            },550)
-            Animated.timing(opacity, {
-                toValue : 0,
-                timing : 500,
-                useNativeDriver: false
-              }).start()
+            if(actionType == '') setactionType('Family & Settings')
+            Animated.parallel([
+                Animated.timing(familyHeight,{
+                    toValue:dimentions.height,
+                    duration:400,
+                    useNativeDriver:false
+                }),
+                Animated.timing(familyWidth,{
+                    toValue:dimentions.width,
+                    duration:400,
+                    useNativeDriver:false
+                }),
+                Animated.timing(familyOpacity,{
+                    toValue:1,
+                    duration:400,
+                    useNativeDriver:false
+                }),
+                Animated.timing(sheight,{
+                    toValue:0,
+                    duration:100,
+                    useNativeDriver:false
+                }),
+                Animated.timing(opacity,{
+                    toValue:1,
+                    duration:100,
+                    useNativeDriver:false
+                })
+            ]).start()
         }else if(state.sheet.result == true && state.sheet.type == 'Marker Selection'){
             //hide Info
         }else if(state.sheet.result == true && state.sheet.type == 'Search'){
             //hide Info
         }else if(state.sheet.result == false){
             if(actionType != '') setactionType('')
-            Animated.timing(sheight, {
-                toValue : 0,
-                timing : 500,
-                useNativeDriver: false
-              }).start(()=>{
-                Animated.timing(opacity, {
-                    toValue : 1,
-                    timing : 500,
-                    useNativeDriver: false
-                  }).start()
-              })
+            Animated.parallel([
+                Animated.timing(familyHeight,{
+                    toValue:0,
+                    duration:400,
+                    useNativeDriver:false
+                }),
+                Animated.timing(familyWidth,{
+                    toValue:0,
+                    duration:400,
+                    useNativeDriver:false
+                }),
+                Animated.timing(familyOpacity,{
+                    toValue:0,
+                    duration:400,
+                    useNativeDriver:false
+                }),
+                Animated.timing(sheight,{
+                    toValue:5,
+                    duration:100,
+                    useNativeDriver:false
+                }),
+                Animated.timing(opacity,{
+                    toValue:1,
+                    duration:100,
+                    useNativeDriver:false
+                })
+            ]).start()
         }
     })
 
@@ -85,14 +110,20 @@ export default Bottom = (props) => {
         if(locationName != ''){
             setaction(true)
         }else{
-            alert('Enable Location Sharing in Settings')
+            //display alert box with message and button. 
+            //message = You will be directed to settings to enable Location Sharing
+            //button = Cancel
+            Linking.openSettings()
         }
     }
 
     return(
         <View style={{height:'100%', width:'100%'}}>
-            <View style={Styles.Bottom}>
-                <View style={{height:'10%',width:'100%',marginTop:'5%',flexDirection:'row',marginLeft:'7%'}}>
+            <View style={[Styles.Bottom,{height:'100%'}]}>
+            <ScrollView onScroll={(e)=>{}} style={{width:60,borderTopWidth:3,marginTop:10,borderColor:'black'}}>
+
+            </ScrollView>
+                <View style={{height:'10%',width:'100%',flexDirection:'row',marginLeft:'7%'}}>
                     <TouchableOpacity style={Styles.ImageBox}>
                         {props.user.photo != '' ? <Image source={{ uri: props.user.photo }} /> : <Uimage name={user.name} />}
                     </TouchableOpacity>
@@ -100,11 +131,11 @@ export default Bottom = (props) => {
                         <Bottomweather name={props.user.name} position={props.position}/>
                     </View>
                 </View>
-                {actionType == 'Family & Settings' ? <View>
+                <Animated.View style={{height:familyHeight,width:familyWidth,opacity:familyOpacity}}>
                     <Contacts user={props.user}/>
-                </View>:null}
+                </Animated.View>
             </View>
-            <Animated.View style={{width:'100%',alignItems:'center',marginTop: sheight,opacity: opacity}}>
+            <Animated.View style={{width:'100%',alignItems:'center',marginTop:sheight, opacity:opacity}}>
                 <TouchableOpacity activeOpacity={1} onPress={()=>checkPermission()} style={{width:action?'75%':'12%',height:50,borderRadius:25,backgroundColor:'#2a9df4',justifyContent:!action?'center':null,alignItems:'center',flexDirection:'row'}}>
                     <Image source={require('../GPS/search.png')} style={{height:25,width:25,marginLeft:'5%'}}/>
                     {action == true ? <View style={{height:'100%',width:'85%',alignItems:'center',flexDirection:'row'}}>
@@ -125,9 +156,10 @@ const Styles = StyleSheet.create({
         width:'100%',
         height:'70%',
         backgroundColor: 'white',
-        borderTopLeftRadius:50,
-        borderTopRightRadius:50,
+        borderTopLeftRadius:25,
+        borderTopRightRadius:25,
         position:'absolute',
+        alignItems:'center',
         bottom:0
     },
     ImageBox: {

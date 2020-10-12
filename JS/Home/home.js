@@ -2,16 +2,17 @@ import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import Styles from './styles'
 import { selmarker } from '../../actions/marker/selmarker'
-import { View, TouchableOpacity } from 'react-native'
+import { View, TouchableOpacity, Dimensions, Animated, Image } from 'react-native'
 import MapView,{Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import Mrker from '../Markers/marker'
 import Details from '../Markers/details'
 import Location from '../FindMe/location'
 import Navigate from '../Components/navigation/navigate'
 import Drawerr from './drawer'
-import Locationame from '../FindMe/locationame'
-import Header from './header'
-import Bottom from './bottom'
+import Search from './components/search'
+import { TextInput } from 'react-native-gesture-handler'
+
+const dimensions = Dimensions.get('screen')
 
 const Home = (props) => {
     const dispatch = useDispatch()
@@ -97,7 +98,7 @@ const Home = (props) => {
     })
 
     return (
-        <View style={{ height: '100%', width: '100%' }}>
+        <View style={{ height: dimensions.height, width: dimensions.width}}>
             {showme == false ? <Location /> : null}
             <View style={Styles.Page}>
                 <MapView provider={PROVIDER_GOOGLE}
@@ -163,10 +164,15 @@ const Home = (props) => {
             {showme ? !followme ? <View style={{display:'',position:'absolute',bottom:180,right:30,borderWidth:0.5,borderRadius:25,backgroundColor:'white',width:50,height:50,shadowColor: "#000",shadowOffset: { width: 0,height: 9 }, shadowOpacity: 0.48, shadowRadius: 11.95, elevation: 18}}>
                 <TouchableOpacity style={{width:'100%',height:'100%'}} onPress={()=>whereAmI()}/>
             </View>: null : null}
-            <Drawerr user={user} regionPosition={regionPosition}/>
             {mrkrInfo == true ? <View style={{position:'absolute',height:'35%',width:'100%',bottom:0,borderTopStartRadius:15,borderTopRightRadius:15}}>
                 <Details />
             </View> : null}
+            <View style={{height:55,position:'absolute',right:'1%',top:'8%'}}>
+              <Search position={userPosition}/>
+            </View>
+            <View style={{width:dimensions.width,bottom:0,position:'absolute'}}>
+              <Drawerr user={user} regionPosition={regionPosition}/>
+            </View>
         </View>
     )
 }

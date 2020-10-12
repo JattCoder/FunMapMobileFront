@@ -2,8 +2,7 @@ import { BOTTOMSHEET } from '../actions/animation/bottomsheet'
 
 const initialState = {
     type: '',//Family & Settings or Marker Selection
-    height: 0,
-    result: true
+    result: false
 }
 
 const reducer = (sheet = initialState, action) => {

@@ -1,5 +1,4 @@
 import React,{ useState, useEffect } from 'react'
-import ImagePicker from 'react-native-image-picker';
 import { View, Text, TouchableOpacity, TextInput, Image, StyleSheet } from 'react-native'
 
 export default Editaccount = (props) => {
@@ -24,30 +23,11 @@ export default Editaccount = (props) => {
         setphoto(props.user.photo)
     })
 
-    selectImage = () => {
-        ImagePicker.launchImageLibrary(options, (response) => {
-            if (response.didCancel) {
-                console.log('User cancelled image picker');
-              } else if (response.error) {
-                console.log('ImagePicker Error: ', response.error);
-              } else if (response.customButton) {
-                console.log('User tapped custom button: ', response.customButton);
-              } else {
-                const source = { uri: response.uri };
-            
-                // You can also display the image using data:
-                // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-            
-                setphoto(source)
-              }
-        });
-    }
-
     return(
         <View style={{width:'100%',height:'100%',marginTop:'15%',alignItems:'center'}}>
-            <View style={Style.ImageBox}>
+            <TouchableOpacity style={Style.ImageBox}>
                     {photo != '' ? <Image source={{ uri: photo }} /> : <Uimage name={user.name} />}
-            </View>
+            </TouchableOpacity>
             <View style={[Style.NameBox,{marginTop:'10%'}]}>
                 <Text style={{color:'#00BFFF'}}>Name </Text>
                 <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:-4,borderColor:'black'}}/>
