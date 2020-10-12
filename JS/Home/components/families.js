@@ -1,7 +1,9 @@
-import React,{ useEffect } from 'react'
+import React,{ useEffect, useState } from 'react'
 import { View, Text } from 'react-native'
 
 export default Families = (props) => {
+
+    const [received,setReceived] = useState(false)
 
     getFamilies = () => {
         console.warn(props.user.id)
@@ -19,7 +21,7 @@ export default Families = (props) => {
     }
 
     useEffect(()=>{
-        getFamilies()
+        if(props.user.id) getFamilies()
     })
 
     return(
