@@ -12,7 +12,7 @@ import sheet from './animation'
 import family from './family'
 
 const rootreducers =  combineReducers({
-  login,recovery,register,recovered,confirmacc,mylocation,placesearch,marker,navigation,sheet
+  login,recovery,register,recovered,confirmacc,mylocation,placesearch,marker,navigation,sheet,family
 })
 
 export default rootreducers

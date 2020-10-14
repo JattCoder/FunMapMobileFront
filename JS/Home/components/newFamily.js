@@ -1,6 +1,8 @@
-import React,{ useState } from 'react'
+import React,{ useState, useEffect } from 'react'
 import { family } from '../../../actions/families/family'
+import { newfam } from '../../../actions/families/newfam'
 import { useDispatch } from 'react-redux'
+import firebase from 'firebase'
 import { View, Text, Dimensions, TouchableOpacity, TextInput } from 'react-native'
 
 export default NewFamily = (props) => {
@@ -19,7 +21,18 @@ export default NewFamily = (props) => {
             })
             .then(res => {return res.json()})
             .then(data => {
-                console.warn(data.message)
+                const permitted = 'Ghost'; const latitude = 0; const longitude = 0
+                firebase.database().ref('FamilyGroups/'+data.message.id+'/'+props.user.id).set({
+                    permitted,
+                    latitude,
+                    longitude
+                }).then((result)=>{
+                    //success callback
+                    dispatch(newfam(data.message))
+                }).catch((error)=>{
+                    //error callback
+                    console.log('error ' , error)
+                })
                 setName('')
             })
             .catch(err => console.log(err))

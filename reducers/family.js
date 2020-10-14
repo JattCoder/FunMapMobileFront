@@ -1,18 +1,15 @@
-import { FAMILY } from '../actions/login/login'
+import { FAMILY } from '../actions/families/family'
+import { NEWFAM } from '../actions/families/newfam'
+import { REMOVEFAM } from '../actions/families/removefam'
 
-let initialState = {
-    admin_id: '',
-    name:'',
-    code:'',
-    admins:'',
-    users:'',
-    created_at:'',
-    date:''
-}
-
-const reducer = (family = initialState, action) => {
+const reducer = (family = [], action) => {
     switch(action.type){
         case FAMILY:
+            return action.family
+        case NEWFAM:
+            family.push(action.family)
+            return family
+        case REMOVEFAM:
             return action.family
         default:
             return family

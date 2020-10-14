@@ -1,10 +1,11 @@
-import React,{ useState } from 'react'
+import React,{ useState, useEffect } from 'react'
 import { View, Text, StyleSheet, Image, ActivityIndicator } from 'react-native'
 import { TouchableOpacity, TextInput } from 'react-native-gesture-handler'
 import { useSelector, useDispatch } from 'react-redux'
 import { login } from '../../actions/login/login'
 import { reslogin } from '../../actions/login/reslogin'
 import Dialog from "react-native-dialog";
+import firebase from 'firebase'
 import DeviceInfo from 'react-native-device-info'
 
 const Login = (props) => {
@@ -15,6 +16,15 @@ const Login = (props) => {
     const[email,setemail] = useState('')
     const[pass,setpass] = useState('')
     const dispatch = useDispatch()
+
+    useEffect(()=>{
+        if (!firebase.apps.length) {
+            firebase.initializeApp({
+                databaseURL: "https://maps-8a2af.firebaseio.com",
+                projectId: "maps-8a2af"
+            });
+        }
+    })
 
     LoginAttempt = () => {
         if(email == '' || pass == ''){
