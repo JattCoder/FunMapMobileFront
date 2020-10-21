@@ -1,4 +1,7 @@
 import React,{ useState } from 'react'
+import { updateshare } from '../../../actions/mylocation/updateshare'
+import { useDispatch, useSelector } from 'react-redux'
+import firebase from 'firebase'
 import { View, Text, Dimensions, TouchableOpacity, StyleSheet } from 'react-native'
 
 export default Locationshare = () => {
@@ -6,6 +9,10 @@ export default Locationshare = () => {
     const [publiColor,setPubliColor] = useState('rgba(142, 144, 145, 0.4)')
     const [familyColor,setFamilyColor] = useState('rgba(142, 144, 145, 0.4)')
     const [ghostColor,setGhoftColor] = useState('#00BFFF')
+    const [fams,setFams] = useState([])
+    const [id,setID] = useState(-1)
+    const [selection,setSelection] = useState('Ghost')
+    const dispatch = useDispatch()
 
     selecType = (selection) => {
         if(selection == 'Public'){
@@ -21,7 +28,26 @@ export default Locationshare = () => {
             setFamilyColor('rgba(142, 144, 145, 0.4)')
             setGhoftColor('#00BFFF')
         }
+        updateChange(selection)
     }
+
+    updateChange = (selection) => {
+        //dispatch(updateshare(selection))
+        fams.map((group)=>{
+            console.warn(group[0].id)
+            firebase.database().ref('FamilyGroups/'+group[0].id+'/'+id).update({
+                permitted: selection,
+            });
+        })
+    }
+
+    useSelector((state)=>{
+        if(fams != state.family){
+            setID(state.login.message.id)
+            setFams(state.family)
+            updateChange(state.mylocation.permitted)
+        }
+    })
 
     return(
         <View style={{width:Dimensions.get('window').width,height:'5%',justifyContent:'center', alignItems:'center',}}>

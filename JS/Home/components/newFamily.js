@@ -10,38 +10,14 @@ export default NewFamily = (props) => {
     const [name,setName] = useState('')
     const dispatch = useDispatch()
 
-    create = async () => {
-        if(name != ''){
-            await fetch(`http://localhost:3000/account/new_family`,{
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({id:props.user.id,email:props.user.email,name})
-            })
-            .then(res => {return res.json()})
-            .then(data => {
-                const permitted = 'Ghost'; const latitude = 0; const longitude = 0
-                firebase.database().ref('FamilyGroups/'+data.message.id+'/'+props.user.id).set({
-                    permitted,
-                    latitude,
-                    longitude
-                }).then((result)=>{
-                    //success callback
-                    dispatch(newfam(data.message))
-                }).catch((error)=>{
-                    //error callback
-                    console.log('error ' , error)
-                })
-                setName('')
-            })
-            .catch(err => console.log(err))
-        }
+    create = () => {
+        dispatch(newfam(props.user.id,props.user.email,name,props.user.name))
+        //props.finish()
     }
 
     return(
         <View style={{width:Dimensions.get('screen').width,height:'100%',justifyContent:'center',alignItems:'center'}}>
-            <Text style={{color:'white',fontSize:25}}>New Event or Family</Text>
+            <Text style={{color:'white',fontSize:25,marginBottom:'20%'}}>New Event or Family</Text>
             <View style={{width:Dimensions.get('screen').width/1.2,height:55,borderRadius:10,alignItems:'center',flexDirection:'row',marginVertical:'5%'}}>
                 <View activeOpacity={1} onPress={()=>openSearch()} style={{backgroundColor:'white',borderRadius:10,height:'100%',width:'18%',justifyContent:'center',alignItems:'center',zIndex:20}}>
                     <Text>Name</Text>

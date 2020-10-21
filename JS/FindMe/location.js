@@ -23,6 +23,7 @@ export default Location = () =>{
             city: '',
             state: '',
             zip: '',
+            permitted: '',
             message:'Allowed'
         }))
         Geolocation.clearWatch(id);
@@ -42,6 +43,7 @@ export default Location = () =>{
             city: '',
             state: '',
             zip: '',
+            permitted: '',
             message: err.message
         }))
         Geolocation.clearWatch(id);
