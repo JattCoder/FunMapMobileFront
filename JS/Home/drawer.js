@@ -305,7 +305,7 @@ export default Drawerr = (props) => {
             </Animated.View>
           </Animated.View>
           <Animated.View style={{position:'absolute',bottom:0,right:0,left:0,width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/9.3,justifyContent:'center'}}>
-              <Animated.View style={{height:menuButtonSize,width:menuButtonSize,borderRadius:50,position:'absolute',right:20,borderWidth:0.5,borderColor:'white',justifyContent:'center',alignItems:'center',zIndex:100}}>
+              <Animated.View style={{height:menuButtonSize,width:menuButtonSize,borderRadius:50,position:'absolute',right:20,borderWidth:0.5,borderColor:'white',backgroundColor:'#9932cc',justifyContent:'center',alignItems:'center',zIndex:100}}>
                 <TouchableOpacity style={{height:'100%',width:'100%',justifyContent:'center',alignItems:'center'}} onPress={()=>showButtons()}>
                   {menuOpen ? <Image style={{height:20,width:20}} source={require('../settingsIcons/close.png')}/>
                   : <Image style={{height:20,width:20}} source={require('../settingsIcons/plus.png')}/>}

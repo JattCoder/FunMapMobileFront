@@ -20,12 +20,10 @@ export default UserCard = (props) => {
                         </View> 
                         : <View style={Style.battery}>
                             { props.user.batteryLevel < 15 ? <View>
-                                {console.warn(props.user)}
                                 <Image style={Style.icon} source={require('../../Battery/battery-zero.png')}/>
                                 <Text style={Style.level}>{`${props.user.batteryLevel}%`}</Text>
                             </View>
                             : props.user.batteryLevel < 51 ? <View style={Style.battery}>
-                                {console.warn(props.user)}
                                 <Image style={Style.icon}  source={require('../../Battery/battery-25.png')}/>
                                 <Text style={Style.level}>{`${props.user.batteryLevel}%`}</Text>
                             </View> 
