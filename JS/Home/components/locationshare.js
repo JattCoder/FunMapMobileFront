@@ -34,7 +34,6 @@ export default Locationshare = () => {
     updateChange = (selection) => {
         //dispatch(updateshare(selection))
         fams.map((group)=>{
-            console.warn(group[0].id)
             firebase.database().ref('FamilyGroups/'+group[0].id+'/'+id).update({
                 permitted: selection,
             });

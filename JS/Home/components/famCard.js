@@ -62,7 +62,6 @@ export default FamCard = (props) => {
 
     return(
         <View style={{width:Dimensions.get('window').width,height:'100%',alignItems:'center',justifyContent:'center'}}>
-            {/* we will animation for first part of opacity and height */}
             <Animated.View style={{opacity:famOpacity,width:Dimensions.get('screen').width/1.07,height:famHeight,shadowColor: "#000",shadowOffset: { width: 0,height: 4 },shadowOpacity: 0.30,shadowRadius: 4.65,elevation: 8,backgroundColor:'rgba(0,0,0,0.4)',borderRadius:10,alignItems:'center'}}>
                 <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
                     <View style={{marginTop:'3%',marginHorizontal:'4%'}}><TouchableOpacity onPress={()=>{props.prev()}} style={{backgroundColor:'#9932cc',borderRadius:5,width:'170%',justifyContent:'center',alignItems:'center'}}><Text style={{fontSize:20,color:'white'}}>{'<'}</Text></TouchableOpacity></View>

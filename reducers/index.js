@@ -10,9 +10,11 @@ import marker from './marker'
 import navigation from './navigation'
 import sheet from './animation'
 import family from './family'
+import invitations from './invitations'
 
 const rootreducers =  combineReducers({
-  login,recovery,register,recovered,confirmacc,mylocation,placesearch,marker,navigation,sheet,family
+  login,recovery,register,recovered,confirmacc,mylocation
+  ,placesearch,marker,navigation,sheet,family,invitations
 })
 
 export default rootreducers

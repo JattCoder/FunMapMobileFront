@@ -5,6 +5,7 @@ import Bottomweather from '../Components/bottomweather/bottomweather'
 import NewFamily from './components/newFamily'
 import Families from './components/families'
 import Uimage from './uimage'
+import PlaceSearchResults from './components/placeSearchResults'
 import { StyleSheet, Animated, View, ScrollView, TouchableOpacity, Image, Dimensions, Text } from 'react-native'
 const { width, height } = Dimensions.get('screen')
 let closeButtonsTimeout
@@ -324,7 +325,7 @@ export default Drawerr = (props) => {
           </Animated.View>
         </Animated.View>
         <Animated.View style={{height:searchResultsHeight,width:Dimensions.get('screen').width,opacity:searchResultsOpacity}}>
-          <Text>Results from Backend will display here</Text>
+          <PlaceSearchResults />
         </Animated.View>
      </Animated.View>
   )
