@@ -76,6 +76,31 @@ export default Families = (props) => {
         ]).start()
     }
 
+    hideInvitations = () => {
+        Animated.parallel([
+            Animated.timing(invitationHeight,{
+                toValue:0,
+                duration:500,
+                useNativeDriver:false
+            }),
+            Animated.timing(invitationOpacity,{
+                toValue:0,
+                duration:500,
+                useNativeDriver:false
+            }),
+            Animated.timing(familyHeight,{
+                toValue:Dimensions.get('screen').height/1.9,
+                duration:500,
+                useNativeDriver:false
+            }),
+            Animated.timing(familyOpacity,{
+                toValue:1,
+                duration:500,
+                useNativeDriver:false
+            })
+        ]).start()
+    }
+
     return(
         <View style={{height:'100%',width:'100%',justifyContent:'center',alignItems:'center'}}>
             <View style={{width:Dimensions.get('screen').width,height:'7%',justifyContent:'center',alignItems:'center',position:'absolute',top:0,right:0}}>
@@ -89,7 +114,7 @@ export default Families = (props) => {
                 </View>
             </View>
             <Animated.View style={{opacity:invitationOpacity,height:invitationHeight,width:Dimensions.get('screen').width}}>
-                <Invitations invitations={invis}/>
+                <Invitations invitations={invis} close={()=>hideInvitations()}/>
             </Animated.View>
             <Animated.View style={{width:Dimensions.get('window').width,height:familyHeight,opacity:familyOpacity}}>
                 {fams.length != 0 ? <FamCard fam={fams[fam]} next={()=>nextFamily()} prev={()=>prevFamily()}/>

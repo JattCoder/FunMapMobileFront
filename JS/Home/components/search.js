@@ -4,7 +4,8 @@ import { useDispatch } from 'react-redux'
 import Geocoder from 'react-native-geocoder-reborn'
 import { submitsearch } from '../../../actions/submitsearch/submitsearch'
 import { clearsearch } from '../../../actions/submitsearch/clearsearch'
-import { Animated, Image, TextInput, Dimensions, TouchableOpacity } from 'react-native'
+import LinearGradient from 'react-native-linear-gradient'
+import { Animated, Image, TextInput, Dimensions, TouchableOpacity, StyleSheet } from 'react-native'
 
 export default Search = (props) => {
 
@@ -85,12 +86,51 @@ export default Search = (props) => {
 
     return(
         <Animated.View style={{width:Dimensions.get('screen').width/1.12,height:55,position:'absolute',right:slide,borderRadius:10,alignItems:'center',flexDirection:'row'}}>
-            <TouchableOpacity activeOpacity={1} onPress={()=>openPlaceSearch()} style={{backgroundColor:'#9932cc',borderRadius:10,height:'100%',width:'18%',justifyContent:'center',alignItems:'center',zIndex:20}}>
-              <Image style={{height:30,width:30,margin:15}} source={require('./search.png')}/>
+            <TouchableOpacity activeOpacity={1} onPress={()=>openPlaceSearch()} style={{backgroundColor:'#9932cc',borderRadius:10,height:'100%',width:'18%',zIndex:20}}>
+                <LinearGradient colors={['#00B4DB','#0083B0']} style={Styles.button}>
+                    <Image style={{height:30,width:30,margin:15}} source={require('./search.png')}/>
+                </LinearGradient>
             </TouchableOpacity>
-            <Animated.View style={{opacity:bar,height:'100%',width:'80%',backgroundColor:'#00BFFF',borderRadius:10,marginLeft:-15,justifyContent:'center',paddingLeft:25,paddingRight:10}}>
-                <TextInput onChangeText={(e)=>onTextChange(e)} autoCapitalize='none' placeholder={'Search'} style={{fontSize:20,color:'white'}}/>
+            <Animated.View style={{opacity:bar,height:'100%',width:'80%',borderRadius:10,marginLeft:-15,justifyContent:'center',paddingLeft:25,paddingRight:10}}>
+                <LinearGradient colors={['#0083B0','#0083B0']} style={Styles.input}>
+                    <TextInput onChangeText={(e)=>onTextChange(e)} autoCapitalize='none' placeholder={'Search'} style={{fontSize:20,color:'white'}}/>
+                </LinearGradient>
             </Animated.View>
         </Animated.View>
     )
 }
+
+const Styles = StyleSheet.create({
+    button:{
+        backgroundColor:'#9932cc',
+        borderRadius:10,
+        height:'100%',
+        width:'100%',
+        justifyContent:'center',
+        alignItems:'center',
+        zIndex:20,
+        shadowColor: "black",
+        shadowOffset: {
+	        width: 0,
+	        height: 12,
+        },
+        shadowOpacity: 0.58,
+        shadowRadius: 16.00,
+        elevation: 24,
+    },
+    input:{
+       height:'100%',
+       width:'100%',
+       borderRadius:10,
+       justifyContent:'center',
+       paddingHorizontal:10,
+       shadowColor: "black",
+        shadowOffset: {
+	        width: 0,
+	        height: 12,
+        },
+        shadowOpacity: 0.58,
+        shadowRadius: 16.00,
+        elevation: 24,
+    }
+})

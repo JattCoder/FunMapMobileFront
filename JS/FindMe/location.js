@@ -54,7 +54,6 @@ export default Location = () =>{
       timeout: 5000,
       maximumAge: 5000
     };
-
     id = Geolocation.watchPosition(success,error,options)
     console.log('Location ID: ',id)
     return null

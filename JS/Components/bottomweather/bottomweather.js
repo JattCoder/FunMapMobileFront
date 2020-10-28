@@ -9,7 +9,10 @@ import { View, Text, Image } from 'react-native'
 export default Bottomweather = (props) => {
 
     const[currentCity,setcurrentCity] = useState('')
-    const[wther,setweather] = useState({})
+    const[wther,setweather] = useState({
+        temp:0,
+        icon:''
+    })
     const[message,setmessage] = useState('')
     const[fams,setFams] = useState([])
     const[id,setID] = useState(-1)
@@ -18,8 +21,6 @@ export default Bottomweather = (props) => {
     let date = new Date().getHours()
 
     useSelector((state)=>{
-        if(state.mylocation.latitude != 0 && message == '') 
-            setmessage('Allowed')
         if(fams != state.family && currentCity != ''){
             setFams(state.family)
             setID(state.login.message.id)
@@ -27,51 +28,48 @@ export default Bottomweather = (props) => {
     })
 
     useEffect(()=>{
+        geocode()
+    },[props.position.latitude,props.position.longitude])
+
+    updateLocation = () => {
+        fams.length > 0 && id != -1 ? fams.map((fam)=>{
+            firebase.database().ref(`FamilyGroups/${fam[0].id}/${id}`).update({
+                location: currentCity,
+                heading: position.heading,
+                latitude: props.position.latitude,
+                longitude: props.position.longitude,
+                speed: position.speed
+            })
+        }) : null
+    }
+
+    geocode = () => {
         let Geo = {
             lat: props.position.latitude,
             lng: props.position.longitude
         }
         Geocoder.geocodePosition(Geo).then(res => {
-            if(message == 'Allowed'){
+            if(props.position.latitude != 0 && props.position.longitude != 0){
                 position = props.position
-                dispatch(mylocation({
-                    latitude: position.latitude,
-                    longitude: position.longitude,
-                    speed: position.speed,
-                    heading: position.heading,
-                    altitude: position.altitude,
-                    altitudeAccuracy: position.altitudeAccuracy,
-                    accuracy: position.accuracy,
-                    complete: `${res[0].streetName}, ${res[0].locality}, ${res[0].adminArea} ${res[0].postalCode}`,
-                    street: res[0].streetName,
-                    city: res[0].locality,
-                    state: res[0].adminArea,
-                    zip: res[0].postalCode,
-                    message: 'Allowed'
-                }))
                 //location,heading,latitude,longitude,speed
-                {fams.length > 0 && id != -1 ? fams.map((fam)=>{
-                    firebase.database().ref(`FamilyGroups/${fam[0].id}/${id}`).update({
-                        location: `${res[0].streetName}, ${res[0].locality}, ${res[0].adminArea} ${res[0].postalCode}`,
-                        heading: position.heading,
-                        latitude: props.position.latitude,
-                        longitude: props.position.longitude,
-                        speed: position.speed
-                    })
-                }) : null}
                 if(currentCity != `${res[0].streetName}, ${res[0].locality}, ${res[0].adminArea} ${res[0].postalCode}`){
                     setcurrentCity(`${res[0].streetName}, ${res[0].locality}, ${res[0].adminArea} ${res[0].postalCode}`)
                     if(res[0].locality != city){
                         city = res[0].locality
-                        console.log('City: ',city)
+                        updateLocation()
                         fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=726db19d90971027a329515b851bfddc`)
                         .then(res => {return res.json()})
-                        .then(data => {console.log(data)})
+                        .then(data => {
+                            setweather({
+                                temp: Math.round((parseInt(data.main.temp)-273.15)*9/5+32),
+                                icon: data.weather[0].icon
+                            })
+                        })
                         .catch(err => console.log('Weather Error: ',err.message))
                     }
                 }
             }else{
-                setweather('N/A')
+                setweather({temp: 'N/A', icon: ''})
                 setcurrentCity('No Location Info')
                 {fams.length > 0 && id != -1 ? fams.map((fam)=>{
                     firebase.database().ref(`FamilyGroups/${fam[0].id}/${id}`).update({
@@ -84,7 +82,7 @@ export default Bottomweather = (props) => {
                 }) : null}
             }
         }).catch(err => console.log(err))
-    })  
+    }
 
     return(
         <View>
@@ -95,8 +93,17 @@ export default Bottomweather = (props) => {
                     <Text style={{color:'white'}}>{currentCity}</Text>
                 </View>
                 <View style={{right:0,top:0,alignItems:'center'}}>
-                    {wther == 'N/A' ? date < 18 ? <Image style={{height:35,width:35}} source={require('../../settingsIcons/sun_color.png')}/> : <Image style={{height:35,width:35}} source={require('../../settingsIcons/moon.png')}/> : null}
-                    {wther ? <Text style={{color:'white'}}>{wther}</Text>:null}
+                    {wther.icon == '' ? date < 18 ? <View style={{justifyContent:'center',alignItems:'center'}}>
+                        <Image style={{height:35,width:35}} source={require('../../settingsIcons/sun_color.png')}/>
+                        <Text style={{color:'white'}}>{wther.temp}</Text>
+                    </View> : <View style={{justifyContent:'center',alignItems:'center'}}>
+                        <Image style={{height:35,width:35}} source={require('../../settingsIcons/moon.png')}/>
+                        <Text style={{color:'white'}}>{wther.temp}</Text>
+                    </View> : null}
+                    {wther.icon != '' ? <View style={{justifyContent:'center',alignItems:'center'}}>
+                        <Image style={{height:35,width:35}} source={{uri: `http://openweathermap.org/img/wn/${wther.icon}@2x.png`}}/>
+                        <Text style={{color:'white'}}>{wther.temp} F</Text>
+                    </View>:null}
                 </View>
             </View> : null}
         </View>

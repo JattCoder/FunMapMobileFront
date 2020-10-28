@@ -11,7 +11,8 @@ export default UserCard = (props) => {
                     </View>
                     <View style={{marginHorizontal:'2%'}}>
                         <Text style={{fontSize:20,color:'white'}}>{props.user.name}</Text>
-                        <Text style={{color:'white'}}>{props.user.location}</Text>
+                        {props.user.permitted == 'Ghost' ? <Text style={{color:'white',width:Dimensions.get('screen').width/1.9}}>Ghost Mode</Text>
+                        : <Text style={{color:'white',width:Dimensions.get('screen').width/1.9}}>{props.user.location}</Text>}
                     </View>
                     <View style={{position:'absolute',right:0,width:'10%'}}>
                         { props.user.charging ? <View style={Style.battery}>

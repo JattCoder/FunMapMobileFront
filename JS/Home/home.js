@@ -5,12 +5,11 @@ import { selmarker } from '../../actions/marker/selmarker'
 import { View, TouchableOpacity, Dimensions, Animated, Image } from 'react-native'
 import MapView,{Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import Mrker from '../Markers/marker'
-import Details from '../Markers/details'
 import Location from '../FindMe/location'
 import Navigate from '../Components/navigation/navigate'
 import Drawerr from './drawer'
 import Search from './components/search'
-import { TextInput } from 'react-native-gesture-handler'
+import LinearGradient from 'react-native-linear-gradient'
 
 const dimensions = Dimensions.get('screen')
 
@@ -24,8 +23,8 @@ const Home = (props) => {
     const [map,setmap] = useState({})
     const [search,setsearch] = useState([])
     const [mrkrInfo,setmrkrInfo] = useState(false)
-    const [slimit,setspeed] = useState(10)
-    const [bottomheight,setBottomheight] = useState('14%')
+    const [slimit,setspeed] = useState(3)
+    const [currentFamily,setCurrentFamily] = useState([])
     const [regionPosition, setRegPosition] = useState({
         latitude: 0,
         longitude: 0,
@@ -70,6 +69,9 @@ const Home = (props) => {
     }
 
     useSelector((state)=>{
+        if(state.mapfamily != currentFamily){
+          setCurrentFamily(state.mapfamily)
+        }
         if(state.mylocation.latitude != 0 && followme == false){
           setUserPosition({
             latitude: state.mylocation.latitude,
@@ -108,7 +110,7 @@ const Home = (props) => {
                     showsBuildings={true}
                     showsPointsOfInterest={false}
                     onPanDrag={()=> {if(speed > slimit){
-                      alert('You can not use this app while driving')
+                      alert('You are not allowed to use app whilte driving for safety concerns')
                     }}}
                     onUserLocationChange={(userlocation)=>{
                         loc = userlocation.nativeEvent.coordinate
@@ -116,7 +118,8 @@ const Home = (props) => {
                         zoom = 0
                         if(loc.speed > slimit){
                           if(followme == true){
-                            if(loc.speed > 10 && loc.speed <= 30) zoom = 18
+                            if(loc.speed > 2 && loc.speed <= 7) zoom = 18.5
+                            else if(loc.speed > 7 && loc.speed <= 30) zoom = 18
                             else if(loc.speed > 30 && loc.speed <= 65) zoom = 17
                             else zoom = 16
                             map.animateCamera({center: {
@@ -152,6 +155,7 @@ const Home = (props) => {
                       latitudeDelta: 100.009,
                       longitudeDelta: 20.0009,
                     }}>
+                        
                         {userPosition.latitude == 0 ? <Navigate /> : null}
                         {search.map((place)=>{
                             return <Marker key={place.id} style={{justifyContent:'center',alignItems:'center'}} onPress={()=>dispatch(selmarker(place))} coordinate={{latitude: place.geo.lat, longitude: place.geo.lng}}>
@@ -164,9 +168,6 @@ const Home = (props) => {
             {showme ? !followme ? <View style={{display:'',position:'absolute',bottom:180,right:30,borderWidth:0.5,borderRadius:25,backgroundColor:'white',width:50,height:50,shadowColor: "#000",shadowOffset: { width: 0,height: 9 }, shadowOpacity: 0.48, shadowRadius: 11.95, elevation: 18}}>
                 <TouchableOpacity style={{width:'100%',height:'100%'}} onPress={()=>whereAmI()}/>
             </View>: null : null}
-            {mrkrInfo == true ? <View style={{position:'absolute',height:'35%',width:'100%',bottom:0,borderTopStartRadius:15,borderTopRightRadius:15}}>
-                <Details />
-            </View> : null}
             <View style={{height:55,position:'absolute',right:'1%',top:'8%'}}>
               <Search position={userPosition}/>
             </View>

@@ -3,7 +3,8 @@ import { useSelector, useDispatch } from 'react-redux'
 import { register } from '../../actions/register/register'
 import { resregister } from '../../actions/register/resregister'
 import { View, StyleSheet, TouchableOpacity, Text, TextInput, ActivityIndicator } from 'react-native'
-import DeviceInfo from 'react-native-device-info';
+import DeviceInfo from 'react-native-device-info'
+import LinearGradient from 'react-native-linear-gradient';
 
 const Register = (props) => {
 
@@ -52,44 +53,46 @@ const Register = (props) => {
     })
 
     return(
-        <View style={Styles.Page}>
+        <LinearGradient colors={['#00B4DB','#1CB5E0','#000046']} style={Styles.Page}>
             <Text style={Styles.Heading}>Register</Text>
             <TouchableOpacity style={Styles.FirstBox}>
-                <Text style={{color:'white'}}>Name </Text>
-                <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:-4,borderColor:'black'}}/>
+                <Text style={{color:'#f5f5f5',fontWeight:'bold'}}>Name </Text>
+                <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:-4,borderColor:'#f5f5f5'}}/>
                 <TextInput style={Styles.FirstInput} autoCapitalize = 'none' onChangeText={(e)=>setname(e)}/>
             </TouchableOpacity>
             <TouchableOpacity style={Styles.NextBox}>
-                <Text style={{color:'white'}}>Email  </Text>
-                <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:-4,borderColor:'black'}}/>
+                <Text style={{color:'#f5f5f5',fontWeight:'bold'}}>Email  </Text>
+                <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:-4,borderColor:'#f5f5f5'}}/>
                 <TextInput style={Styles.NextInput} autoCapitalize = 'none' onChangeText={(e)=>setemail(e)}/>
             </TouchableOpacity>
             <TouchableOpacity style={Styles.NextBox}>
-                <Text style={{color:'white'}}>Phone</Text>
-                <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:-4,borderColor:'black'}}/>
+                <Text style={{color:'#f5f5f5',fontWeight:'bold'}}>Phone</Text>
+                <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:-4,borderColor:'#f5f5f5'}}/>
                 <TextInput style={Styles.NextInput} autoCapitalize = 'none' onChangeText={(e)=>setphone(e)}/>
             </TouchableOpacity>
             <TouchableOpacity style={Styles.NextBox}>
-                <Text style={{color:'white'}}>Pass  </Text>
-                <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:-4,borderColor:'black'}}/>
+                <Text style={{color:'#f5f5f5',fontWeight:'bold'}}>Pass   </Text>
+                <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:-4,borderColor:'#f5f5f5'}}/>
                 <TextInput style={Styles.NextInput} autoCapitalize = 'none' secureTextEntry={true} onChangeText={(e)=>setpass(e)}/>
             </TouchableOpacity>
             <TouchableOpacity style={Styles.NextBox}>
-                <Text style={{color:'white'}}>Pass  </Text>
-                <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:-4,borderColor:'black'}}/>
+                <Text style={{color:'#f5f5f5',fontWeight:'bold'}}>Pass   </Text>
+                <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:-4,borderColor:'#f5f5f5'}}/>
                 <TextInput style={Styles.NextInput} autoCapitalize = 'none' secureTextEntry={true} onChangeText={(e)=>setrpass(e)}/>
             </TouchableOpacity>
-            <Text style={{color:'white',marginTop:20}}>Recovery Code: Use this code to recover your Account</Text>
-            <Text style={{color:'white',fontStyle:'italic'}}>(Keep it Safe)</Text>
+            <Text style={{color:'#f5f5f5',marginTop:20}}>Recovery Code: Use this code to recover your Account</Text>
+            <Text style={{color:'#f5f5f5',fontStyle:'italic'}}>(Keep it Safe)</Text>
             <TouchableOpacity style={Styles.CodeBox}>
-                <Text style={{color:'white'}}>Code </Text>
-                <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:-4,borderColor:'black'}}/>
+                <Text style={{color:'#f5f5f5',fontWeight:'bold'}}>Code  </Text>
+                <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:-4,borderColor:'#f5f5f5'}}/>
                 <TextInput style={Styles.CodeInput} autoCapitalize = 'none' secureTextEntry={true} onChangeText={(e)=>setcode(e)}/>
             </TouchableOpacity>
             <TouchableOpacity style={Styles.Register} onPress={()=>RegisterAttempt()}>
+            <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['#1CB5E0','#1CB5E0','#1CB5E0']} style={{width:'100%',height:'100%',borderRadius:25,justifyContent:'center',alignItems:'center'}}>
                 {registerLoad == false ? <Text style={Styles.RegisterText}>Register</Text> : <ActivityIndicator size='small' color='#5810d8'/>}
+            </LinearGradient>
             </TouchableOpacity>
-        </View>
+        </LinearGradient>
     )
 }
 
@@ -110,13 +113,21 @@ const Styles = StyleSheet.create({
     },
     FirstBox:{
         marginTop:70,
-        borderRadius:25,
-        borderColor:'black',
+        borderRadius:10,
+        borderColor:'#f5f5f5',
         borderWidth:0.8,
         width:280,
         height:45,
         flexDirection:'row',
-        padding:13
+        padding:13,
+        shadowColor: "#1CB5E0",
+        shadowOffset: {
+	        width: 0,
+	        height: 12,
+        },
+        shadowOpacity: 0.58,
+        shadowRadius: 16.00,
+        elevation: 24,
     },
     FirstInput:{
         paddingLeft:1,
@@ -128,13 +139,21 @@ const Styles = StyleSheet.create({
     },
     NextBox:{
         marginTop:20,
-        borderRadius:25,
-        borderColor:'black',
+        borderRadius:10,
+        borderColor:'#f5f5f5',
         borderWidth:0.8,
         width:280,
         height:45,
         flexDirection:'row',
-        padding:13
+        padding:13,
+        shadowColor: "#1CB5E0",
+        shadowOffset: {
+	        width: 0,
+	        height: 12,
+        },
+        shadowOpacity: 0.58,
+        shadowRadius: 16.00,
+        elevation: 24,
     },
     NextInput:{
         paddingLeft:1,
@@ -146,13 +165,21 @@ const Styles = StyleSheet.create({
     },
     CodeBox:{
         marginTop:5,
-        borderRadius:25,
-        borderColor:'black',
+        borderRadius:10,
+        borderColor:'#f5f5f5',
         borderWidth:0.8,
         width:280,
         height:45,
         flexDirection:'row',
-        padding:13
+        padding:13,
+        shadowColor: "#1CB5E0",
+        shadowOffset: {
+	        width: 0,
+	        height: 12,
+        },
+        shadowOpacity: 0.58,
+        shadowRadius: 16.00,
+        elevation: 24,
     },
     CodeInput:{
         paddingLeft:1,
@@ -171,10 +198,18 @@ const Styles = StyleSheet.create({
         justifyContent:'center',
         alignItems:'center',
         width:250,
-        flexDirection:'row'
+        flexDirection:'row',
+        shadowColor: "#1CB5E0",
+        shadowOffset: {
+	        width: 0,
+	        height: 12,
+        },
+        shadowOpacity: 0.58,
+        shadowRadius: 16.00,
+        elevation: 24,
     },
     RegisterText:{
         padding:12,
-        color:'black',
+        color:'#f5f5f5',
     },
 })

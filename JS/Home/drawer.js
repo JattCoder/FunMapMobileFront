@@ -6,6 +6,7 @@ import NewFamily from './components/newFamily'
 import Families from './components/families'
 import Uimage from './uimage'
 import PlaceSearchResults from './components/placeSearchResults'
+import LinearGradient from 'react-native-linear-gradient'
 import { StyleSheet, Animated, View, ScrollView, TouchableOpacity, Image, Dimensions, Text } from 'react-native'
 const { width, height } = Dimensions.get('screen')
 let closeButtonsTimeout
@@ -283,14 +284,17 @@ export default Drawerr = (props) => {
 
   return(
      <Animated.View style={[Styles.Bottom,actionSheetStyle,{height:sheetHeight}]}>
+       <LinearGradient colors={['#00B4DB','#1CB5E0','#000046']} style={{height:'100%',width:'100%',alignItems:'center',borderTopLeftRadius:25,borderTopRightRadius:25,}}>
         <ScrollView onScroll={(e)=>guestureHandler(e)} style={{width:80,height:10,borderTopWidth:3,marginTop:10,borderColor:'white',zIndex:100}} />
         <Animated.View style={{width:Dimensions.get('screen').width,height:'20%',position:'absolute',flexDirection:'row',marginTop:headingMargin,marginHorizontal:'5%',alignItems:'center'}}>
-          <TouchableOpacity style={[Styles.ImageBox,{height:45,width:45}]}>
-            {props.user.photo != '' ? <Image source={{ uri: user.image }} /> : <Uimage name={user.name} />}
+          <TouchableOpacity onPress={()=>alert('Pressed')} style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+            <TouchableOpacity style={[Styles.ImageBox,{height:45,width:45}]}>
+              {props.user.photo != '' ? <Image source={{ uri: user.image }} /> : <Uimage name={user.name} />}
+            </TouchableOpacity>
+            <View>
+              <Bottomweather name={props.user.name} position={props.regionPosition}/>
+            </View>
           </TouchableOpacity>
-          <View>
-            <Bottomweather name={props.user.name} position={props.regionPosition}/>
-          </View>
         </Animated.View>
         <Animated.View style={{height:bottomViewHeight,width:Dimensions.get('screen').width,opacity:bottomViewOpacity}}>
           <Locationshare />
@@ -327,6 +331,7 @@ export default Drawerr = (props) => {
         <Animated.View style={{height:searchResultsHeight,width:Dimensions.get('screen').width,opacity:searchResultsOpacity}}>
           <PlaceSearchResults />
         </Animated.View>
+      </LinearGradient>
      </Animated.View>
   )
 }
@@ -334,10 +339,9 @@ export default Drawerr = (props) => {
 const Styles = StyleSheet.create({
   Bottom:{
       width:width,
-      backgroundColor: '#9932cc',
+      alignItems:'center',
       borderTopLeftRadius:25,
       borderTopRightRadius:25,
-      alignItems:'center',
       right:0,
       left:0
   },
