@@ -30,6 +30,9 @@ export default Drawerr = (props) => {
   const [newGroupFormHeight] = useState(new Animated.Value(0))
   const [searchResultsOpacity] = useState(new Animated.Value(0))
   const [searchResultsHeight] = useState(new Animated.Value(0))
+  const [settingsHeight] = useState(new Animated.Value(0))
+  const [settingsWidth] = useState(new Animated.Value(0))
+  const [settingsOpacity] = useState(new Animated.Value(0))
   const [menuOpen,setMenuOpen] = useState(false)
 
   const bringUpActionSheet = () => {
@@ -224,6 +227,36 @@ export default Drawerr = (props) => {
     ]).start()
   }
 
+  openSettings = () => {
+    Animated.parallel([
+      Animated.timing(settingsHeight,{
+        toValue:Dimensions.get('screen').height/1.7,
+        duration:500,
+        useNativeDriver:false
+      }),
+      Animated.timing(settingsWidth,{
+        toValue:Dimensions.get('screen').width,
+        duration:500,
+        useNativeDriver:false
+      }),
+      Animated.timing(settingsOpacity,{
+        toValue:1,
+        duration:100,
+        useNativeDriver:false
+      }),
+      Animated.timing(groupHeight,{
+        toValue:0,
+        duration:500,
+        useNativeDriver:false
+      }),
+      Animated.timing(groupOpacity,{
+        toValue:0,
+        duration:500,
+        useNativeDriver:false
+      })
+    ]).start()
+  }
+
   const actionSheetIntropolate = alignment.interpolate({
     inputRange: [0,1],
     outputRange: [-height/2.7+60, 0]
@@ -302,26 +335,29 @@ export default Drawerr = (props) => {
             <Animated.View style={{height:groupHeight,width:'100%',opacity:groupOpacity,justifyContent:'center',alignItems:'center'}}>
               <Families user={props.user}/>
             </Animated.View>
+            <Animated.View style={{width:settingsWidth,height:settingsHeight,opacity:settingsOpacity,justifyContent:'center',alignItems:'center',backgroundColor:'white'}}>
+              <Text>Settings Page</Text>
+            </Animated.View>
             <Animated.View style={{height:newGroupFormHeight,width:'100%',opacity:newGroupFormOpacity,justifyContent:'center',alignItems:'center'}}>
               <TouchableOpacity onPress={()=>closeForm()} style={{width:-Dimensions.get('screen').width,height:'8%',borderRadius:10,position:'absolute',top:20,right:25,zIndex:100}}>
                   <Image style={{height:30,width:30}} source={require('../settingsIcons/close.png')}/>
               </TouchableOpacity>
-              <NewFamily user={props.user} finish={closeForm()}/>
+              <NewFamily user={props.user} finish={()=>closeForm()}/>
             </Animated.View>
           </Animated.View>
           <Animated.View style={{position:'absolute',bottom:0,right:0,left:0,width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/9.3,justifyContent:'center'}}>
-              <Animated.View style={{height:menuButtonSize,width:menuButtonSize,borderRadius:50,position:'absolute',right:20,borderWidth:0.5,borderColor:'white',backgroundColor:'#9932cc',justifyContent:'center',alignItems:'center',zIndex:100}}>
+              <Animated.View style={{height:menuButtonSize,width:menuButtonSize,position:'absolute',right:20,justifyContent:'center',alignItems:'center',zIndex:100}}>
                 <TouchableOpacity style={{height:'100%',width:'100%',justifyContent:'center',alignItems:'center'}} onPress={()=>showButtons()}>
-                  {menuOpen ? <Image style={{height:20,width:20}} source={require('../settingsIcons/close.png')}/>
-                  : <Image style={{height:20,width:20}} source={require('../settingsIcons/plus.png')}/>}
+                  {menuOpen ? <View style={{height:'100%',width:'100%',backgroundColor:'red',borderRadius:50,justifyContent:'center',alignItems:'center'}}><Image style={{height:20,width:20}} source={require('../settingsIcons/close.png')}/></View>
+                  : <View style={{height:'100%',width:'100%',backgroundColor:'#00B4DB',borderRadius:50,justifyContent:'center',alignItems:'center'}}><Image style={{height:20,width:20}} source={require('../settingsIcons/plus.png')}/></View>}
                 </TouchableOpacity>
               </Animated.View>
-              <Animated.View style={{opacity:settingOpacity,height:settingSize,width:settingSize,borderRadius:50,position:'absolute',right:20*3,borderWidth:0.5,borderColor:'white',justifyContent:'center',alignItems:'center'}}>
-                <TouchableOpacity style={{height:'100%',width:'100%',justifyContent:'center',alignItems:'center'}} onPress={()=>alert('Open Settings')}>
+              <Animated.View style={{opacity:settingOpacity,height:settingSize,width:settingSize,borderRadius:50,position:'absolute',backgroundColor:'#f7797d',right:20*3,justifyContent:'center',alignItems:'center'}}>
+                <TouchableOpacity style={{height:'100%',width:'100%',justifyContent:'center',alignItems:'center'}} onPress={()=>openSettings()}>
                   <Image style={{height:20,width:20}} source={require('../settingsIcons/setting.png')}/>
                 </TouchableOpacity>
               </Animated.View>
-              <Animated.View style={{opacity:newGroupButtonOpacity,height:newGroupButtonSize,width:newGroupButtonSize,borderRadius:50,position:'absolute',right:20*6,borderWidth:0.5,borderColor:'white',justifyContent:'center',alignItems:'center'}}>
+              <Animated.View style={{opacity:newGroupButtonOpacity,height:newGroupButtonSize,width:newGroupButtonSize,borderRadius:50,position:'absolute',backgroundColor:'#FBD786',right:20*6,justifyContent:'center',alignItems:'center'}}>
                 <TouchableOpacity style={{height:'100%',width:'100%',justifyContent:'center',alignItems:'center'}} onPress={()=>openForm()}>
                   <Image style={{height:20,width:20}} source={require('../settingsIcons/plus.png')}/>
                 </TouchableOpacity>

@@ -23,14 +23,14 @@ export default Checkbattery = () => {
     }
 
     useEffect(()=>{
-        getInfo()
+        //getInfo()
     })
 
     useSelector((state)=>{
-        if(fams != state.family){
-            setId(state.login.message.id)
-            setFams(state.family)
-        }
+        // if(fams != state.family){
+        //     setId(state.login.message.id)
+        //     setFams(state.family)
+        // }
     })
 
     return null
