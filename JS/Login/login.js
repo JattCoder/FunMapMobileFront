@@ -118,7 +118,6 @@ const Styles = StyleSheet.create({
     Page:{
         height:Dimensions.get('screen').height,
         width:Dimensions.get('screen').width,
-        backgroundColor:'white',
         justifyContent:'center',
         alignItems:'center',
         position:'absolute',
