@@ -1,55 +1,133 @@
-import React from 'react'
+import React,{ useState } from 'react'
 import LinearGradient from 'react-native-linear-gradient'
-import { View, StyleSheet, Dimensions, ScrollView, Switch, Text } from 'react-native'
+import { View, StyleSheet, Dimensions, ScrollView, Switch, Text, Image } from 'react-native'
+import { TouchableOpacity } from 'react-native-gesture-handler'
 
-export default Settings = () => {
+export default Settings = (props) => {
+
+    const [drivingMode,setDrivingMode] = useState(false)
+    const drivingSwitch = () => setDrivingMode(previousState => !previousState);
+    const [avoidHighways,setAvoidHighways] = useState(false)
+    const highwaySwitch = () => setAvoidHighways(previousState => !previousState);
+    const [avoidTolls,setAvoidTolls] = useState(false)
+    const tollsSwitch = () => setAvoidTolls(previousState => !previousState);
+    const [avoidFerries,setAvoidFerries] = useState(false)
+    const ferriesSwitch = () => setAvoidFerries(previousState => !previousState);
+    const [temperature,setTemperature] = useState(false)
+    const temperatureSwitch = () => setTemperature(previousState => !previousState);
+
     return(
         <View style={Styles.Page}>
-            <ScrollView showsVerticalScrollIndicator={false}>
-                <View style={{width:Dimensions.get('screen').width,justifyContent:'center',alignItems:'center'}}><Text>Navigation</Text></View>
+            <TouchableOpacity onPress={()=>props.close()} style={{width:'100%',height:'4%'}}>
+                    <View style={{justifyContent:'center',position:'absolute',alignItems:'center',flexDirection:'row'}}>
+                        <Image style={{height:20,width:20}} source={require('../../settingsIcons/back.png')}/>
+                        <Text style={{color:'white',fontSize:20}}>Family</Text>
+                    </View>
+            </TouchableOpacity>
+            <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false} style={{marginTop:'5%'}}>
+                <View style={{width:Dimensions.get('screen').width,marginTop:'4%',alignItems:'center',justifyContent:'center',marginBottom:'2%',flexDirection:'row'}}>
+                    <TouchableOpacity activeOpacity={1} style={{height:0,width:30,marginRight:10,borderWidth:0.5,borderColor:'white'}}/>
+                    <Text style={{fontSize:20,fontweight:'bold',color:'white'}}>Navigation</Text>
+                    <TouchableOpacity activeOpacity={1} style={{height:0,width:230,marginLeft:10,borderWidth:0.5,borderColor:'white'}}/>
+                </View>
                 <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/15.2,justifyContent:'center',alignItems:'center'}}>
                     <View style={Styles.Tab}>
-                        <Text style={{fontweight:'bold',fontSize:25,color:'black',position:'absolute',left:25}}>Driving Mode</Text>
-                        <Switch style={{position:'absolute',right:25}}/>
+                        <View style={{position:'absolute',left:25,flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+                            <Image style={{height:30,width:30}} source={require('../../settingsIcons/mode.png')}/>
+                            <Text style={{fontweight:'bold',fontSize:16,color:'black'}}>   Driving Mode</Text>
+                        </View>
+                        <Switch trackColor={{ false: "#fed8b1", true: "#FF8C00" }}
+                                thumbColor={drivingMode ? "white" : "#FF8C00"}
+                                onValueChange={drivingSwitch}
+                                value={drivingMode} style={{position:'absolute',right:25}}/>
                     </View>
                 </View>
-                <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/15.2,justifyContent:'center',alignItems:'center',marginTop:'5%'}}>
+                <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/15.2,justifyContent:'center',alignItems:'center',marginTop:'3%'}}>
                     <View style={Styles.Tab}>
-                        <Text style={{fontweight:'bold',fontSize:25,color:'black',position:'absolute',left:25}}>Highways</Text>
-                        <Switch style={{position:'absolute',right:25}}/>
+                        <View style={{position:'absolute',left:25,flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+                            <Image style={{height:30,width:30}} source={require('../../settingsIcons/highway.png')}/>
+                            <Text style={{fontweight:'bold',fontSize:16,color:'black'}}>   Highways</Text>
+                        </View>
+                        <Switch trackColor={{ false: "#767577", true: "#40E0D0" }}
+                                thumbColor={avoidHighways ? "white" : "#40E0D0"}
+                                onValueChange={highwaySwitch}
+                                value={avoidHighways} style={{position:'absolute',right:25}}/>
                     </View>
                 </View>
-                <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/15.2,justifyContent:'center',alignItems:'center',marginTop:'5%'}}>
+                <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/15.2,justifyContent:'center',alignItems:'center',marginTop:'3%'}}>
                     <View style={Styles.Tab}>
-                        <Text style={{fontweight:'bold',fontSize:25,color:'black',position:'absolute',left:25}}>Tolls</Text>
-                        <Switch style={{position:'absolute',right:25}}/>
+                        <View style={{position:'absolute',left:25,flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+                            <Image style={{height:30,width:30}} source={require('../../settingsIcons/toll.png')}/>
+                            <Text style={{fontweight:'bold',fontSize:16,color:'black'}}>   Tolls</Text>
+                        </View>
+                        <Switch trackColor={{ false: "#767577", true: "#FF0080" }}
+                                thumbColor={avoidTolls ? "white" : "#FF0080"}
+                                onValueChange={tollsSwitch}
+                                value={avoidTolls} style={{position:'absolute',right:25}}/>
                     </View>
                 </View>
-                <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/15.2,justifyContent:'center',alignItems:'center',marginTop:'5%'}}>
+                <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/15.2,justifyContent:'center',alignItems:'center',marginTop:'3%'}}>
                     <View style={Styles.Tab}>
-                        <Text style={{fontweight:'bold',fontSize:25,color:'black',position:'absolute',left:25}}>Ferries</Text>
-                        <Switch style={{position:'absolute',right:25}}/>
+                        <View style={{position:'absolute',left:25,flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+                            <Image style={{height:30,width:30}} source={require('../../settingsIcons/ferries.png')}/>
+                            <Text style={{fontweight:'bold',fontSize:16,color:'black'}}>   Ferries</Text>
+                        </View>
+                        <Switch trackColor={{ false: "#767577", true: "#c06c84" }}
+                                thumbColor={avoidFerries ? "white" : "#c06c84"}
+                                onValueChange={ferriesSwitch}
+                                value={avoidFerries} style={{position:'absolute',right:25}}/>
                     </View>
                 </View>
-                <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/15.2,justifyContent:'center',alignItems:'center',marginTop:'5%'}}>
-                    <View style={Styles.Tab}>
-                        <Text style={{fontweight:'bold',fontSize:25,color:'black',position:'absolute',left:25}}>Temperature</Text>
-                        <Switch style={{position:'absolute',right:25}}/>
-                    </View>
+                <View style={{width:Dimensions.get('screen').width,marginTop:'4%',alignItems:'center',justifyContent:'center',marginBottom:'2%',flexDirection:'row'}}>
+                    <TouchableOpacity activeOpacity={1} style={{height:0,width:30,marginRight:10,borderWidth:0.5,borderColor:'white'}}/>
+                    <Text style={{fontSize:20,fontweight:'bold',color:'white'}}>Guidance</Text>
+                    <TouchableOpacity activeOpacity={1} style={{height:0,width:230,marginLeft:10,borderWidth:0.5,borderColor:'white'}}/>
                 </View>
-                <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/15.2,justifyContent:'center',alignItems:'center',marginTop:'5%'}}>
+                <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/15.2,justifyContent:'center',alignItems:'center',marginTop:'3%'}}>
                     <View style={[Styles.Tab,{justifyContent:'center',alignItems:'center'}]}>
-                        <Text style={{fontweight:'bold',fontSize:25,color:'black'}}>Background Color</Text>
+                        <Text style={{fontweight:'bold',fontSize:16,color:'black'}}>Voice Guidance</Text>
                     </View>
                 </View>
-                <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/15.2,justifyContent:'center',alignItems:'center',marginTop:'5%'}}>
+                <View style={{width:Dimensions.get('screen').width,marginTop:'4%',alignItems:'center',justifyContent:'center',marginBottom:'2%',flexDirection:'row'}}>
+                    <TouchableOpacity activeOpacity={1} style={{height:0,width:37,marginRight:10,borderWidth:0.5,borderColor:'white'}}/>
+                    <Text style={{fontSize:20,fontweight:'bold',color:'white'}}>Weather</Text>
+                    <TouchableOpacity activeOpacity={1} style={{height:0,width:237,marginLeft:10,borderWidth:0.5,borderColor:'white'}}/>
+                </View>
+                <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/15.2,justifyContent:'center',alignItems:'center',marginTop:'3%'}}>
+                    <View style={Styles.Tab}>
+                        <View style={{position:'absolute',left:25,flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+                            <Image style={{height:30,width:30}} source={require('../../settingsIcons/temp.png')}/>
+                            <Text style={{fontweight:'bold',fontSize:16,color:'black'}}>   Temperature</Text>
+                        </View>
+                        <Switch trackColor={{ false: "#767577", true: "#38ef7d" }}
+                                thumbColor={temperature ? "white" : "#38ef7d"}
+                                onValueChange={temperatureSwitch}
+                                value={temperature} style={{position:'absolute',right:25}}/>
+                    </View>
+                </View>
+                <View style={{width:Dimensions.get('screen').width,marginTop:'4%',alignItems:'center',justifyContent:'center',marginBottom:'2%',flexDirection:'row'}}>
+                    <TouchableOpacity activeOpacity={1} style={{height:0,width:55,marginRight:10,borderWidth:0.5,borderColor:'white'}}/>
+                    <Text style={{fontSize:20,fontweight:'bold',color:'white'}}>Style</Text>
+                    <TouchableOpacity activeOpacity={1} style={{height:0,width:255,marginLeft:10,borderWidth:0.5,borderColor:'white'}}/>
+                </View>
+                <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/15.2,justifyContent:'center',alignItems:'center',marginTop:'3%'}}>
                     <View style={[Styles.Tab,{justifyContent:'center',alignItems:'center'}]}>
-                        <Text style={{fontweight:'bold',fontSize:25,color:'black'}}>Account Settings</Text>
+                        <Text style={{fontweight:'bold',fontSize:16,color:'black'}}>Background Color</Text>
                     </View>
                 </View>
-                <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/15.2,justifyContent:'center',alignItems:'center',marginTop:'10%',marginBottom:'7%'}}>
+                <View style={{width:Dimensions.get('screen').width,marginTop:'4%',alignItems:'center',justifyContent:'center',marginBottom:'2%',flexDirection:'row'}}>
+                    <TouchableOpacity activeOpacity={1} style={{height:0,width:40,marginRight:10,borderWidth:0.5,borderColor:'white'}}/>
+                    <Text style={{fontSize:20,fontweight:'bold',color:'white'}}>Account</Text>
+                    <TouchableOpacity activeOpacity={1} style={{height:0,width:240,marginLeft:10,borderWidth:0.5,borderColor:'white'}}/>
+                </View>
+                <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/15.2,justifyContent:'center',alignItems:'center'}}>
+                    <View style={[Styles.Tab,{justifyContent:'center',alignItems:'center'}]}>
+                        <Text style={{fontweight:'bold',fontSize:16,color:'black'}}>Account Settings</Text>
+                    </View>
+                </View>
+                <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/15.2,justifyContent:'center',alignItems:'center',marginTop:'5%',marginBottom:'7%'}}>
                     <View style={[Styles.Logout,{justifyContent:'center',alignItems:'center'}]}>
-                        <Text style={{fontweight:'bold',fontSize:25,color:'black'}}>Logout</Text>
+                        <Text style={{fontweight:'bold',fontSize:16,color:'black'}}>Logout</Text>
                     </View>
                 </View>
             </ScrollView>
@@ -61,15 +139,13 @@ const Styles = StyleSheet.create({
     Page:{
         height:Dimensions.get('screen').height/1.9,
         width:'100%',
-        justifyContent:'center',
-        alignItems:'center',
         top:0,
         right:0,
         left:0,
         bottom:0
     },
     Tab:{
-        height:'100%',
+        height:'90%',
         width:'80%',
         backgroundColor:'white',
         borderRadius:10,

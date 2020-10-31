@@ -258,6 +258,36 @@ export default Drawerr = (props) => {
     ]).start()
   }
 
+  closeSettings = () => {
+    Animated.parallel([
+      Animated.timing(settingsHeight,{
+        toValue:0,
+        duration:500,
+        useNativeDriver:false
+      }),
+      Animated.timing(settingsWidth,{
+        toValue:0,
+        duration:500,
+        useNativeDriver:false
+      }),
+      Animated.timing(settingsOpacity,{
+        toValue:0,
+        duration:100,
+        useNativeDriver:false
+      }),
+      Animated.timing(groupHeight,{
+        toValue:Dimensions.get('window').height/1.7,
+        duration:500,
+        useNativeDriver:false
+      }),
+      Animated.timing(groupOpacity,{
+        toValue:1,
+        duration:500,
+        useNativeDriver:false
+      })
+    ]).start()
+  }
+
   const actionSheetIntropolate = alignment.interpolate({
     inputRange: [0,1],
     outputRange: [-height/2.7+60, 0]
@@ -337,7 +367,7 @@ export default Drawerr = (props) => {
               <Families user={props.user}/>
             </Animated.View>
             <Animated.View style={{width:settingsWidth,height:settingsHeight,opacity:settingsOpacity,justifyContent:'center',alignItems:'center'}}>
-              <Settings />
+              <Settings close={()=>closeSettings()}/>
             </Animated.View>
             <Animated.View style={{height:newGroupFormHeight,width:'100%',opacity:newGroupFormOpacity,justifyContent:'center',alignItems:'center'}}>
               <TouchableOpacity onPress={()=>closeForm()} style={{width:-Dimensions.get('screen').width,height:'8%',borderRadius:10,position:'absolute',top:20,right:25,zIndex:100}}>
