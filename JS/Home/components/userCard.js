@@ -1,7 +1,16 @@
-import React from 'react'
+import React,{ useState } from 'react'
+import { useSelector } from 'react-redux'
 import { View, TouchableOpacity, Text, Image, Dimensions, StyleSheet } from 'react-native'
 
 export default UserCard = (props) => {
+
+    const [permitted,setPermitted] = useState('Ghost')
+
+    useSelector((state)=>{
+        if(permitted != state.settings.permitted){
+            setPermitted(state.settings.permitted)
+        }
+    })
 
         return(
             <TouchableOpacity onPress={()=>alert('Pressed '+props.user.name)} style={{width:Dimensions.get('window').width/1.10}}>
@@ -11,7 +20,7 @@ export default UserCard = (props) => {
                     </View>
                     <View style={{marginHorizontal:'2%'}}>
                         <Text style={{fontSize:20,color:'white'}}>{props.user.name}</Text>
-                        {props.user.permitted == 'Ghost' ? <Text style={{color:'white',width:Dimensions.get('screen').width/1.9}}>Ghost Mode</Text>
+                        {permitted == 'Ghost' ? <Text style={{color:'white',width:Dimensions.get('screen').width/1.9}}>Ghost Mode</Text>
                         : <Text style={{color:'white',width:Dimensions.get('screen').width/1.9}}>{props.user.location}</Text>}
                     </View>
                     <View style={{position:'absolute',right:0,width:'10%'}}>

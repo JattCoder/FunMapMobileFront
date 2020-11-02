@@ -51,9 +51,13 @@ export default Bottomweather = (props) => {
         Geocoder.geocodePosition(Geo).then(res => {
             if(props.position.latitude != 0 && props.position.longitude != 0){
                 position = props.position
-                //location,heading,latitude,longitude,speed
-                if(currentCity != `${res[0].streetName}, ${res[0].locality}, ${res[0].adminArea} ${res[0].postalCode}`){
-                    setcurrentCity(`${res[0].streetName}, ${res[0].locality}, ${res[0].adminArea} ${res[0].postalCode}`)
+                location = ''
+                if(res[0].streetname != null) location += res[0].streetname + ', '
+                if(res[0].locality != null) location += res[0].locality + ', '
+                if(res[0].adminArea != null) location += res[0].adminArea + ' '
+                if(res[0].postalCode != null) location += res[0].postalCode
+                if(currentCity != location){
+                    setcurrentCity(location)
                     if(res[0].locality != city){
                         city = res[0].locality
                         updateLocation()

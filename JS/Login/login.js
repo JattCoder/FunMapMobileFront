@@ -4,6 +4,7 @@ import { TouchableOpacity, TextInput } from 'react-native-gesture-handler'
 import { useSelector, useDispatch } from 'react-redux'
 import { login } from '../../actions/login/login'
 import { reslogin } from '../../actions/login/reslogin'
+import { settings } from '../../actions/settings/settings'
 import Dialog from "react-native-dialog"
 import firebase from 'firebase'
 import LinearGradient from 'react-native-linear-gradient'
@@ -68,9 +69,9 @@ const Login = (props) => {
             if (user.confirmed == false) {
                 props.navigation.navigate('ConfirmEmail',{user: user})
                 dispatch(reslogin())
-            }
-            else{
-                props.navigation.navigate('Home',{user: user})
+            } else{
+                if(state.settings.user_id == -1) dispatch(settings(user.id))
+                else props.navigation.navigate('Home',{user: user})
             }
         }
         if(loginLoad == true) setloginLoad(false)

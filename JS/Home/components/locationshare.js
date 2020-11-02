@@ -1,5 +1,5 @@
-import React,{ useState } from 'react'
-import { updateshare } from '../../../actions/mylocation/updateshare'
+import React,{ useState, useEffect } from 'react'
+import { locshare } from '../../../actions/settings/locShare'
 import { useDispatch, useSelector } from 'react-redux'
 import firebase from 'firebase'
 import { View, Text, Dimensions, TouchableOpacity, StyleSheet } from 'react-native'
@@ -11,8 +11,14 @@ export default Locationshare = () => {
     const [ghostColor,setGhoftColor] = useState('#00BFFF')
     const [fams,setFams] = useState([])
     const [id,setID] = useState(-1)
+    const [settings,setSettings] = useState({})
     const [selection,setSelection] = useState('Ghost')
     const dispatch = useDispatch()
+    const permit = useSelector((state)=>{return state.settings.permitted})
+
+    useEffect(()=>{
+        selecType(permit)
+    },[])
 
     selecType = (selection) => {
         if(selection == 'Public'){
@@ -28,11 +34,11 @@ export default Locationshare = () => {
             setFamilyColor('rgba(142, 144, 145, 0.4)')
             setGhoftColor('#00BFFF')
         }
-        updateChange(selection)
     }
 
     updateChange = (selection) => {
-        //dispatch(updateshare(selection))
+        selecType(selection)
+        dispatch(locshare(id,selection))
         fams.map((group)=>{
             firebase.database().ref('FamilyGroups/'+group[0].id+'/'+id).update({
                 permitted: selection,
@@ -42,22 +48,23 @@ export default Locationshare = () => {
 
     useSelector((state)=>{
         if(fams != state.family){
-            setID(state.login.message.id)
             setFams(state.family)
-            updateChange(state.mylocation.permitted)
+        }
+        if(id != state.login.message.id){
+            setID(state.login.message.id)
         }
     })
 
     return(
         <View style={{width:Dimensions.get('window').width,height:'5%',justifyContent:'center', alignItems:'center',}}>
             <View style={{width:'80%',height:'100%',justifyContent:'center',alignItems:'center',flexDirection:'row',borderColor:'white',borderWidth:1}}>
-                <TouchableOpacity activeOpacity={1} onPress={()=>selecType('Public')} style={[Style.Buttons,{borderRightColor:'white',borderRightWidth:0.5,backgroundColor:publiColor}]}>
+                <TouchableOpacity activeOpacity={1} onPress={()=>updateChange('Public')} style={[Style.Buttons,{borderRightColor:'white',borderRightWidth:0.5,backgroundColor:publiColor}]}>
                     <Text style={Style.ButtonText}>Public</Text>
                 </TouchableOpacity>
-                <TouchableOpacity activeOpacity={1} onPress={()=>selecType('Family')} style={[Style.Buttons,{backgroundColor:familyColor}]}>
+                <TouchableOpacity activeOpacity={1} onPress={()=>updateChange('Family')} style={[Style.Buttons,{backgroundColor:familyColor}]}>
                     <Text style={Style.ButtonText}>Family</Text>
                 </TouchableOpacity>
-                <TouchableOpacity activeOpacity={1} onPress={()=>selecType('Ghost')} style={[Style.Buttons,{borderLeftColor:'white',borderLeftWidth:0.5,backgroundColor:ghostColor}]}>
+                <TouchableOpacity activeOpacity={1} onPress={()=>updateChange('Ghost')} style={[Style.Buttons,{borderLeftColor:'white',borderLeftWidth:0.5,backgroundColor:ghostColor}]}>
                     <Text style={Style.ButtonText}>Ghost</Text>
                 </TouchableOpacity>
             </View>

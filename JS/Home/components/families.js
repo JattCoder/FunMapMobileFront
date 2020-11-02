@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { family } from '../../../actions/families/family'
 import { invitations } from '../../../actions/families/invitations'
 import { View, Text, Dimensions, TouchableOpacity, ActivityIndicator, Animated } from 'react-native'
-import firebase from 'firebase'
+import { famselection } from '../../../actions/settings/famSelection'
 import FamCard from './famCard'
 import Invitations from './invitations'
 
@@ -17,12 +17,14 @@ export default Families = (props) => {
     const [familyHeight] = useState(new Animated.Value(Dimensions.get('screen').height/1.9))
     const [familyOpacity] = useState(new Animated.Value(1))
     const dispatch = useDispatch()
+    const selectedFam = useSelector((state) => {return state.settings.familySelection})
 
     useEffect(()=>{
         if(props.user.id) {
             dispatch(family(props.user.id))
             dispatch(invitations(props.user.id))
         }
+        setFam(selectedFam)
     },[props.user.id])
 
     useSelector((state)=>{
@@ -38,16 +40,20 @@ export default Families = (props) => {
     nextFamily = () => {
         if(fam + 1 >= fams.length){
             setFam(0)
+            dispatch(famselection(props.user.id,0))
         }else{
             setFam(fam+1)
+            dispatch(famselection(props.user.id,fam+1))
         }
     }
 
     prevFamily = () => {
         if(fam - 1 < 0){
             setFam(fams.length - 1)
+            dispatch(famselection(props.user.id,fams.length - 1))
         }else{
             setFam(fam-1)
+            dispatch(famselection(props.user.id,fam-1))
         }
     }
 

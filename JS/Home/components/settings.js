@@ -1,24 +1,65 @@
 import React,{ useState } from 'react'
-import LinearGradient from 'react-native-linear-gradient'
+import { useSelector, useDispatch } from 'react-redux'
+import { settingsupdate } from '../../../actions/settings/settingupdate' 
 import { View, StyleSheet, Dimensions, ScrollView, Switch, Text, Image } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 
 export default Settings = (props) => {
 
+    const [uid,setUid] = useState(-1)
     const [drivingMode,setDrivingMode] = useState(false)
-    const drivingSwitch = () => setDrivingMode(previousState => !previousState);
+    const drivingSwitch = () => setDrivingMode(previousState => !previousState)
     const [avoidHighways,setAvoidHighways] = useState(false)
-    const highwaySwitch = () => setAvoidHighways(previousState => !previousState);
+    const highwaySwitch = () => setAvoidHighways(previousState => !previousState)
     const [avoidTolls,setAvoidTolls] = useState(false)
-    const tollsSwitch = () => setAvoidTolls(previousState => !previousState);
+    const tollsSwitch = () => setAvoidTolls(previousState => !previousState)
     const [avoidFerries,setAvoidFerries] = useState(false)
-    const ferriesSwitch = () => setAvoidFerries(previousState => !previousState);
+    const ferriesSwitch = () => setAvoidFerries(previousState => !previousState)
     const [temperature,setTemperature] = useState(false)
-    const temperatureSwitch = () => setTemperature(previousState => !previousState);
+    const temperatureSwitch = () => setTemperature(previousState => !previousState)
+    const [added,setAdded] = useState(false)
+    const dispatch = useDispatch()
+
+    // {"backgroundColor": "", "drivingMode": "driving", "familySelection": 0, "ferries": false, 
+    // "highways": false, "id": 1, "permitted": "Ghost", "temperature": "F°", "tolls": false, "user_id": 1}
+
+    saveAndExit = () => {
+        props.close()
+        dispatch(settingsupdate({
+            drivingMode: drivingMode == false ? 'driving' : 'walking',
+            highways: avoidHighways,
+            tolls: avoidTolls,
+            ferries: avoidFerries,
+            temperature: temperature == false ? 'C°' : 'F°',
+        },uid))
+    }
+
+    useSelector((state)=>{
+        if(added == false){
+            set = state.settings
+            setUid(set.user_id)
+            if(drivingMode != (set.drivingMode == 'driving' ? false : true)){
+                setDrivingMode(previousState => !previousState)
+            }
+            if(avoidHighways != set.avoidHighways){
+                setAvoidHighways(previousState => !previousState)
+            }
+            if(avoidTolls != set.avoidTolls){
+                setAvoidTolls(previousState => !previousState)
+            }
+            if(avoidFerries != set.avoidFerries){
+                setAvoidFerries(previousState => !previousState)
+            }
+            if(temperature != (set.temperature == 'F°' ? true : false)){
+                setTemperature(previousState => !previousState)
+            }
+            setAdded(true)
+        }
+    })
 
     return(
         <View style={Styles.Page}>
-            <TouchableOpacity onPress={()=>props.close()} style={{width:'100%',height:'4%'}}>
+            <TouchableOpacity onPress={()=>saveAndExit()} style={{width:'100%',height:'4%'}}>
                     <View style={{justifyContent:'center',position:'absolute',alignItems:'center',flexDirection:'row'}}>
                         <Image style={{height:20,width:20}} source={require('../../settingsIcons/back.png')}/>
                         <Text style={{color:'white',fontSize:20}}>Family</Text>
@@ -34,7 +75,8 @@ export default Settings = (props) => {
                     <View style={Styles.Tab}>
                         <View style={{position:'absolute',left:25,flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
                             <Image style={{height:30,width:30}} source={require('../../settingsIcons/mode.png')}/>
-                            <Text style={{fontweight:'bold',fontSize:16,color:'black'}}>   Driving Mode</Text>
+                            {drivingMode == false ? <Text style={{fontweight:'bold',fontSize:16,color:'black'}}>   Driving</Text>
+                            : <Text style={{fontweight:'bold',fontSize:16,color:'black'}}>   Walking</Text>}
                         </View>
                         <Switch trackColor={{ false: "#fed8b1", true: "#FF8C00" }}
                                 thumbColor={drivingMode ? "white" : "#FF8C00"}
@@ -97,7 +139,8 @@ export default Settings = (props) => {
                     <View style={Styles.Tab}>
                         <View style={{position:'absolute',left:25,flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
                             <Image style={{height:30,width:30}} source={require('../../settingsIcons/temp.png')}/>
-                            <Text style={{fontweight:'bold',fontSize:16,color:'black'}}>   Temperature</Text>
+                            {temperature == true ? <Text style={{fontweight:'bold',fontSize:16,color:'black'}}>   {'F°'}</Text>
+                            : <Text style={{fontweight:'bold',fontSize:16,color:'black'}}>   {'C°'}</Text>}
                         </View>
                         <Switch trackColor={{ false: "#767577", true: "#38ef7d" }}
                                 thumbColor={temperature ? "white" : "#38ef7d"}
