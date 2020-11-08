@@ -24,7 +24,7 @@ export default Account = (props) => {
     const [autoLogin,setAutoLogin] = useState(false)
     const interpolateColor = interpolatecolor.interpolate({
         inputRange: [0,150],
-        outputRange: ['#00BFFF','#696969']
+        outputRange: ['#00BFFF','#2C5364']
     })
 
     animateIt = () => {
@@ -237,7 +237,8 @@ export default Account = (props) => {
     }
 
     return(
-        <View style={{height:'160%',width:'100%'}}>
+        <View style={{height:'100%',width:'100%'}}>
+            <TouchableOpacity onPress={()=>props.close()} style={{zIndex:100,height:'10%',width:'10%',position:'absolute',right:0}}><Image style={{height:'60%',width:'60%'}} source={require('../../settingsIcons/close.png')}/></TouchableOpacity>
             <Animated.View style={{opacity:passChangeOpacity,height:passChangeHeight}}>
                 <TouchableOpacity onPress={()=>closePasswordChange()} activeOpacity={1} style={{flexDirection:'row',width:'100%',alignItems:'center',marginHorizontal:'3%'}}>
                     <Image style={{height:20,width:20}} source={require('../../settingsIcons/back.png')}/>
@@ -267,25 +268,25 @@ export default Account = (props) => {
             <View style={{marginHorizontal:'10%'}}>
                 <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
                     <Shimmer>
-                        <Text style={{fontSize:25}}>{props.user.name}</Text>
+                        <Text style={{fontSize:25,color:'white',fontWeight:'bold'}}>{props.user.name}</Text>
                     </Shimmer>
                 </View>
                 <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
-                    <Text style={{fontSize:15}}>{props.user.email}</Text>
+                    <Text style={{fontSize:15,color:'white'}}>{props.user.email}</Text>
                 </View>
-                <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
-                    <Text>{props.user.phone}</Text>
-                </View>
-                <View style={{flexDirection:'row',alignItems:'center',borderRadius:50,borderWidth:0.3,height:'20%',paddingHorizontal:'5%',marginTop:'5%'}}>
-                    <Text style={{fontSize:20}}>Member</Text>
+                {props.user.phone != '' ? <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
+                    <Text style={{color:'white'}}>{props.user.phone}</Text>
+                </View> : null}
+                <View style={{flexDirection:'row',alignItems:'center',borderRadius:10,borderWidth:0.3,height:'20%',paddingHorizontal:'5%',marginTop:'5%'}}>
+                    <Text style={{fontSize:20,fontWeight:'bold',color:'white'}}>Member</Text>
                     <TouchableOpacity style={{borderWidth:0.5,height:'60%',marginHorizontal:'1.5%'}}/>
                     {props.user.member_type == 'Premium' || props.user.member_type == 'Temp' ? <Text style={{fontSize:18}}>Premium</Text> 
                     : <View><Text>Basic</Text><Text style={{right:0}}>Upgrade</Text></View>}
                 </View>
                 <View style={{width:'100%',height:'15%',marginTop:'3%',justifyContent:'center',alignItems:'center',flexDirection:'row'}}>
-                    <Text>Auto-Login</Text>
-                    <Switch trackColor={{ true: "#767577", false: "#767577" }}
-                        thumbColor={!autoLogin ? "#00BFFF" : "#f4f3f4"} onValueChange={()=>autoLoginHandler()} value={autoLogin} style={{marginHorizontal:'3%'}}/>
+                    <Text style={{fontWeight:'bold',color:'white'}}>Auto-Login</Text>
+                    <Switch trackColor={{ true: "#0F2027", false: "#00BFFF" }}
+                        thumbColor={!autoLogin ? "#00BFFF" : "#00BFFF"} onValueChange={()=>autoLoginHandler()} value={autoLogin} style={{marginHorizontal:'3%'}}/>
                 </View>
             </View>
             <View style={{width:'100%',position:'absolute',bottom:0,justifyContent:'center',alignItems:'center'}}>
@@ -320,7 +321,7 @@ const Style = StyleSheet.create({
         height: 95,
         borderRadius: 100,
         position:'absolute',
-        backgroundColor:'#D3D3D3',
+        backgroundColor:'#2C5364',
         shadowColor: "#00BFFF",
         shadowOffset: {
 	        width: 0,

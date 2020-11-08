@@ -1,6 +1,6 @@
 import React,{ useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import mylocation from '../../../actions/mylocation/mylocation'
+import { mylocation } from '../../../actions/mylocation/mylocation'
 import Geocoder from 'react-native-geocoder-reborn'
 import firebase from 'firebase'
 import Checkbattery from './checkbattery'
@@ -13,7 +13,7 @@ export default Bottomweather = (props) => {
         temp:0,
         icon:''
     })
-    const[message,setmessage] = useState('')
+    const[temp,setTemp] = useState('F°')
     const[fams,setFams] = useState([])
     const[id,setID] = useState(-1)
     const dispatch = useDispatch()
@@ -25,14 +25,31 @@ export default Bottomweather = (props) => {
             setFams(state.family)
             setID(state.login.message.id)
         }
+        if(temp != state.settings.temperature) setTemp(state.settings.temperature)
     })
 
     useEffect(()=>{
         geocode()
     },[props.position.latitude,props.position.longitude])
 
-    updateLocation = () => {
+    updateLocation = (location,res) => {
         fams.length > 0 && id != -1 ? fams.map((fam)=>{
+            dispatch(mylocation({
+                latitude: props.position.latitude,
+                longitude: props.position.longitude,
+                speed: props.position.speed,
+                heading: props.position.heading,
+                altitude: props.position.altitude,
+                altitudeAccuracy: props.position.altitudeAccuracy,
+                accuracy: props.position.accuracy,
+                complete: location,
+                street: res.streetName,
+                city: res.locality,
+                state: res.adminArea,
+                zip: res.postalCode,
+                permitted: true,
+                message: ''
+            }))
             firebase.database().ref(`FamilyGroups/${fam[0].id}/${id}`).update({
                 location: currentCity,
                 heading: position.heading,
@@ -52,22 +69,29 @@ export default Bottomweather = (props) => {
             if(props.position.latitude != 0 && props.position.longitude != 0){
                 position = props.position
                 location = ''
-                if(res[0].streetname != null) location += res[0].streetname + ', '
+                if(res[0].streetName != null) location += res[0].streetName + ', '
                 if(res[0].locality != null) location += res[0].locality + ', '
                 if(res[0].adminArea != null) location += res[0].adminArea + ' '
                 if(res[0].postalCode != null) location += res[0].postalCode
                 if(currentCity != location){
                     setcurrentCity(location)
+                    updateLocation(location,res[0])
                     if(res[0].locality != city){
                         city = res[0].locality
-                        updateLocation()
                         fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=726db19d90971027a329515b851bfddc`)
                         .then(res => {return res.json()})
                         .then(data => {
-                            setweather({
-                                temp: Math.round((parseInt(data.main.temp)-273.15)*9/5+32),
-                                icon: data.weather[0].icon
-                            })
+                            if(temp == 'F°'){
+                                setweather({
+                                    temp: Math.round((parseInt(data.main.temp)-273.15)*9/5+32)+' '+temp,
+                                    icon: data.weather[0].icon
+                                })
+                            }else if(temp == 'C°'){
+                                setweather({
+                                    temp: Math.round(parseInt(data.main.temp)-273.15)+' '+temp,
+                                    icon: data.weather[0].icon
+                                })
+                            }
                         })
                         .catch(err => console.log('Weather Error: ',err.message))
                     }
@@ -106,7 +130,7 @@ export default Bottomweather = (props) => {
                     </View> : null}
                     {wther.icon != '' ? <View style={{justifyContent:'center',alignItems:'center'}}>
                         <Image style={{height:35,width:35}} source={{uri: `http://openweathermap.org/img/wn/${wther.icon}@2x.png`}}/>
-                        <Text style={{color:'white'}}>{wther.temp} F</Text>
+                        <Text style={{color:'white'}}>{wther.temp}</Text>
                     </View>:null}
                 </View>
             </View> : null}
