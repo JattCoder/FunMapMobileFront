@@ -9,6 +9,8 @@ import Location from '../FindMe/location'
 import Navigate from '../Components/navigation/navigate'
 import Drawerr from './drawer'
 import Search from './components/search'
+import { bottomsheet } from '../../actions/animation/bottomsheet'
+import { clearsearch } from '../../actions/submitsearch/clearsearch'
 import LinearGradient from 'react-native-linear-gradient'
 
 const dimensions = Dimensions.get('screen')
@@ -23,7 +25,7 @@ const Home = (props) => {
     const [map,setmap] = useState({})
     const [search,setsearch] = useState([])
     const [mrkrInfo,setmrkrInfo] = useState(false)
-    const [slimit,setspeed] = useState(3)
+    const [slimit,setspeed] = useState(0)
     const [currentFamily,setCurrentFamily] = useState([])
     const [regionPosition, setRegPosition] = useState({
         latitude: 0,
@@ -49,26 +51,30 @@ const Home = (props) => {
         heading: 0,
         speed: 0,
     })
-    let speed = 0
 
     useEffect(() => {
         setuser(props.route.params.user)
-    })
+    },[props.route.params.user])
 
     whereAmI = () => {
+      if(userPosition.speed == 0){
+        map.animateCamera({center: {
+          latitude: userPosition.latitude,
+          longitude: userPosition.longitude,
+        },
+        altitude: 500,
+        heading: userPosition.heading,
+        pitch: userPosition.speed,
+        zoom: 17})
+      }
       setfollowme(true)
-      setspeed(1)
-      map.animateCamera({center: {
-        latitude: userPosition.latitude,
-        longitude: userPosition.longitude,
-      },
-      altitude: 500,
-      heading: userPosition.heading,
-      pitch: userPosition.speed,
-      zoom: 18})
+      setspeed(0)
     }
 
     useSelector((state)=>{
+        if(state.marker.name != ''){
+          //alert('marker is selected')
+        }
         if(state.mapfamily != currentFamily){
           setCurrentFamily(state.mapfamily)
         }
@@ -86,7 +92,7 @@ const Home = (props) => {
           whereAmI()
         }
         if(followme == true){
-            if(state.placesearch.length > 0) {
+            if(search != state.placesearch) {
                 setsearch(state.placesearch)
             }
             if(state.marker.name != '' && mrkrInfo == false){
@@ -105,46 +111,42 @@ const Home = (props) => {
             <View style={Styles.Page}>
                 <MapView provider={PROVIDER_GOOGLE}
                     ref={ref => { setmap(ref) }}
+                    onLongPress={()=>alert('Need Urgent Help?')}
                     followsUserLocation={true}
                     showsUserLocation={showme}
                     showsBuildings={true}
                     showsPointsOfInterest={false}
-                    onPanDrag={()=> {if(speed > slimit){
-                      alert('You are not allowed to use app whilte driving for safety concerns')
-                    }}}
+                    onPanDrag={()=> setspeed(2000)}
                     onUserLocationChange={(userlocation)=>{
                         loc = userlocation.nativeEvent.coordinate
-                        speed = loc.speed
                         zoom = 0
-                        if(loc.speed > slimit){
-                          if(followme == true){
-                            if(loc.speed > 2 && loc.speed <= 7) zoom = 18.5
-                            else if(loc.speed > 7 && loc.speed <= 30) zoom = 18
-                            else if(loc.speed > 30 && loc.speed <= 65) zoom = 17
-                            else zoom = 16
-                            map.animateCamera({center: {
-                              latitude: loc.latitude,
-                              longitude: loc.longitude,
-                            },
-                            altitude: 500,
+                        if(loc.speed > 2 && loc.speed <= 7) zoom = 18.5
+                          else if(loc.speed > 7 && loc.speed <= 30) zoom = 18
+                          else if(loc.speed > 30 && loc.speed <= 65) zoom = 17
+                          else zoom = 16
+                          setRegPosition({
+                            latitude: loc.latitude,
+                            longitude: loc.longitude,
+                            speed: loc.speed,
                             heading: loc.heading,
-                            pitch: loc.speed,
-                            zoom: zoom})
-                            setRegPosition({
-                              latitude: loc.latitude,
-                              longitude: loc.longitude,
-                              speed: loc.speed,
-                              heading: loc.heading,
-                              altitude: loc.altitude,
-                              altitudeAccuracy: loc.altitudeAccuracy,
-                              accuracy: loc.accuracy,
-                              complete: '',
-                              street: '',
-                              city: '',
-                              state: '',
-                              zip: ''
-                            })
-                          }
+                            altitude: loc.altitude,
+                            altitudeAccuracy: loc.altitudeAccuracy,
+                            accuracy: loc.accuracy,
+                            complete: '',
+                            street: '',
+                            city: '',
+                            state: '',
+                            zip: ''
+                          })
+                        if(loc.speed >= slimit && followme == true){
+                          map.animateCamera({center: {
+                            latitude: loc.latitude,
+                            longitude: loc.longitude,
+                          },
+                          altitude: 500,
+                          heading: loc.heading,
+                          pitch: loc.speed,
+                          zoom: zoom})
                         }
                     }}
                     customMapStyle={mapStyle}
@@ -155,13 +157,9 @@ const Home = (props) => {
                       latitudeDelta: 100.009,
                       longitudeDelta: 20.0009,
                     }}>
-                        
                         {userPosition.latitude == 0 ? <Navigate /> : null}
                         {search.map((place)=>{
-                            return <Marker key={place.id} style={{justifyContent:'center',alignItems:'center'}} onPress={()=>dispatch(selmarker(place))} coordinate={{latitude: place.geo.lat, longitude: place.geo.lng}}>
-                                {/* <Infowindow place={place}/> */}
-                                <Mrker place={place} style={style={width:25,height:35}}/>
-                            </Marker>
+                            return <Marker key={place.id} onPress={()=>{dispatch(selmarker(place)),dispatch(bottomsheet('Search'))}} coordinate={{latitude: place.geo.lat, longitude: place.geo.lng}}/>
                         })}
                 </MapView>
             </View>
@@ -172,7 +170,7 @@ const Home = (props) => {
               <Search position={userPosition}/>
             </View>
             <View style={{width:dimensions.width,bottom:0,position:'absolute'}}>
-              <Drawerr user={user} regionPosition={regionPosition}/>
+              <Drawerr user={user} regionPosition={regionPosition} followMe={()=>whereAmI()} logout={props.navigation}/>
             </View>
         </View>
     )

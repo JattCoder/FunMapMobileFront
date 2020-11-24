@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "626824452588",
+    "firebase_url": "https://maps-8a2af.firebaseio.com",
+    "project_id": "maps-8a2af",
+    "storage_bucket": "maps-8a2af.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:626824452588:android:1fd0a29a4519c3d36108c9",
+        "android_client_info": {
+          "package_name": "com.mobilefront"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "626824452588-q4pq72429oltcqdte0h9jt0rogen0hco.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkAjcWY8SHwx5gpF1vck-KvxCUff4KCUA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "626824452588-vrtednti8ll3j9k170cv75leqieaajb7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "626824452588-3gdobdn6daso63oo8q1as4kcefuc29qq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.Project"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

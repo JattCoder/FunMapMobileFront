@@ -1,19 +1,29 @@
+import auth from '@react-native-firebase/auth'
+import firebase from 'firebase'
 export const LOGIN = 'LOGIN'
 
-export const login = (email,pass,method,mac) => {
-    return async (dispatch) => {
-        var url = new URL("http://localhost:3000/login"),
-            params = {em: email, ps: pass, method, mac}
-            Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
-        return await fetch(url)
-        .then(res => {return res.json()})
-        .then(data => {dispatch({type: LOGIN, payload: data})})
-        .catch(err => {
-            let error = {
-                code: 'Error: Network',
-                message: err.message,
-                result: false
+export const login = (email,pass,mac) => {
+    return (dispatch) => {
+        let punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~]/g
+        let spaceRE = /\s+/g
+        auth()
+        .signInWithEmailAndPassword(email,pass)
+        .then((usr)=>{
+            console.warn(email.replace(punctuation,'').replace(spaceRE,''))
+            firebase.database().ref(`Users/`+email.replace(punctuation,'').replace(spaceRE,''))
+            .on('value', snapshot => {
+                if(snapshot.val().mac == mac) dispatch({type: LOGIN, message: snapshot, result: true})
+                else dispatch({type: LOGIN, message: {error: 'Please Logout from other device first '}, result: false})
+            })
+        })
+        .catch((err)=>{
+            if(err.code === 'auth/wrong-password'){
+                console.warn('Incorrect Password')
+            }else if(err.code === 'auth/user-not-found'){
+                console.warn('Account Not Found')
+            }else if(err.code === 'auth/invalid-email'){
+                console.warn('Invalid Email')
             }
-            dispatch({type: LOGIN, payload: error})})
+        })
     }
 }

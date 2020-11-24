@@ -1,5 +1,5 @@
 import React,{ useState } from 'react'
-import { useSelector } from 'react-redux' 
+import { useSelector, useDispatch } from 'react-redux' 
 import Locationshare from './components/locationshare'
 import Bottomweather from '../Components/bottomweather/bottomweather'
 import NewFamily from './components/newFamily'
@@ -8,6 +8,8 @@ import Uimage from './uimage'
 import PlaceSearchResults from './components/placeSearchResults'
 import LinearGradient from 'react-native-linear-gradient'
 import Settings from './components/settings'
+import { bottomsheet } from '../../actions/animation/bottomsheet'
+import { clemarker } from '../../actions/marker/clemarker';
 import { StyleSheet, Animated, View, ScrollView, TouchableOpacity, Image, Dimensions, Text } from 'react-native'
 const { width, height } = Dimensions.get('screen')
 let closeButtonsTimeout
@@ -16,8 +18,8 @@ export default Drawerr = (props) => {
 
   const [backColor,setBackColor] = useState(['#00B4DB','#1CB5E0','#000046'])
   const [alignment] = useState(new Animated.Value(0))
-  const [sheetHeight] = useState(new Animated.Value(height/2.4))
-  const [headingMargin] = useState(new Animated.Value(16))
+  const [sheetHeight] = useState(new Animated.Value(height/7.4))
+  const [headingMargin] = useState(new Animated.Value(40))
   const [bottomViewOpacity] = useState(new Animated.Value(0))
   const [bottomViewHeight] = useState(new Animated.Value(0))
   const [menuButtonSize] = useState(new Animated.Value(50))
@@ -36,6 +38,7 @@ export default Drawerr = (props) => {
   const [settingsWidth] = useState(new Animated.Value(0))
   const [settingsOpacity] = useState(new Animated.Value(0))
   const [menuOpen,setMenuOpen] = useState(false)
+  const dispatch = useDispatch()
 
   const bringUpActionSheet = () => {
     Animated.parallel([
@@ -75,12 +78,12 @@ export default Drawerr = (props) => {
         useNativeDriver:false
       }).start(),
       Animated.timing(sheetHeight,{
-        toValue:height/2.4,
+        toValue:height/7.4,
         duration:500,
         useNativeDriver:false
       }),
       Animated.timing(headingMargin,{
-        toValue:16,
+        toValue:40,
         duration:500,
         useNativeDriver:false
       }),
@@ -291,7 +294,7 @@ export default Drawerr = (props) => {
 
   const actionSheetIntropolate = alignment.interpolate({
     inputRange: [0,1],
-    outputRange: [-height/2.7+60, 0]
+    outputRange: [-height/12.7+60, 0]
   })
 
   const actionSheetStyle = {
@@ -300,7 +303,7 @@ export default Drawerr = (props) => {
 
   guestureHandler = (e) => {
     if(e.nativeEvent.contentOffset.y > 0) bringUpActionSheet()
-    else if(e.nativeEvent.contentOffset.y < 0) {hideTheActionSheet(),setMenuOpen(false)}
+    else if(e.nativeEvent.contentOffset.y < 0) {hideTheActionSheet(),dispatch(bottomsheet('')),dispatch(clemarker()),setMenuOpen(false)}
   }
 
   useSelector((state)=>{
@@ -315,12 +318,12 @@ export default Drawerr = (props) => {
           useNativeDriver:false
         }),
         Animated.timing(sheetHeight,{
-          toValue:height/2.5,
+          toValue:height/2.4,
           duration:500,
           useNativeDriver:false
         }),
         Animated.timing(headingMargin,{
-          toValue:-10,
+          toValue:5,
           duration:500,
           useNativeDriver:false
         }),
@@ -330,7 +333,7 @@ export default Drawerr = (props) => {
           useNativeDriver:false
         }),
         Animated.timing(searchResultsHeight,{
-          toValue:Dimensions.get('window').height/1.4,
+          toValue:Dimensions.get('window').height/3.1,
           duration:500,
           useNativeDriver:false
         }),
@@ -355,7 +358,7 @@ export default Drawerr = (props) => {
        <LinearGradient colors={['#00B4DB','#1CB5E0','#000046']} style={{height:'100%',width:'100%',alignItems:'center',borderTopLeftRadius:25,borderTopRightRadius:25,}}>
         <ScrollView onScroll={(e)=>guestureHandler(e)} style={{width:80,height:10,borderTopWidth:3,marginTop:10,borderColor:'white',zIndex:100}} />
         <Animated.View style={{width:Dimensions.get('screen').width,height:'20%',position:'absolute',flexDirection:'row',marginTop:headingMargin,marginHorizontal:'5%',alignItems:'center'}}>
-          <TouchableOpacity onPress={()=>alert('Pressed')} style={{flexDirection:'row',justifyContent:'center',alignItems:'center',marginHorizontal:'5%'}}>
+          <TouchableOpacity onPress={()=>props.followMe()} style={{flexDirection:'row',justifyContent:'center',alignItems:'center',marginHorizontal:'5%',zIndex:150}}>
             <TouchableOpacity style={[Styles.ImageBox,{height:45,width:45}]}>
               {props.user.photo != '' ? <Image source={{ uri: user.image }} /> : <Uimage name={user.name} />}
             </TouchableOpacity>

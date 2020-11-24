@@ -4,7 +4,7 @@ import { register } from '../../actions/register/register'
 import { resregister } from '../../actions/register/resregister'
 import { View, StyleSheet, TouchableOpacity, Text, TextInput, ActivityIndicator } from 'react-native'
 import DeviceInfo from 'react-native-device-info'
-import LinearGradient from 'react-native-linear-gradient';
+import LinearGradient from 'react-native-linear-gradient'
 
 const Register = (props) => {
 
@@ -31,7 +31,7 @@ const Register = (props) => {
         else{
             setregisterLoad(true)
             DeviceInfo.getMacAddress().then(mac => {
-                dispatch(register(name,email,phone,photo,pass,code,'App',mac))
+                dispatch(register(name,email,phone,photo,pass,code,mac))
             });
         }
     }

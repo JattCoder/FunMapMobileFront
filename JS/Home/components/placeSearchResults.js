@@ -1,62 +1,44 @@
 import React,{ useState } from 'react'
 import { View, Text, Dimensions, ScrollView, Image, StyleSheet } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
-import { clearsearch } from '../../../actions/submitsearch/clearsearch'
-import { TouchableOpacity } from 'react-native-gesture-handler'
 import ResultsIcon from '../../Components/resultsIcon/resultsIcon'
 import LinearGradient from 'react-native-linear-gradient'
+import { ceil } from 'react-native-reanimated'
 
 export default PlaceSearcgResults = () => {
 
-    const [places,setPlaces] = useState([])
-    const [myPos,setMyPos] = useState({
-        lat:0,
-        lng:0
+    const [placeInfo,setPlaceInfo] = useState({
+        name:''
     })
     const dispatch = useDispatch() 
 
     useSelector((state)=>{
-        if(state.placesearch.length > 0){
-            setPlaces(state.placesearch)
-            dispatch(clearsearch())
-        }
-        //latitude": 37.39248364, "longitude":
-        if(myPos.lat != state.mylocation.latitude && myPos.lng != state.mylocation.longitude){
-            setMyPos({
-                lat: state.mylocation.latitude,
-                lng: state.mylocation.longitude
-            })
+        if(state.marker != placeInfo){
+            setPlaceInfo(state.marker)
         }
     })
 
-    // {"address": "10110 N De Anza Blvd, Cupertino, CA 95014, United States",
-    //  "geo": {"lat": 37.3245611, "lng": -122.0313944},
-    //   "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/worship_general-71.png",
-    //    "id": "0", "name": "Saint Joseph of Cupertino Parish",
-    //     "placeid": "ChIJ0wTIbK61j4ARHH-5GLpV864", "rating": 4.3,
-    //      "status": false,
-    //       "types": ["church", "place_of_worship", "school", "point_of_interest", "establishment"]}
-
-    return(
-        <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/1.5,alignItems:'center'}}>
-            <ScrollView showsVerticalScrollIndicator={false} style={{width:'95%',height:'100%',marginVertical:'5%',borderRadius:10,borderWidth:0.5,borderColor:'white'}}>
-                {places.map((place)=>{
-                   return <TouchableOpacity key={place.id} onPress={()=>console.warn(place)} style={Styles.Item}>
-                        <View style={{width:'15%'}}>
-                            <ResultsIcon icon={place.icon} rating={place.rating} geo={place.geo} mygeo={myPos}/>
-                        </View>
-                        <View style={{marginLeft:'2%'}}>
-                            <Text style={{fontWeight:'bold',fontSize:15,color:'white',width:Dimensions.get('window').width/1.4}}>{place.name}</Text>
-                            <Text style={{fontSize:13,color:'white',width:Dimensions.get('window').width/1.4}}>{place.address}</Text>
-                        </View>
-                    </TouchableOpacity>
-                })}
-            </ScrollView>
-        </View>
-    )
+    return( placeInfo.name != '' ? <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/1.5,alignItems:'center'}}>
+        <View style={Styles.Icon}><Image style={{height:'50%',width:'50%',padding:'10%'}} source={{uri:placeInfo.icon}}/></View>
+        <Text style={{fontWeight:'bold',color:'white',fontSize:20,margin:'5%'}}>{placeInfo.name}</Text>
+        <Text>{placeInfo.formatted_address}</Text>
+    </View> : null )
 }
 
 const Styles = StyleSheet.create({
+    Icon:{
+        width:Dimensions.get('screen').width/7.2,
+        height:Dimensions.get('screen').height/17.2,
+        borderRadius:50,borderLeftColor:'white',
+        borderTopColor:'rgba( 0, 0, 0, 0.0)',
+        borderBottomColor:'white',
+        borderRightColor:'white',
+        borderWidth:1,
+        justifyContent:'center',
+        alignItems:'center',
+        borderLeftWidth:2,
+        borderRightWidth:2
+    },
     Outer:{
         justifyContent:'center',
         alignItems:'center',

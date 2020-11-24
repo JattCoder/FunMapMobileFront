@@ -1,5 +1,5 @@
 import React,{ useState, useEffect } from 'react'
-import { View, Text, StyleSheet, Image, ActivityIndicator, Dimensions } from 'react-native'
+import { View, Text, StyleSheet, Image, ActivityIndicator, Dimensions, Animated } from 'react-native'
 import { TouchableOpacity, TextInput } from 'react-native-gesture-handler'
 import { useSelector, useDispatch } from 'react-redux'
 import { login } from '../../actions/login/login'
@@ -9,23 +9,62 @@ import Dialog from "react-native-dialog"
 import firebase from 'firebase'
 import LinearGradient from 'react-native-linear-gradient'
 import DeviceInfo from 'react-native-device-info'
+import auth from '@react-native-firebase/auth'
+import Shimmer from 'react-native-shimmer'
+import Facebook from './facebook'
+
+const punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~]/g
+const spaceRE = /\s+/g
 
 const Login = (props) => {
-    const[loginLoad,setloginLoad] = useState(false)
     const[googleLoad,setgoogleLoad] = useState(false)
     const[tries,settries] = useState(0)
     const[message,setmessage] = useState('Detected Multiple Attempts, Would you like to recover your account?')
     const[email,setemail] = useState('')
     const[pass,setpass] = useState('')
+    const[emailPassHeight] = useState(new Animated.Value(1))
+    const[emailPassOpacity] = useState(new Animated.Value(1))
+    const[socialHeight] = useState(new Animated.Value(0))
+    const[socialOpacity] = useState(new Animated.Value(0))
+    const[HoldGoogle] = useState(new Animated.Value(60))
+    const[HoldFacebook] = useState(new Animated.Value(60))
+    const[HoldTwitter] = useState(new Animated.Value(60))
+    const[GoogleOpacity] = useState(new Animated.Value(0))
+    const[FacebookOpacity] = useState(new Animated.Value(0))
+    const[TwitterOpacity] = useState(new Animated.Value(0))
+    const[GoogleBottom] = useState(new Animated.Value(-150))
+    const[FacebookBottom] = useState(new Animated.Value(-150))
+    const[TwitterBottom] = useState(new Animated.Value(-150))
+    const[GoogleShadow] = useState(new Animated.Value(16))
+    const[FacebookShadow] = useState(new Animated.Value(16))
+    const[TwitterShadow] = useState(new Animated.Value(16))
+    const[GoogleShadowColor] = useState(new Animated.Value(0))
+    const[FacebookShadowcolor] = useState(new Animated.Value(0))
+    const[TwitterShadowColor] = useState(new Animated.Value(0))
+    const[LoginSize] = useState(new Animated.Value(2))
+    const[LoginOpacity] = useState(new Animated.Value(1))
+    const[LoadSize] = useState(new Animated.Value(0))
+    const[LoadOpacity] = useState(new Animated.Value(0))
+    const[LoginLoad] = useState(new Animated.Value(0))
+    const[selection,setSelection] = useState(false)
     const dispatch = useDispatch()
 
     useEffect(()=>{
         if (!firebase.apps.length) {
             firebase.initializeApp({
+                authDomain: "maps-8a2af.firebaseapp.com",
                 databaseURL: "https://maps-8a2af.firebaseio.com",
                 projectId: "maps-8a2af"
             });
         }
+        auth().onAuthStateChanged(user => {
+            if(user){
+                firebase.database().ref(`Users/${user.email.replace(punctuation,'').replace(spaceRE,'')}`)
+                .once('value',snapshot => {
+                    console.warn(`Welcome ${snapshot.val().name}`)
+                })
+            }
+        })
     })
 
     LoginAttempt = () => {
@@ -34,13 +73,444 @@ const Login = (props) => {
             else if(pass == '') alert('Password field is empty')
         }else{
             settries(tries+1)
-            if(loginLoad != true || googleLoad != true){
-                setloginLoad(true)
-                DeviceInfo.getMacAddress().then(mac => {
-                    dispatch(login(email,pass,'App',mac))
-                });
-            }
+            DeviceInfo.getMacAddress().then(mac => {
+                emailPassLogin(mac)
+            });
         }
+    }
+
+    emailPassLogin = (mac) => {
+        Animated.timing(LoginSize,{
+            toValue: 2,
+            duration: 100,
+            useNativeDriver: false
+        }).start(()=>{
+            Animated.parallel([
+                Animated.timing(LoginSize,{
+                    toValue: 0,
+                    duration: 200,
+                    useNativeDriver: false
+                }),
+                Animated.timing(LoginOpacity,{
+                    toValue:0,
+                    duration:150,
+                    useNativeDriver:false
+                })
+            ]).start(()=>{
+                Animated.parallel([
+                    Animated.timing(LoadSize,{
+                        toValue:2,
+                        duration:150,
+                        useNativeDriver:false
+                    }),
+                    Animated.timing(LoadOpacity,{
+                        toValue:1,
+                        duration:50,
+                        useNativeDriver:false
+                    })
+                ]).start(()=>{
+                    Animated.timing(LoadSize,{
+                        toValue:1,
+                        duration:100,
+                        useNativeDriver:false
+                    })
+                })
+            })
+        })
+        auth()
+        .signInWithEmailAndPassword(email,pass)
+        .then((usr)=>{
+            firebase.database().ref(`Users/`+email.replace(punctuation,'').replace(spaceRE,''))
+            .on('value', snapshot => {
+                console.warn(snapshot.val())
+                // if(snapshot.val().mac == mac) dispatch(login(snapshot,))
+                // else alert('First Log-Out from other device')
+            })
+        })
+        .catch((err)=>{
+            if(err.code === 'auth/wrong-password'){
+                console.warn('Incorrect Password')
+            }else if(err.code === 'auth/user-not-found'){
+                console.warn('Account Not Found')
+            }else if(err.code === 'auth/invalid-email'){
+                console.warn('Invalid Email')
+            }
+        })
+    }
+
+    Release = (Source) => {
+        setSelection(false)
+        Animated.parallel([
+            Animated.timing(HoldGoogle,{
+                toValue: 60,
+                duration: 200,
+                useNativeDriver: false
+            }),
+            Animated.timing(HoldFacebook,{
+                toValue: 60,
+                duration: 200,
+                useNativeDriver: false
+            }),
+            Animated.timing(HoldTwitter,{
+                toValue: 60,
+                duration: 200,
+                useNativeDriver: false
+            }),
+        ]).start()
+    }
+
+    const emailPassInterpolate = emailPassHeight.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0%','100%']
+    })
+    const socialInterpolate = socialHeight.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0%', '100%']
+    })
+    const loginLoadActionInterpolate = LoginLoad.interpolate({
+        inputRange:[1, 2],
+        outputRange:['180deg', '360deg']
+    })
+    const loginSizeInterpolate = LoginSize.interpolate({
+        inputRange:[0, 1, 2],
+        outputRange:['0%', '120%', '100%']
+    })
+    const loadSizeInterpolate = LoadSize.interpolate({
+        inputRange:[0, 1, 2],
+        outputRange:['0%', '120%', '100%']
+    })
+ 
+    showSocial = () => {
+        Animated.parallel([
+            Animated.timing(socialHeight,{
+                toValue: 1,
+                duration:200,
+                useNativeDriver: false
+            }),
+            Animated.timing(socialOpacity,{
+                toValue: 1,
+                duration: 200, 
+                useNativeDriver: false
+            }),
+            Animated.timing(emailPassHeight,{
+                toValue: 0,
+                duration: 150,
+                useNativeDriver: false
+            }),
+            Animated.timing(emailPassOpacity,{
+                toValue: 0,
+                duration: 100,
+                useNativeDriver: false
+            })
+        ]).start(()=>{
+            Animated.parallel([
+                Animated.timing(GoogleOpacity,{
+                    toValue: 1,
+                    duration: 200,
+                    useNativeDriver: false
+                }),
+                Animated.timing(GoogleBottom,{
+                    toValue: 0,
+                    duration: 200,
+                    useNativeDriver: false
+                })
+            ]).start(()=>{
+                Animated.parallel([
+                    Animated.timing(FacebookOpacity,{
+                        toValue: 1,
+                        duration: 200,
+                        useNativeDriver: false
+                    }),
+                    Animated.timing(FacebookBottom,{
+                        toValue: 0,
+                        duration: 200,
+                        useNativeDriver: false
+                    })
+                ]).start(()=>{
+                    Animated.parallel([
+                        Animated.timing(TwitterOpacity,{
+                            toValue: 1,
+                            duration: 200,
+                            useNativeDriver: false
+                        }),
+                        Animated.timing(TwitterBottom,{
+                            toValue: 0,
+                            duration: 200,
+                            useNativeDriver: false
+                        })
+                    ]).start(()=>{
+                        if(selection != false) setSelection(false)
+                        animateSocialButtons()
+                    })
+                })
+            })
+        })
+    }
+
+    hideSocial = () => {
+        Animated.parallel([
+            Animated.timing(GoogleOpacity,{
+                toValue: 0,
+                duration: 50,
+                useNativeDriver: false
+            }),
+            Animated.timing(GoogleBottom,{
+                toValue: -200,
+                duration: 100,
+                useNativeDriver: false
+            })
+        ]).start(()=>{
+            Animated.parallel([
+                Animated.timing(FacebookOpacity,{
+                    toValue: 0,
+                    duration: 50,
+                    useNativeDriver: false
+                }),
+                Animated.timing(FacebookBottom,{
+                    toValue: -200,
+                    duration: 100,
+                    useNativeDriver: false
+                })
+            ]).start(()=>{
+                Animated.parallel([
+                    Animated.timing(TwitterOpacity,{
+                        toValue: 0,
+                        duration: 50,
+                        useNativeDriver: false
+                    }),
+                    Animated.timing(TwitterBottom,{
+                        toValue: -200,
+                        duration: 100,
+                        useNativeDriver: false
+                    })
+                ]).start(()=>{
+                    Animated.parallel([
+                        Animated.timing(socialHeight,{
+                            toValue: 0,
+                            duration:150,
+                            useNativeDriver: false
+                        }),
+                        Animated.timing(socialOpacity,{
+                            toValue: 0,
+                            duration: 150, 
+                            useNativeDriver: false
+                        }),
+                        Animated.timing(emailPassHeight,{
+                            toValue: 1,
+                            duration: 200,
+                            useNativeDriver: false
+                        }),
+                        Animated.timing(emailPassOpacity,{
+                            toValue: 1,
+                            duration: 200,
+                            useNativeDriver: false
+                        })
+                    ]).start(()=>setSelection(true))
+                })
+            })
+        })
+    }
+
+    animateSocialButtons = () => {
+        setTimeout(()=>{
+            Animated.timing(GoogleBottom,{
+                toValue:10,
+                duration:150,
+                useNativeDriver: false
+            }).start(()=>{
+                Animated.timing(GoogleBottom,{
+                    toValue:0,
+                    duration:150,
+                    useNativeDriver: false
+                }).start(()=>{
+                    setTimeout(()=>{
+                        Animated.timing(FacebookBottom,{
+                            toValue:10,
+                            duration:150,
+                            useNativeDriver: false
+                        }).start(()=>{
+                            Animated.timing(FacebookBottom,{
+                                toValue:0,
+                                duration:150,
+                                useNativeDriver: false
+                            }).start(()=>{
+                                setTimeout(()=>{
+                                    Animated.timing(TwitterBottom,{
+                                        toValue:10,
+                                        duration:150,
+                                        useNativeDriver: false
+                                    }).start(()=>{
+                                        Animated.timing(TwitterBottom,{
+                                            toValue:0,
+                                            duration:150,
+                                            useNativeDriver: false
+                                        }).start(()=>{
+                                            if(!selection) animateSocialButtons()
+                                        })
+                                    })
+                                },400)
+                            })
+                        })
+                    },400)
+                })
+            })
+        },700)
+    }
+
+    const GoogleShadowInterpolate = GoogleShadowColor.interpolate({
+        inputRange: [1, 2, 3],
+        outputRange: ['black', 'green', 'red']
+    })
+
+    const FacebookShadowInterpolate = FacebookShadowcolor.interpolate({
+        inputRange: [1, 2, 3],
+        outputRange: ['black', 'green', 'red']
+    })
+
+    const TwitterShadowInterpolate = TwitterShadowColor.interpolate({
+        inputRange: [1, 2, 3],
+        outputRange: ['black', 'green', 'red']
+    })
+
+    HoldGooglePlay = () => {
+        setSelection(true)
+        animateGoogleColor = () => {
+            Animated.timing(GoogleShadow,{
+                toValue: 7,
+                duration: 2000,
+                useNativeDriver: false
+            }).start(()=>{
+                Animated.timing(GoogleShadow,{
+                    toValue: 16,
+                    duration: 2000,
+                    useNativeDriver: false
+                }).start(()=>{
+                    Animated.timing(GoogleShadowColor,{
+                        toValue: 1,
+                        duration: 1000,
+                        useNativeDriver: false
+                    }).start()
+                })
+            })
+        }
+        Animated.parallel([
+            Animated.timing(HoldGoogle,{
+                toValue: 65,
+                duration: 200,
+                useNativeDriver: false
+            }),
+            Animated.timing(HoldFacebook,{
+                toValue: 45,
+                duration: 200,
+                useNativeDriver: false
+            }),
+            Animated.timing(HoldTwitter,{
+                toValue: 45,
+                duration: 200,
+                useNativeDriver: false
+            }),
+            Animated.timing(GoogleShadowColor,{
+                toValue: 2,
+                duration: 1000,
+                useNativeDriver: false
+            })
+        ]).start(()=>{
+            animateGoogleColor()
+        })
+    }
+
+    HoldFacebookPlay = () => {
+        setSelection(true)
+        animateFacebookColor = () => {
+            Animated.timing(FacebookShadow,{
+                toValue: 7,
+                duration: 2000,
+                useNativeDriver: false
+            }).start(()=>{
+                Animated.timing(FacebookShadow,{
+                    toValue: 16,
+                    duration: 2000,
+                    useNativeDriver: false
+                }).start(()=>{
+                    Animated.timing(FacebookShadowcolor,{
+                        toValue: 1,
+                        duration: 1000,
+                        useNativeDriver: false
+                    }).start()
+                })
+            })
+        }
+        Animated.parallel([
+            Animated.timing(HoldGoogle,{
+                toValue: 45,
+                duration: 200,
+                useNativeDriver: false
+            }),
+            Animated.timing(HoldFacebook,{
+                toValue: 65,
+                duration: 200,
+                useNativeDriver: false
+            }),
+            Animated.timing(HoldTwitter,{
+                toValue: 45,
+                duration: 200,
+                useNativeDriver: false
+            }),
+            Animated.timing(FacebookShadowcolor,{
+                toValue: 2,
+                duration: 1000,
+                useNativeDriver: false
+            })
+        ]).start(()=>{
+            animateFacebookColor()
+        })
+    }
+
+    HoldTwitterPlay = () => {
+        setSelection(true)
+        animateTwitterColor = () => {
+            Animated.timing(TwitterShadow,{
+                toValue: 7,
+                duration: 2000,
+                useNativeDriver: false
+            }).start(()=>{
+                Animated.timing(TwitterShadow,{
+                    toValue: 16,
+                    duration: 2000,
+                    useNativeDriver: false
+                }).start(()=>{
+                    Animated.timing(TwitterShadowColor,{
+                        toValue: 1,
+                        duration: 1000,
+                        useNativeDriver: false
+                    }).start()
+                })
+            })
+        }
+        Animated.parallel([
+            Animated.timing(HoldGoogle,{
+                toValue: 45,
+                duration: 200,
+                useNativeDriver: false
+            }),
+            Animated.timing(HoldFacebook,{
+                toValue: 45,
+                duration: 200,
+                useNativeDriver: false
+            }),
+            Animated.timing(HoldTwitter,{
+                toValue: 65,
+                duration: 200,
+                useNativeDriver: false
+            }),
+            Animated.timing(TwitterShadowColor,{
+                toValue: 2,
+                duration: 1000,
+                useNativeDriver: false
+            })
+        ]).start(()=>{
+            animateTwitterColor()
+        })
     }
 
     cancelRecovery = () => {
@@ -57,29 +527,8 @@ const Login = (props) => {
         props.navigation.navigate('Register')
     }
 
-    useSelector((state)=>{
-        if(state.login.result == false && state.login.message != ''){
-            if(state.login.message == 'Already loggedin, on another Device') {
-                setmessage('Someone could be using your Account. Would you like to Recover it?')
-                settries(4)
-            }else alert(state.login.message)
-            dispatch(reslogin())
-        }else if(state.login.result == true){
-            user = state.login.message
-            if (user.confirmed == false) {
-                props.navigation.navigate('ConfirmEmail',{user: user})
-                dispatch(reslogin())
-            } else{
-                if(state.settings.user_id == -1) dispatch(settings(user.id))
-                else props.navigation.navigate('Home',{user: user})
-            }
-        }
-        if(loginLoad == true) setloginLoad(false)
-        if(googleLoad == true) setgoogleLoad(false)
-    })
-
     return(
-        <LinearGradient colors={['#00B4DB','#1CB5E0','#000046']} style={Styles.Page}>
+        <LinearGradient colors={['#D3CCE3','#E9E4F0','#E9E4F0']} style={Styles.Page}>
             {tries >= 4 ? <Dialog.Container visible={true}>
                 <Dialog.Title>Account Recovery?</Dialog.Title>
                 <Dialog.Description>{message}</Dialog.Description>
@@ -91,24 +540,75 @@ const Login = (props) => {
                 <Dialog.Button label='Cancel' onPress={()=>cancelRecovery()}/>
                 <Dialog.Button label='Recover' onPress={()=>acceptRecovery()}/>
             </Dialog.Container>}
-            <Text style={Styles.Heading}>Welcome to New App</Text>
+            <Text style={Styles.Heading}>Fun Map</Text>
             <Image source={{uri:'https://images.app.goo.gl/REU5wKvQuZMF4YGL6'}}/>
-            <TouchableOpacity style={Styles.EmailBox} activeOpacity={1}>
-                <Text style={{color:'#f5f5f5',fontWeight:'bold'}}>Email</Text>
-                <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:0,borderColor:'#f5f5f5'}}/>
-                <TextInput style={[Styles.EmailInput, {height: Platform.OS == 'android' ? 40 : 20}]} autoCapitalize = 'none' onChangeText={(e)=>setemail(e)}/>
-            </TouchableOpacity>
-            <TouchableOpacity style={Styles.PassBox} activeOpacity={1}>
-                <Text style={{color:'#f5f5f5',fontWeight:'bold'}}>Pass </Text>
-                <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:0,borderColor:'#f5f5f5'}}/>
-                <TextInput style={[Styles.PassInput, {height: Platform.OS == 'android' ? 40 : 20}]} autoCapitalize = 'none' secureTextEntry={true} onChangeText={(e)=>setpass(e)}/>
-            </TouchableOpacity>
-            <TouchableOpacity style={Styles.Login} onPress={()=>LoginAttempt()}>
-                <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['#1CB5E0','#1CB5E0','#1CB5E0']} style={{width:'100%',height:'100%',borderRadius:25,justifyContent:'center',alignItems:'center'}}>
-                {loginLoad == false ? <Text style={Styles.LoginText}>Login</Text> : <ActivityIndicator size='small' color='#5810d8'/>}
-                </LinearGradient>
-            </TouchableOpacity>
-            <Text style={{marginTop:30,marginBottom:30,color:'white'}} onPress={()=>register()}>Register</Text>
+            <View style={{width: Dimensions.get('screen').width,height: Dimensions.get('screen').height/1.5,position:'absolute',bottom:0}}>
+                <Animated.View style={{height:emailPassInterpolate,width:'100%',position:'absolute',bottom:0,opacity:emailPassOpacity,justifyContent:'center',alignItems:'center'}}>
+                    <TouchableOpacity style={Styles.EmailBox} activeOpacity={1}>
+                        <Text style={{color:'#7F7FD5',fontWeight:'bold'}}>Email</Text>
+                        <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:0,borderColor:'#7F7FD5'}}/>
+                        <TextInput style={[Styles.EmailInput, {height: Platform.OS == 'android' ? 40 : 20}]} autoCapitalize = 'none' onChangeText={(e)=>setemail(e)}/>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={Styles.PassBox} activeOpacity={1}>
+                        <Text style={{color:'#7F7FD5',fontWeight:'bold'}}>Pass </Text>
+                        <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:0,borderColor:'#7F7FD5'}}/>
+                        <TextInput style={[Styles.PassInput, {height: Platform.OS == 'android' ? 40 : 20}]} autoCapitalize = 'none' secureTextEntry={true} onChangeText={(e)=>setpass(e)}/>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={Styles.Login} activeOpacity={1} onPress={()=>LoginAttempt()}>
+                        <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['#1CB5E0','#1CB5E0','#1CB5E0']} style={{width:'100%',height:'100%',borderRadius:25,justifyContent:'center',alignItems:'center'}}>
+                        <View style={{width:'100%',height:'100%'}}>
+                            <Animated.View style={{height:loginSizeInterpolate,width:loginSizeInterpolate,opacity:LoginOpacity,justifyContent:'center',alignItems:'center'}}>
+                                <Text style={Styles.LoginText}>Login</Text>
+                            </Animated.View>
+                            <Animated.View style={{height:loadSizeInterpolate,width:loadSizeInterpolate,opacity:LoadOpacity,justifyContent:'center',alignItems:'center'}}>
+                                <Animated.View style={{position:'absolute',transform: [{ rotate: loginLoadActionInterpolate}]}}>
+                                    <LinearGradient colors={['#f7797d','#FBD786','#f7797d']} style={{height:35,width:35,borderRadius:50,justifyContent:'space-evenly'}}/>
+                                </Animated.View>
+                                <TouchableOpacity style={{height:30,width:30,backgroundColor:'#00B4DB',borderRadius:50,justifyContent:'center',alignItems:'center',zIndex:100}} activeOpacity={1}>
+                                    <Text style={{fontWeight:'bold',fontSize:12,color:'white'}}>FM</Text>
+                                </TouchableOpacity>
+                            </Animated.View>
+                        </View>
+                        </LinearGradient>
+                    </TouchableOpacity>
+                    <View style={{flexDirection:'row',height:'15%',alignItems:'center'}}>
+                        <Text style={{color:'#7F7FD5',marginRight:'5%'}} onPress={()=>register()}>Register</Text>
+                        <TouchableOpacity style={{height:20,borderWidth:0.5,borderColor:'#7F7FD5'}}/>
+                        <Text style={{color:'#7F7FD5',marginLeft:'5%'}}>Recover</Text>
+                    </View>
+                    <TouchableOpacity style={{width:'100%',height:'20%'}} onPress={()=>showSocial()}>
+                        <Shimmer><Text style={{fontSize:15,fontWeight:'bold'}}>Social Media</Text></Shimmer>
+                    </TouchableOpacity>
+                </Animated.View>
+                <Animated.View style={{height:socialInterpolate,width:'100%',opacity:socialOpacity,justifyContent:'center',alignItems:'center',bottom:0,position:'absolute'}}>
+                    <View style={{width:'65%',flexDirection:'row',position:'absolute',bottom:'20%',alignItems:'center',justifyContent:'space-between'}}>
+                        <Animated.View style={[Styles.SociaLogin,{height:HoldGoogle,width:HoldGoogle,shadowRadius:GoogleShadow,shadowColor:GoogleShadowInterpolate}]}>
+                            <Animated.View style={{opacity:GoogleOpacity,position:'absolute',bottom:GoogleBottom,width:'100%',height:'100%'}}>
+                                <TouchableOpacity activeOpacity={1} disabled={false} onPress={()=>alert('google')} onPressIn={()=>HoldGooglePlay()} onPressOut={()=>Release('Google')}>
+                                    <Image style={{height:'100%',width:'100%'}} source={require('../Logo/Google.png')}/>
+                                </TouchableOpacity>
+                            </Animated.View>
+                        </Animated.View>
+                        <Animated.View style={[Styles.SociaLogin,{height:HoldFacebook,width:HoldFacebook,shadowRadius:FacebookShadow,shadowColor:FacebookShadowInterpolate}]}>
+                            <Animated.View style={{opacity:FacebookOpacity,position:'absolute',bottom:FacebookBottom,width:'100%',height:'100%'}}>
+                                <TouchableOpacity activeOpacity={1} disabled={false} onPress={()=>{alert('facebook')}} onPressIn={()=>HoldFacebookPlay()} onPressOut={()=>Release('Facebook')}>
+                                    <Image style={{height:'100%',width:'100%'}} source={require('../Logo/facebook.png')}/>
+                                </TouchableOpacity>
+                            </Animated.View>
+                        </Animated.View>
+                        <Animated.View style={[Styles.SociaLogin,{height:HoldTwitter,width:HoldTwitter,shadowRadius:TwitterShadow,shadowColor:TwitterShadowInterpolate}]}>
+                            <Animated.View style={{opacity:TwitterOpacity,position:'absolute',bottom:TwitterBottom,width:'100%',height:'100%'}}>
+                                <TouchableOpacity activeOpacity={1} disabled={false} onPress={()=>alert('twitter')} onPressIn={()=>HoldTwitterPlay()} onPressOut={()=>Release('Twitter')}>
+                                    <Image style={{height:'100%',width:'100%'}} source={require('../Logo/twitter.png')}/>
+                                </TouchableOpacity>
+                            </Animated.View>
+                        </Animated.View>
+                    </View>
+                    <TouchableOpacity onPress={()=>hideSocial()}>
+                        <Shimmer><Text style={{fontSize:15,fontWeight:'bold'}}>Email - Password</Text></Shimmer>
+                    </TouchableOpacity>
+                </Animated.View>
+            </View>
         </LinearGradient>
     )
 }
@@ -129,8 +629,18 @@ const Styles = StyleSheet.create({
     },
     Heading:{
         fontSize:20,
-        color:'white',
-        marginTop:'30%',
+        color:'#00B4DB',
+        fontSize:25,
+        position:'absolute',
+        top:0,
+        marginTop:'50%',
+        shadowOffset: {
+	        width: 0,
+	        height: 12,
+        },
+        shadowOpacity: 0.58,
+        shadowRadius: 16.00,
+        elevation: 24,
     },
     Google:{
         marginTop:20,
@@ -173,14 +683,14 @@ const Styles = StyleSheet.create({
     EmailBox:{
         marginTop:'60%',
         borderRadius:10,
-        borderColor:'#f5f5f5',
+        borderColor:'#7F7FD5',
         borderWidth:0.8,
         width:280,
         height:45,
         flexDirection:'row',
         padding:13,
         alignItems:'center',
-        shadowColor: "#f5f5f5",
+        shadowColor: "#7F7FD5",
         shadowOffset: {
 	        width: 0,
 	        height: 12,
@@ -192,14 +702,14 @@ const Styles = StyleSheet.create({
     PassBox:{
         marginTop:20,
         borderRadius:10,
-        borderColor:'#f5f5f5',
+        borderColor:'#7F7FD5',
         borderWidth:0.8,
         width:280,
         height:45,
         flexDirection:'row',
         padding:13,
         alignItems:'center',
-        shadowColor: "#f5f5f5",
+        shadowColor: "#7F7FD5",
         shadowOffset: {
 	        width: 0,
 	        height: 12,
@@ -214,7 +724,7 @@ const Styles = StyleSheet.create({
         width:190,
         height:20,
         marginLeft:10,
-        color:'white',
+        color:'#7F7FD5',
     },
     PassInput:{
         paddingLeft:1,
@@ -222,6 +732,15 @@ const Styles = StyleSheet.create({
         width:190,
         height:20,
         marginLeft:10,
-        color:'white'
+        color:'#7F7FD5'
+    },
+    SociaLogin:{
+        borderRadius:50,
+        shadowOffset: {
+	        width: 0,
+	        height: 12,
+        },
+        shadowOpacity: 0.58,
+        elevation:24,
     }
 })

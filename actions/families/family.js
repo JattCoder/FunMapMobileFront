@@ -14,6 +14,7 @@ export const family = (id) => {
                     group[1].map((member)=>{
                         firebase.database().ref(`FamilyGroups/${group[0].id}/${member.id}`).on('value',(snapshot) => {
                             if(snapshot.val()){
+                                console.warn(snapshot.val().longitude)
                                member.action = snapshot.val().action
                                member.batteryLevel = snapshot.val().batteryLevel
                                member.charging = snapshot.val().charging

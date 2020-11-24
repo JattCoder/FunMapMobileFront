@@ -12,6 +12,7 @@ export const selmarker = (place) => {
                         name: place.name,
                         rating: place.rating,
                         placeid: place.placeid,
+                        icon: place.icon,
                         lat: place.geo.lat,
                         lng: place.geo.lng,
                         formatted_address: data.formatted_address,

@@ -21,6 +21,7 @@ export default Search = (props) => {
     let waitTime;
     let closeSrc;
     const dispatch = useDispatch()
+    const location = useSelector(state => {return state.mylocation.complete})
 
     const typeWidth = typeSearchWidth.interpolate({
         inputRange: [0, 1],
@@ -91,6 +92,8 @@ export default Search = (props) => {
             closeShortCuts()
         }else if(saction == 'Open'){
             closePlaceSearch()
+            dispatch(clearsearch())
+            setAction('')
         }else{
             Animated.parallel([
                 Animated.timing(slide,{
@@ -136,7 +139,7 @@ export default Search = (props) => {
             },5000)
         }else{
             setAction('Type')
-            dispatch(bottomsheet('Search'))
+            //dispatch(bottomsheet('Search'))
             if(closeSrc) clearTimeout(closeSrc)
             if(waitTime) clearTimeout(waitTime)
             waitTime = setTimeout(()=>{
@@ -145,7 +148,7 @@ export default Search = (props) => {
         }
     }
 
-    searchPlaces = (input) => {
+    searchPlaces = (input = '') => {
         if(city != ''){
             !input.includes(' in ') ? search = `${input} in ${city}` : search = input 
             var url = new URL("http://localhost:3000/account/places/search"),
@@ -157,13 +160,15 @@ export default Search = (props) => {
                 dispatch(submitsearch(places))
             })
             .catch(err => { console.log(err) })
-        }else alert('Please turn on location sharing in settings')
+        }else{
+            console.warn('alert')
+        }
     }
 
     useSelector((state)=>{
-        if(city != state.mylocation.city){
-            setCity(state.mylocation.city)
-        }
+        if(state.mylocation.complete != '')
+            if(city != state.mylocation.complete)
+                setCity(state.mylocation.complete)
     })
 
     return(

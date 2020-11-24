@@ -5,6 +5,7 @@ import Geocoder from 'react-native-geocoder-reborn'
 import firebase from 'firebase'
 import Checkbattery from './checkbattery'
 import { View, Text, Image } from 'react-native'
+import History from '../../Home/components/history'
 
 export default Bottomweather = (props) => {
 
@@ -114,6 +115,7 @@ export default Bottomweather = (props) => {
 
     return(
         <View>
+            {/* <History current={{lat: props.position.latitude, lng: props.position.longitude}} city={currentCity} speed={props.position.speed}/> */}
             <Checkbattery />
             {currentCity != '' ? <View style={{flexDirection:'row',width:'100%',alignItems:'center'}}>
                 <View style={{left:0,width:'77%'}}>

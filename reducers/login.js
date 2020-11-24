@@ -1,18 +1,20 @@
 import { LOGIN } from '../actions/login/login'
+import { REGISTER } from '../actions/register/register'
 import { LOGIN_RES } from '../actions/login/reslogin'
 
 let initialState = {
-    code: '',
-    message: '',
+    message: {},
     result: false
 }
 
 const reducer = (login = initialState, action) => {
     switch(action.type){
         case LOGIN:
-            return { ...login, ...action.payload }
+            return {message: action.message, result: action.result}
+        case REGISTER:
+            return {message: action.message, result: action.result}
         case LOGIN_RES:
-            return { ...login, ...action.payload }
+            return {message: action.message, result: action.result}
         default:
             return login
     }
