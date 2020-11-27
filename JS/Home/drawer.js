@@ -360,10 +360,10 @@ export default Drawerr = (props) => {
         <Animated.View style={{width:Dimensions.get('screen').width,height:'20%',position:'absolute',flexDirection:'row',marginTop:headingMargin,marginHorizontal:'5%',alignItems:'center'}}>
           <TouchableOpacity onPress={()=>props.followMe()} style={{flexDirection:'row',justifyContent:'center',alignItems:'center',marginHorizontal:'5%',zIndex:150}}>
             <TouchableOpacity style={[Styles.ImageBox,{height:45,width:45}]}>
-              {props.user.photo != '' ? <Image source={{ uri: user.image }} /> : <Uimage name={user.name} />}
+              {/* {props.user.photo != '' ? <Image source={{ uri: user.image }} /> : <Uimage name={user.name} />} */}
             </TouchableOpacity>
             <View>
-              <Bottomweather name={props.user.name} position={props.regionPosition}/>
+              {/* <Bottomweather name={props.user.name} position={props.regionPosition}/> */}
             </View>
           </TouchableOpacity>
         </Animated.View>
@@ -371,7 +371,7 @@ export default Drawerr = (props) => {
           <Locationshare />
           <Animated.View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/1.75}}>
             <Animated.View style={{height:groupHeight,width:'100%',opacity:groupOpacity,justifyContent:'center',alignItems:'center'}}>
-              <Families user={props.user}/>
+              {/* <Families user={props.user}/> */}
             </Animated.View>
             <Animated.View style={{width:settingsWidth,height:settingsHeight,opacity:settingsOpacity,justifyContent:'center',alignItems:'center'}}>
               <Settings close={()=>closeSettings()}/>
@@ -380,7 +380,7 @@ export default Drawerr = (props) => {
               <TouchableOpacity onPress={()=>closeForm()} style={{width:-Dimensions.get('screen').width,height:'8%',borderRadius:10,position:'absolute',top:20,right:25,zIndex:100}}>
                   <Image style={{height:30,width:30}} source={require('../settingsIcons/close.png')}/>
               </TouchableOpacity>
-              <NewFamily user={props.user} finish={()=>closeForm()}/>
+              {/* <NewFamily user={props.user} finish={()=>closeForm()}/> */}
             </Animated.View>
           </Animated.View>
           <Animated.View style={{position:'absolute',bottom:0,right:0,left:0,width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/9.3,justifyContent:'center'}}>

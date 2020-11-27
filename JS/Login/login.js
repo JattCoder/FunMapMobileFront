@@ -46,6 +46,7 @@ const Login = (props) => {
     const[LoadSize] = useState(new Animated.Value(0))
     const[LoadOpacity] = useState(new Animated.Value(0))
     const[LoginLoad] = useState(new Animated.Value(0))
+    const[doneLoading,setDoneLoading] = useState(false)
     const[selection,setSelection] = useState(false)
     const dispatch = useDispatch()
 
@@ -61,7 +62,8 @@ const Login = (props) => {
             if(user){
                 firebase.database().ref(`Users/${user.email.replace(punctuation,'').replace(spaceRE,'')}`)
                 .once('value',snapshot => {
-                    console.warn(`Welcome ${snapshot.val().name}`)
+                    // console.warn(`Welcome ${snapshot.val().name}`)
+                    // props.navigation.navigate('Home',{user: snapshot.val()})
                 })
             }
         })
@@ -80,6 +82,21 @@ const Login = (props) => {
     }
 
     emailPassLogin = (mac) => {
+
+        animateLoginLoad = () => {
+            Animated.timing(LoginLoad,{
+                toValue: 2,
+                duration: 1000,
+                useNativeDriver: false
+            }).start(()=>{
+                Animated.timing(LoginLoad,{
+                    toValue: 1,
+                    duration: 1000,
+                    useNativeDriver: false
+                }).start(()=>{if(!doneLoading) animateLoginLoad()})
+            })
+        }
+
         Animated.timing(LoginSize,{
             toValue: 2,
             duration: 100,
@@ -109,11 +126,7 @@ const Login = (props) => {
                         useNativeDriver:false
                     })
                 ]).start(()=>{
-                    Animated.timing(LoadSize,{
-                        toValue:1,
-                        duration:100,
-                        useNativeDriver:false
-                    })
+                    animateLoginLoad()
                 })
             })
         })
@@ -122,7 +135,7 @@ const Login = (props) => {
         .then((usr)=>{
             firebase.database().ref(`Users/`+email.replace(punctuation,'').replace(spaceRE,''))
             .on('value', snapshot => {
-                console.warn(snapshot.val())
+                props.navigation.navigate('Home')
                 // if(snapshot.val().mac == mac) dispatch(login(snapshot,))
                 // else alert('First Log-Out from other device')
             })
@@ -358,40 +371,36 @@ const Login = (props) => {
     }
 
     const GoogleShadowInterpolate = GoogleShadowColor.interpolate({
-        inputRange: [1, 2, 3],
-        outputRange: ['black', 'green', 'red']
+        inputRange: [0, 1, 2, 3, 4],
+        outputRange: ['black','#4285F4', '#EA4335', '#FBBC05', '#34A853']
     })
 
     const FacebookShadowInterpolate = FacebookShadowcolor.interpolate({
-        inputRange: [1, 2, 3],
-        outputRange: ['black', 'green', 'red']
+        inputRange: [0, 1, 2],
+        outputRange: ['black' ,'#3b5998', '#3b5998']
     })
 
     const TwitterShadowInterpolate = TwitterShadowColor.interpolate({
-        inputRange: [1, 2, 3],
-        outputRange: ['black', 'green', 'red']
+        inputRange: [0, 1, 2],
+        outputRange: ['black','#3b5998', '#00acee']
     })
 
     HoldGooglePlay = () => {
         setSelection(true)
+        let range = 1
         animateGoogleColor = () => {
-            Animated.timing(GoogleShadow,{
-                toValue: 7,
-                duration: 2000,
-                useNativeDriver: false
-            }).start(()=>{
-                Animated.timing(GoogleShadow,{
-                    toValue: 16,
-                    duration: 2000,
+            range += 1
+            if(range <= 4)
+                Animated.timing(GoogleShadowColor,{
+                    toValue: range,
+                    duration: 1500, 
                     useNativeDriver: false
-                }).start(()=>{
-                    Animated.timing(GoogleShadowColor,{
-                        toValue: 1,
-                        duration: 1000,
-                        useNativeDriver: false
-                    }).start()
-                })
-            })
+                }).start(()=>animateGoogleColor())
+            else Animated.timing(GoogleShadowColor,{
+                toValue: 0,
+                duration: 1500,
+                useNativeDriver: false
+            }).start()
         }
         Animated.parallel([
             Animated.timing(HoldGoogle,{
@@ -421,24 +430,20 @@ const Login = (props) => {
 
     HoldFacebookPlay = () => {
         setSelection(true)
-        animateFacebookColor = () => {
-            Animated.timing(FacebookShadow,{
-                toValue: 7,
-                duration: 2000,
-                useNativeDriver: false
-            }).start(()=>{
-                Animated.timing(FacebookShadow,{
-                    toValue: 16,
-                    duration: 2000,
-                    useNativeDriver: false
-                }).start(()=>{
+            let range = 0
+            animateFacebookColor = () => {
+                range += 1
+                if(range <= 2)
                     Animated.timing(FacebookShadowcolor,{
-                        toValue: 1,
-                        duration: 1000,
+                        toValue: range,
+                        duration: 1500,
                         useNativeDriver: false
-                    }).start()
-                })
-            })
+                    }).start(()=>animateFacebookColor())
+                else Animated.timing(FacebookShadowcolor,{
+                    toValue: 0,
+                    duration: 1500,
+                    useNativeDriver: false
+                }).start()
         }
         Animated.parallel([
             Animated.timing(HoldGoogle,{
@@ -468,24 +473,20 @@ const Login = (props) => {
 
     HoldTwitterPlay = () => {
         setSelection(true)
+        let range = 0
         animateTwitterColor = () => {
-            Animated.timing(TwitterShadow,{
-                toValue: 7,
-                duration: 2000,
-                useNativeDriver: false
-            }).start(()=>{
-                Animated.timing(TwitterShadow,{
-                    toValue: 16,
-                    duration: 2000,
+            range += 1
+            if(range <= 2)
+                Animated.timing(TwitterShadowColor,{
+                    toValue: 1,
+                    duration: 1000,
                     useNativeDriver: false
-                }).start(()=>{
-                    Animated.timing(TwitterShadowColor,{
-                        toValue: 1,
-                        duration: 1000,
-                        useNativeDriver: false
-                    }).start()
-                })
-            })
+                }).start(()=>animateTwitterColor())
+            else Animated.timing(TwitterShadowColor,{
+                toValue: 0,
+                duration: 1500,
+                useNativeDriver: false
+            }).start()
         }
         Animated.parallel([
             Animated.timing(HoldGoogle,{
@@ -577,7 +578,7 @@ const Login = (props) => {
                         <Text style={{color:'#7F7FD5',marginLeft:'5%'}}>Recover</Text>
                     </View>
                     <TouchableOpacity style={{width:'100%',height:'20%'}} onPress={()=>showSocial()}>
-                        <Shimmer><Text style={{fontSize:15,fontWeight:'bold'}}>Social Media</Text></Shimmer>
+                        <Shimmer><Text style={{fontSize:15,fontWeight:'bold'}}>Login With</Text></Shimmer>
                     </TouchableOpacity>
                 </Animated.View>
                 <Animated.View style={{height:socialInterpolate,width:'100%',opacity:socialOpacity,justifyContent:'center',alignItems:'center',bottom:0,position:'absolute'}}>
