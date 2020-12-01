@@ -174,12 +174,12 @@ export default Search = (props) => {
     return(
         <Animated.View style={{width:Dimensions.get('screen').width/1.12,height:55,position:'absolute',right:slide,borderRadius:10,alignItems:'center',flexDirection:'row'}}>
             <TouchableOpacity activeOpacity={1} onPress={()=>openPlaceSearch()} style={{backgroundColor:'#9932cc',borderRadius:10,height:'100%',width:'18%',zIndex:20}}>
-                <LinearGradient colors={['#00B4DB','#0083B0']} style={Styles.button}>
+                <LinearGradient colors={['#7F7FD5','#7F7FD5']} style={Styles.button}>
                     <Image style={{height:30,width:30,margin:15}} source={require('./search.png')}/>
                 </LinearGradient>
             </TouchableOpacity>
             <Animated.View style={{opacity:bar,height:'100%',width:'80%',borderRadius:10,marginLeft:-15,justifyContent:'center',paddingLeft:25,paddingRight:10}}>
-                <LinearGradient colors={['#0083B0','#0083B0']} style={{height:'100%',width:'100%',borderRadius:10}}>
+                <LinearGradient colors={['#7F7CD5','#7F7CD5']} style={{height:'100%',width:'100%',borderRadius:10}}>
                     <Animated.View style={[Styles.input,{width:typeWidth,opacity:typeSearchOpacity}]}>
                         <TextInput onChangeText={(e)=>onTextChange(e)} autoCapitalize='none' placeholder={'Search'} style={{fontSize:20,color:'white',position:'absolute',left:10}}/>
                         {action == '' ? <TouchableOpacity onPress={()=>openShortCuts()}  style={{position:'absolute',right:10}}>

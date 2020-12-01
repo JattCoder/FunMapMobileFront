@@ -22,7 +22,9 @@ const Login = (props) => {
     const[message,setmessage] = useState('Detected Multiple Attempts, Would you like to recover your account?')
     const[email,setemail] = useState('')
     const[pass,setpass] = useState('')
-    const[emailPassHeight] = useState(new Animated.Value(1))
+    const[intro] = useState(new Animated.Value(0))
+    const[intrOpacity] = useState(new Animated.Value(0))
+    const[emailPassHeight] = useState(new Animated.Value(0))
     const[emailPassOpacity] = useState(new Animated.Value(1))
     const[socialHeight] = useState(new Animated.Value(0))
     const[socialOpacity] = useState(new Animated.Value(0))
@@ -55,17 +57,37 @@ const Login = (props) => {
             firebase.initializeApp({
                 authDomain: "maps-8a2af.firebaseapp.com",
                 databaseURL: "https://maps-8a2af.firebaseio.com",
-                projectId: "maps-8a2af"
+                projectId: "maps-8a2af",
+                appId: "1:626824452588:web:6db65e228561fca36108c9",
+                apiKey: "AIzaSyCubEvuePYKjY1LbFOA0Dief0endEF0SY8",
             });
         }
-        auth().onAuthStateChanged(user => {
-            if(user){
-                firebase.database().ref(`Users/${user.email.replace(punctuation,'').replace(spaceRE,'')}`)
-                .once('value',snapshot => {
-                    // console.warn(`Welcome ${snapshot.val().name}`)
-                    // props.navigation.navigate('Home',{user: snapshot.val()})
-                })
-            }
+        Animated.timing(intrOpacity,{
+            toValue: 1,
+            duration: 500,
+            useNativeDriver: false
+        }).start(()=>{
+            auth().onAuthStateChanged(user => {
+                if(user){
+                    firebase.database().ref(`Users/${user.email.replace(punctuation,'').replace(spaceRE,'')}`)
+                    .once('value',snapshot => {
+                        props.navigation.navigate('Home',{user: snapshot.val()})
+                    })
+                }else{
+                    Animated.parallel([
+                        Animated.timing(intro,{
+                            toValue: 1,
+                            duration: 500,
+                            useNativeDriver: false
+                        }),
+                        Animated.timing(emailPassHeight,{
+                            toValue: 1,
+                            duration: 500,
+                            useNativeDriver: false
+                        })
+                    ]).start()
+                }
+            })
         })
     })
 
@@ -130,25 +152,32 @@ const Login = (props) => {
                 })
             })
         })
-        auth()
-        .signInWithEmailAndPassword(email,pass)
-        .then((usr)=>{
-            firebase.database().ref(`Users/`+email.replace(punctuation,'').replace(spaceRE,''))
-            .on('value', snapshot => {
-                props.navigation.navigate('Home')
-                // if(snapshot.val().mac == mac) dispatch(login(snapshot,))
-                // else alert('First Log-Out from other device')
-            })
-        })
-        .catch((err)=>{
-            if(err.code === 'auth/wrong-password'){
-                console.warn('Incorrect Password')
-            }else if(err.code === 'auth/user-not-found'){
-                console.warn('Account Not Found')
-            }else if(err.code === 'auth/invalid-email'){
-                console.warn('Invalid Email')
-            }
-        })
+
+        console.warn(firebase.auth.FacebookAuthProvider())
+
+        // auth()
+        // .signInWithEmailAndPassword(email,pass)
+        // .then((usr)=>{
+        //     firebase.database().ref(`Users/`+email.replace(punctuation,'').replace(spaceRE,''))
+        //     .on('value', snapshot => {
+        //         props.navigation.navigate('Home')
+        //         // if(snapshot.val().mac == mac) dispatch(login(snapshot,))
+        //         // else alert('First Log-Out from other device')
+        //     })
+        // })
+        // .catch((err)=>{
+        //     if(err.code === 'auth/wrong-password'){
+        //         console.warn('Incorrect Password')
+        //     }else if(err.code === 'auth/user-not-found'){
+        //         console.warn('Account Not Found')
+        //     }else if(err.code === 'auth/invalid-email'){
+        //         console.warn('Invalid Email')
+        //     }
+        // })
+    }
+
+    Intro = () => {
+
     }
 
     Release = (Source) => {
@@ -171,6 +200,11 @@ const Login = (props) => {
             }),
         ]).start()
     }
+
+    const introInterpolate = intro.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['100%','50%']
+    })
 
     const emailPassInterpolate = emailPassHeight.interpolate({
         inputRange: [0, 1],
@@ -541,8 +575,9 @@ const Login = (props) => {
                 <Dialog.Button label='Cancel' onPress={()=>cancelRecovery()}/>
                 <Dialog.Button label='Recover' onPress={()=>acceptRecovery()}/>
             </Dialog.Container>}
-            <Text style={Styles.Heading}>Fun Map</Text>
-            <Image source={{uri:'https://images.app.goo.gl/REU5wKvQuZMF4YGL6'}}/>
+            <Animated.View style={{position:'absolute', top:0, marginTop:introInterpolate,opacity:intrOpacity}}>
+                <Text style={Styles.Heading}>Fun Map</Text>
+            </Animated.View>
             <View style={{width: Dimensions.get('screen').width,height: Dimensions.get('screen').height/1.5,position:'absolute',bottom:0}}>
                 <Animated.View style={{height:emailPassInterpolate,width:'100%',position:'absolute',bottom:0,opacity:emailPassOpacity,justifyContent:'center',alignItems:'center'}}>
                     <TouchableOpacity style={Styles.EmailBox} activeOpacity={1}>
@@ -632,9 +667,6 @@ const Styles = StyleSheet.create({
         fontSize:20,
         color:'#00B4DB',
         fontSize:25,
-        position:'absolute',
-        top:0,
-        marginTop:'50%',
         shadowOffset: {
 	        width: 0,
 	        height: 12,

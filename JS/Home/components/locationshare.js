@@ -22,17 +22,17 @@ export default Locationshare = () => {
 
     selecType = (selection) => {
         if(selection == 'Public'){
-            setPubliColor('#00BFFF')
+            setPubliColor('#7F7FD5')
             setFamilyColor('rgba(142, 144, 145, 0.4)')
             setGhoftColor('rgba(142, 144, 145, 0.4)')
         }else if(selection == 'Family'){
             setPubliColor('rgba(142, 144, 145, 0.4)')
-            setFamilyColor('#00BFFF')
+            setFamilyColor('#7F7FD5')
             setGhoftColor('rgba(142, 144, 145, 0.4)')
         }else if(selection == 'Ghost'){
             setPubliColor('rgba(142, 144, 145, 0.4)')
             setFamilyColor('rgba(142, 144, 145, 0.4)')
-            setGhoftColor('#00BFFF')
+            setGhoftColor('#7F7FD5')
         }
     }
 
@@ -56,15 +56,15 @@ export default Locationshare = () => {
     })
 
     return(
-        <View style={{width:Dimensions.get('window').width,height:'5%',justifyContent:'center', alignItems:'center',}}>
-            <View style={{width:'80%',height:'100%',justifyContent:'center',alignItems:'center',flexDirection:'row',borderColor:'white',borderWidth:1}}>
-                <TouchableOpacity activeOpacity={1} onPress={()=>updateChange('Public')} style={[Style.Buttons,{borderRightColor:'white',borderRightWidth:0.5,backgroundColor:publiColor}]}>
+        <View style={{width:Dimensions.get('window').width,height:'5%',justifyContent:'center', alignItems:'center',borderRadius:10}}>
+            <View style={{width:'80%',height:'100%',justifyContent:'center',alignItems:'center',flexDirection:'row',borderColor:'#7F7FD5',borderWidth:1,borderRadius:10}}>
+                <TouchableOpacity activeOpacity={1} onPress={()=>updateChange('Public')} style={[Style.Buttons,{borderRightColor:'#7F7FD5',borderTopLeftRadius:9,borderBottomLeftRadius:9,borderRightWidth:0.5,backgroundColor:publiColor}]}>
                     <Text style={Style.ButtonText}>Public</Text>
                 </TouchableOpacity>
                 <TouchableOpacity activeOpacity={1} onPress={()=>updateChange('Family')} style={[Style.Buttons,{backgroundColor:familyColor}]}>
                     <Text style={Style.ButtonText}>Family</Text>
                 </TouchableOpacity>
-                <TouchableOpacity activeOpacity={1} onPress={()=>updateChange('Ghost')} style={[Style.Buttons,{borderLeftColor:'white',borderLeftWidth:0.5,backgroundColor:ghostColor}]}>
+                <TouchableOpacity activeOpacity={1} onPress={()=>updateChange('Ghost')} style={[Style.Buttons,{borderLeftColor:'#7F7FD5',borderTopRightRadius:9,borderBottomRightRadius:9,borderLeftWidth:0.5,backgroundColor:ghostColor}]}>
                     <Text style={Style.ButtonText}>Ghost</Text>
                 </TouchableOpacity>
             </View>

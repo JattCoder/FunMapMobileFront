@@ -19,13 +19,13 @@ const App = () => {
 
   useEffect(()=>{
     if (!firebase.apps.length) {
-        console.warn('about to initialize app')
         firebase.initializeApp({
           authDomain: "maps-8a2af.firebaseapp.com",
           databaseURL: "https://maps-8a2af.firebaseio.com",
-          projectId: "maps-8a2af"
+          projectId: "maps-8a2af",
+          appId: "1:626824452588:web:6db65e228561fca36108c9",
+          apiKey: "AIzaSyCubEvuePYKjY1LbFOA0Dief0endEF0SY8",
         });
-        console.warn('app is initialized')
       }
     })
 

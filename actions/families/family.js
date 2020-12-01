@@ -1,40 +1,44 @@
 import firebase from 'firebase'
 export const FAMILY = 'FAMILY'
+let punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~]/g
+let spaceRE = /\s+/g
 
-export const family = (id) => {
+export const family = (email) => {
     return (dispatch) => {
-        var url = new URL("http://localhost:3000/account/families"),
-            params = {id}
-            Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
-        fetch(url)
-        .then(res => {return res.json()})
-        .then(groups => {
-            if(groups.result == true){
-                groups.message.map((group)=>{
-                    group[1].map((member)=>{
-                        firebase.database().ref(`FamilyGroups/${group[0].id}/${member.id}`).on('value',(snapshot) => {
-                            if(snapshot.val()){
-                                console.warn(snapshot.val().longitude)
-                               member.action = snapshot.val().action
-                               member.batteryLevel = snapshot.val().batteryLevel
-                               member.charging = snapshot.val().charging
-                               member.heading = snapshot.val().heading
-                               member.latitude = snapshot.val().latitude
-                               member.longitude = snapshot.val().longitude
-                               member.location = snapshot.val().location
-                               member.name = snapshot.val().name
-                               member.navigation = snapshot.val().navigation
-                               member.permitted = snapshot.val().permitted
-                               member.speed = snapshot.val().speed
-
-                              return dispatch({type: FAMILY, family: groups.message})
-                           }
+        let families = {}
+        firebase.database().ref(`FamilyGroups/`).once('value',(allGroups) => {
+            if(allGroups.val()){ allGroups.forEach( group => {
+                   if(group.child('Members/'+email.replace(punctuation,'').replace(spaceRE,''))){
+                        firebase.database().ref('FamilyGroups/'+group.key).on('value',(myGroup)=>{
+                            families[myGroup.child('Name').val()] = {
+                                Name: myGroup.child('Name').val(),
+                                Message: myGroup.child('Message').val(),
+                                Users:[]
+                            }
+                            myGroup.child('Members').forEach(member => {
+                                //Member key => member.key, value => member.val()
+                                firebase.database().ref('Users/'+member.key).once('value',(userInfo)=>{
+                                    user = {
+                                        Name: userInfo.child('name').val(),
+                                        Email: userInfo.child('email').val(),
+                                        Phone: userInfo.child('phone').val(),
+                                        Photo: userInfo.child('photo').val(),
+                                        Address: userInfo.child('address').val(),
+                                        Latitude: userInfo.child('latitude').val(),
+                                        Longitute: userInfo.child('longitude').val(),
+                                        Heading: userInfo.child('heading').val(),
+                                        Speed: userInfo.child('speed').val(),
+                                        Member: member.child('Member').val(),
+                                        LocationShare: member.child('locationShare').val()
+                                    }
+                                    families[myGroup.child('Name').val()]['Users'].push(user)
+                                    return dispatch({type: FAMILY, family: families})
+                                })
+                            })
                         })
-                    })
-                })
-            }
+                   }
+            })}
         })
-        .catch(err => console.warn(err.message))
     }
 }
 

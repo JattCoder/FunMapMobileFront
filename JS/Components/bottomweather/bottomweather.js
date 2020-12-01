@@ -5,6 +5,7 @@ import Geocoder from 'react-native-geocoder-reborn'
 import firebase from 'firebase'
 import Checkbattery from './checkbattery'
 import { View, Text, Image } from 'react-native'
+import Weathericon from './weathericon'
 import History from '../../Home/components/history'
 
 export default Bottomweather = (props) => {
@@ -119,20 +120,20 @@ export default Bottomweather = (props) => {
             <Checkbattery />
             {currentCity != '' ? <View style={{flexDirection:'row',width:'100%',alignItems:'center'}}>
                 <View style={{left:0,width:'77%'}}>
-                    <Text style={{fontSize:20,color:'white'}}>{props.name}</Text>
-                    <Text style={{color:'white'}}>{currentCity}</Text>
+                    <Text style={{fontSize:20,color:'#7F7FD5'}}>{props.name}</Text>
+                    <Text style={{color:'#7F7FD5'}}>{currentCity}</Text>
                 </View>
                 <View style={{right:0,top:0,alignItems:'center'}}>
                     {wther.icon == '' ? date < 18 ? <View style={{justifyContent:'center',alignItems:'center'}}>
                         <Image style={{height:35,width:35}} source={require('../../weather/01d.png')}/>
-                        <Text style={{color:'white'}}>{wther.temp}</Text>
+                        <Text style={{color:'#7F7FD5'}}>{wther.temp}</Text>
                     </View> : <View style={{justifyContent:'center',alignItems:'center'}}>
                         <Image style={{height:35,width:35}} source={require('../../weather/01d.png')}/>
-                        <Text style={{color:'white'}}>{wther.temp}</Text>
+                        <Text style={{color:'#7F7FD5'}}>{wther.temp}</Text>
                     </View> : null}
                     {wther.icon != '' ? <View style={{justifyContent:'center',alignItems:'center'}}>
-                        <Image style={{height:35,width:35}} source={{uri: `http://openweathermap.org/img/wn/${wther.icon}@2x.png`}}/>
-                        <Text style={{color:'white'}}>{wther.temp}</Text>
+                        {<Weathericon icon={wther.icon}/>}
+                        <Text style={{color:'#7F7FD5'}}>{wther.temp}</Text>
                     </View>:null}
                 </View>
             </View> : null}

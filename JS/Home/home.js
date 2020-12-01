@@ -53,7 +53,6 @@ const Home = (props) => {
     })
 
     useEffect(() => {
-      console.warn(props.route.params.user)
         setuser(props.route.params.user)
     },[props.route.params.user])
 
@@ -170,10 +169,9 @@ const Home = (props) => {
             <View style={{height:55,position:'absolute',right:'1%',top:'8%'}}>
               <Search position={userPosition}/>
             </View>
-            {console.warn(user)}
-            {/* <View style={{width:dimensions.width,bottom:0,position:'absolute'}}>
+            <View style={{width:dimensions.width,bottom:0,position:'absolute'}}>
               <Drawerr user={user} regionPosition={regionPosition} followMe={()=>whereAmI()} logout={props.navigation}/>
-            </View> */}
+            </View>
         </View>
     )
 }

@@ -352,18 +352,17 @@ export default Drawerr = (props) => {
       //hide content on this sheet not the entire sheet
     }
   })
-
   return(
      <Animated.View style={[Styles.Bottom,actionSheetStyle,{height:sheetHeight}]}>
-       <LinearGradient colors={['#00B4DB','#1CB5E0','#000046']} style={{height:'100%',width:'100%',alignItems:'center',borderTopLeftRadius:25,borderTopRightRadius:25,}}>
+       <LinearGradient colors={['rgba(211,204,227,0.1)','rgba(211,204,227,0.7)','#D3CCE3','#D3CCE3','#D3CCE3','#E9E4F0','#E9E4F0']} style={{height:'100%',width:'100%',alignItems:'center',borderTopLeftRadius:25,borderTopRightRadius:25,}}>
         <ScrollView onScroll={(e)=>guestureHandler(e)} style={{width:80,height:10,borderTopWidth:3,marginTop:10,borderColor:'white',zIndex:100}} />
         <Animated.View style={{width:Dimensions.get('screen').width,height:'20%',position:'absolute',flexDirection:'row',marginTop:headingMargin,marginHorizontal:'5%',alignItems:'center'}}>
           <TouchableOpacity onPress={()=>props.followMe()} style={{flexDirection:'row',justifyContent:'center',alignItems:'center',marginHorizontal:'5%',zIndex:150}}>
             <TouchableOpacity style={[Styles.ImageBox,{height:45,width:45}]}>
-              {/* {props.user.photo != '' ? <Image source={{ uri: user.image }} /> : <Uimage name={user.name} />} */}
+              {props.user.photo != '' ? <Image source={{ uri: props.user.image }} /> : <Uimage name={props.user.name} />}
             </TouchableOpacity>
             <View>
-              {/* <Bottomweather name={props.user.name} position={props.regionPosition}/> */}
+              <Bottomweather name={props.user.name} position={props.regionPosition}/>
             </View>
           </TouchableOpacity>
         </Animated.View>
@@ -371,23 +370,23 @@ export default Drawerr = (props) => {
           <Locationshare />
           <Animated.View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/1.75}}>
             <Animated.View style={{height:groupHeight,width:'100%',opacity:groupOpacity,justifyContent:'center',alignItems:'center'}}>
-              {/* <Families user={props.user}/> */}
+              <Families user={props.user}/>
             </Animated.View>
             <Animated.View style={{width:settingsWidth,height:settingsHeight,opacity:settingsOpacity,justifyContent:'center',alignItems:'center'}}>
-              <Settings close={()=>closeSettings()}/>
+              {/* <Settings close={()=>closeSettings()}/> */}
             </Animated.View>
             <Animated.View style={{height:newGroupFormHeight,width:'100%',opacity:newGroupFormOpacity,justifyContent:'center',alignItems:'center'}}>
               <TouchableOpacity onPress={()=>closeForm()} style={{width:-Dimensions.get('screen').width,height:'8%',borderRadius:10,position:'absolute',top:20,right:25,zIndex:100}}>
                   <Image style={{height:30,width:30}} source={require('../settingsIcons/close.png')}/>
               </TouchableOpacity>
-              {/* <NewFamily user={props.user} finish={()=>closeForm()}/> */}
+              <NewFamily user={props.user} finish={()=>closeForm()}/>
             </Animated.View>
           </Animated.View>
           <Animated.View style={{position:'absolute',bottom:0,right:0,left:0,width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/9.3,justifyContent:'center'}}>
               <Animated.View style={{height:menuButtonSize,width:menuButtonSize,position:'absolute',right:20,justifyContent:'center',alignItems:'center',zIndex:100}}>
                 <TouchableOpacity style={{height:'100%',width:'100%',justifyContent:'center',alignItems:'center'}} onPress={()=>showButtons()}>
                   {menuOpen ? <View style={{height:'100%',width:'100%',backgroundColor:'red',borderRadius:50,justifyContent:'center',alignItems:'center'}}><Image style={{height:20,width:20}} source={require('../settingsIcons/close.png')}/></View>
-                  : <View style={{height:'100%',width:'100%',backgroundColor:'#00B4DB',borderRadius:50,justifyContent:'center',alignItems:'center'}}><Image style={{height:20,width:20}} source={require('../settingsIcons/plus.png')}/></View>}
+                  : <View style={{height:'100%',width:'100%',backgroundColor:'#7F7FD5',borderRadius:50,justifyContent:'center',alignItems:'center'}}><Image style={{height:20,width:20}} source={require('../settingsIcons/plus.png')}/></View>}
                 </TouchableOpacity>
               </Animated.View>
               <Animated.View style={{opacity:settingOpacity,height:settingSize,width:settingSize,borderRadius:50,position:'absolute',backgroundColor:'#f7797d',right:20*3,justifyContent:'center',alignItems:'center'}}>
@@ -421,7 +420,7 @@ const Styles = StyleSheet.create({
   },
   ImageBox: {
       borderRadius: 50,
-      borderColor: 'white',
+      borderColor: '#7F7FD5',
       borderWidth: 0.5,
       marginHorizontal:'3%'
   }
