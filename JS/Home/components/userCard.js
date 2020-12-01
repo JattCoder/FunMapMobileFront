@@ -1,4 +1,4 @@
-import React,{ useState } from 'react'
+import React,{ useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { View, TouchableOpacity, Text, Image, Dimensions, StyleSheet } from 'react-native'
 
@@ -12,34 +12,36 @@ export default UserCard = (props) => {
         }
     })
 
+    // {"Address": null, "Email": "harmandeepmand.hm@gmail.com", "Heading": null, "Latitude": null, "LocationShare": false, "Longitute": null, "Member": "Member", "Name": "Harmandeep Mand", "Phone": "4403171521", "Photo": "", "Speed": null} 
+
         return(
-            <TouchableOpacity onPress={()=>alert('Pressed '+props.user.name)} style={{width:Dimensions.get('window').width/1.10}}>
+            <TouchableOpacity onPress={()=>alert('Pressed '+props.user.Name)} style={{width:Dimensions.get('window').width/1.10}}>
                 <View style={{flexDirection:'row',marginHorizontal:'7%',marginVertical:'2%',alignItems:'center'}}>
                     <View style={{width:50,height:50}}>
-                        {user.photo != '' ? <Image source={{ uri: props.user.image }} /> : <Uimage name={props.user.name} />}
+                        {props.user.Photo != '' ? <Image source={{ uri: props.user.Photo }} /> : <Uimage name={props.user.Name} />}
                     </View>
                     <View style={{marginHorizontal:'2%'}}>
-                        <Text style={{fontSize:20,color:'white'}}>{props.user.name}</Text>
-                        {permitted == 'Ghost' ? <Text style={{color:'white',width:Dimensions.get('screen').width/1.9}}>Ghost Mode</Text>
-                        : <Text style={{color:'white',width:Dimensions.get('screen').width/1.9}}>{props.user.location}</Text>}
+                        <Text style={{fontSize:20,color:'#7F7FD5'}}>{props.user.Name}</Text>
+                        {permitted == 'Ghost' ? <Text style={{color:'#7F7FD5',width:Dimensions.get('screen').width/1.9}}>Ghost Mode</Text>
+                        : <Text style={{color:'white',width:Dimensions.get('screen').width/1.9}}>{props.user.Address}</Text>}
                     </View>
                     <View style={{position:'absolute',right:0,width:'10%'}}>
-                        { props.user.charging ? <View style={Style.battery}>
+                        { props.user.Charging ? <View style={Style.battery}>
                             <Image style={Style.icon} source={require('../../Battery/battery-charging.png')}/>
-                            <Text style={Style.level}>{`${props.user.batteryLevel}%`}</Text>
+                            <Text style={Style.level}>{`${props.user.BatteryLevel}%`}</Text>
                         </View> 
                         : <View style={Style.battery}>
-                            { props.user.batteryLevel < 15 ? <View>
+                            { props.user.BatteryLevel < 15 ? <View>
                                 <Image style={Style.icon} source={require('../../Battery/battery-zero.png')}/>
-                                <Text style={Style.level}>{`${props.user.batteryLevel}%`}</Text>
+                                <Text style={Style.level}>{`${props.user.BatteryLevel}%`}</Text>
                             </View>
-                            : props.user.batteryLevel < 51 ? <View style={Style.battery}>
+                            : props.user.BatteryLevel < 51 ? <View style={Style.battery}>
                                 <Image style={Style.icon}  source={require('../../Battery/battery-25.png')}/>
-                                <Text style={Style.level}>{`${props.user.batteryLevel}%`}</Text>
+                                <Text style={Style.level}>{`${props.user.BatteryLevel}%`}</Text>
                             </View> 
                             : <View style={Style.battery}>
                                 <Image style={Style.icon}  source={require('../../Battery/battery-100.png')}/>
-                                <Text style={Style.level}>{`${props.user.batteryLevel}%`}</Text> 
+                                <Text style={Style.level}>{`${props.user.BatteryLevel}%`}</Text> 
                             </View>}
                         </View>}
                     </View>
@@ -60,6 +62,6 @@ const Style = StyleSheet.create({
     },
     level:{
         fontSize:10,
-        color:'white'
+        color:'#7F7FD5'
     }
 })

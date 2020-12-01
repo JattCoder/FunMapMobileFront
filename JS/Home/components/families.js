@@ -31,10 +31,10 @@ export default Families = (props) => {
     useSelector((state)=>{
         if(fams != state.family){
             setFams(state.family)
-            if(fams['First Group']) {
-                setFam(fams['First Group'])
+            if(state.family['First Group']) {
+                setFam(state.family['First Group'])
                 count = 0
-                for(let selection in fams){
+                for(let selection in state.family){
                     if(selection == 'First Group'){
                         break
                     }
@@ -42,7 +42,7 @@ export default Families = (props) => {
                 }
                  setGroupNumber(count)
             }else{
-                setFam(fams[Object.keys(fams)[0]])
+                setFam(fams[Object.keys(state.family)[0]])
                 setGroupNumber(0)
             //here set the first group as default because last saved group does not exists and update database with default group
             }
@@ -143,7 +143,7 @@ export default Families = (props) => {
                 </View>
             </View>
             <Animated.View style={{width:Dimensions.get('window').width,height:Dimensions.get('screen').height/2.3,opacity:1,transform: [{ rotateY: rotateCardInterpolate}]}}>
-                {fams.length != 0 ? <FamCard fam={fams[fam]} next={()=>nextFamily()} prev={()=>prevFamily()}/>
+                {fams.length != 0 ? <FamCard fam={fam} next={()=>nextFamily()} prev={()=>prevFamily()}/>
                 : <View style={{height:'100%',width:'100%',justifyContent:'center',alignItems:'center'}}>
                     <ActivityIndicator color={'white'} size={'large'}/>
                 </View>}

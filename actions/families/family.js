@@ -13,27 +13,27 @@ export const family = (email) => {
                             families[myGroup.child('Name').val()] = {
                                 Name: myGroup.child('Name').val(),
                                 Message: myGroup.child('Message').val(),
+                                ID: myGroup.child('ID').val(),
                                 Users:[]
                             }
                             myGroup.child('Members').forEach(member => {
                                 //Member key => member.key, value => member.val()
-                                firebase.database().ref('Users/'+member.key).once('value',(userInfo)=>{
-                                    user = {
-                                        Name: userInfo.child('name').val(),
-                                        Email: userInfo.child('email').val(),
-                                        Phone: userInfo.child('phone').val(),
-                                        Photo: userInfo.child('photo').val(),
-                                        Address: userInfo.child('address').val(),
-                                        Latitude: userInfo.child('latitude').val(),
-                                        Longitute: userInfo.child('longitude').val(),
-                                        Heading: userInfo.child('heading').val(),
-                                        Speed: userInfo.child('speed').val(),
-                                        Member: member.child('Member').val(),
-                                        LocationShare: member.child('locationShare').val()
-                                    }
-                                    families[myGroup.child('Name').val()]['Users'].push(user)
-                                    return dispatch({type: FAMILY, family: families})
-                                })
+                                user = {
+                                    Name: member.child('name').val(),
+                                    Phone: member.child('phone').val(),
+                                    Photo: member.child('photo').val(),
+                                    Address: member.child('address').val(),
+                                    Latitude: member.child('latitude').val(),
+                                    Longitute: member.child('longitude').val(),
+                                    Heading: member.child('heading').val(),
+                                    Speed: member.child('speed').val(),
+                                    Member: member.child('member').val(),
+                                    LocationShare: member.child('locationShare').val(),
+                                    Charging: member.child('charging').val(),
+                                    BatteryLevel: member.child('batteryLevel').val()
+                                }
+                                families[myGroup.child('Name').val()]['Users'].push(user)
+                                return dispatch({type: FAMILY, family: families})
                             })
                         })
                    }

@@ -11,8 +11,8 @@ export default FamCard = (props) => {
     const[famOpacity] = useState(new Animated.Value(1))
     const[searchHeight] = useState(new Animated.Value(0))
     const[searchOpacity] = useState(new Animated.Value(0))
-    const[rightButton] = useState(new Animated.Value(13))
-    const[leftButton] = useState(new Animated.Value(13))
+    const[rightButtonMarginTop] = useState(new Animated.Value(0))
+    const[leftButtonMarginTop] = useState(new Animated.Value(0))
     const dispatch = useDispatch()
 
     openSearch = () => {
@@ -65,27 +65,32 @@ export default FamCard = (props) => {
         ]).start()
     }
 
-    setCurrentFam = () => {
-        // dispatch(currentfamily(props.fam[1]))
-    }
+    const leftButtonInterpolate = leftButtonMarginTop.interpolate({
+        inputRange:[0,1,2],
+        outputRange:['3%','2.5%','2%']
+    })
+
+    const RightButtonInterpolate = rightButtonMarginTop.interpolate({
+        inputRange:[0,1,2],
+        outputRange:['3%','2.5%','2%']
+    })
 
     useEffect(()=>{
         console.warn(props.fam)
-        setCurrentFam()
     },[props.fam])
 
     return(
         <View style={{width:Dimensions.get('window').width,height:'100%',alignItems:'center',justifyContent:'center',marginTop:'5%'}}>
             <Animated.View style={{opacity:famOpacity,width:Dimensions.get('screen').width/1.07,height:famHeight,shadowColor: "#000",shadowOffset: { width: 0,height: 4 },shadowOpacity: 0.30,shadowRadius: 4.65,elevation: 8,backgroundColor:'rgba(211,204,227,1)',borderRadius:10,alignItems:'center'}}>
                 <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
-                    <Animated.View style={{marginTop:'3%',marginHorizontal:'4%',height:leftButton,width:leftButton}}>
-                        <TouchableOpacity activeOpacity={1} onPress={()=>{props.prev()}} style={{backgroundColor:'#00B4DB',borderRadius:50,width:'170%',justifyContent:'center',alignItems:'center',width:'100%',height:'100%'}}/>
+                    <Animated.View style={{marginTop:leftButtonInterpolate,marginHorizontal:'4%',height:13,width:13}}>
+                        <TouchableOpacity activeOpacity={1} onPress={()=>{props.prev()}} style={{backgroundColor:'rgba(0,0,0,0.5)',borderRadius:50,width:'170%',justifyContent:'center',alignItems:'center',width:'100%',height:'100%'}}/>
                     </Animated.View>
-                    <View style={{marginTop:'3%',borderRadius:10,backgroundColor:'#00B4DB',justifyContent:'center',alignItems:'center'}}>
-                        {/* <Text style={{margin:5,fontSize:20,justifyContent:'center',color:'white'}}>{props.fam[0].name}</Text> */}
+                    <View style={{marginTop:'3%',borderRadius:10,backgroundColor:'#7F7FD5',justifyContent:'center',alignItems:'center'}}>
+                        {/* <Text style={{margin:5,fontSize:20,justifyContent:'center',color:'white'}}>{props.fam.Name}</Text> */}
                     </View>
-                    <Animated.View style={{marginTop:'3%',marginHorizontal:'4%',height:rightButton,width:rightButton}}>
-                        <TouchableOpacity activeOpacity={1} onPress={()=>{props.next()}} style={{backgroundColor:'#00B4DB',borderRadius:50,width:'170%',justifyContent:'center',alignItems:'center',width:'100%',height:'100%'}}/>
+                    <Animated.View style={{marginTop:RightButtonInterpolate,marginHorizontal:'4%',height:13,width:13}}>
+                        <TouchableOpacity activeOpacity={1} onPress={()=>{props.next()}} style={{backgroundColor:'rgba(0,0,0,0.5)',borderRadius:50,width:'170%',justifyContent:'center',alignItems:'center',width:'100%',height:'100%'}}/>
                     </Animated.View>
                 </View>
                 <View style={{width:'100%',height:'5%',justifyContent:'center'}}>
@@ -97,11 +102,11 @@ export default FamCard = (props) => {
                     </TouchableOpacity>
                 </View>
                 <View style={{height:'75%',width:'100%',margin:20}}>
-                    {/* <ScrollView>
-                        {props.fam[1].map((user,index)=>{
-                            return <UserCard user={user} famid={props.fam[0].id} key={index}/>
-                        })}
-                    </ScrollView> */}
+                    <ScrollView>
+                        {/* {props.fam.Users.map((member)=>{
+                            return <UserCard user={member} />
+                        })} */}
+                    </ScrollView>
                 </View>
             </Animated.View>
             <Animated.View style={{height:searchHeight,width:'100%',opacity:searchOpacity,alignItems:'center'}}>
