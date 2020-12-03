@@ -3,22 +3,23 @@ import { locshare } from '../../../actions/settings/locShare'
 import { useDispatch, useSelector } from 'react-redux'
 import firebase from 'firebase'
 import { View, Text, Dimensions, TouchableOpacity, StyleSheet } from 'react-native'
+const punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~]/g
+const spaceRE = /\s+/g
 
-export default Locationshare = () => {
+export default Locationshare = (props) => {
 
     const [publiColor,setPubliColor] = useState('rgba(142, 144, 145, 0.4)')
     const [familyColor,setFamilyColor] = useState('rgba(142, 144, 145, 0.4)')
     const [ghostColor,setGhoftColor] = useState('#00BFFF')
     const [fams,setFams] = useState([])
-    const [id,setID] = useState(-1)
+    const [email,setEmail] = useState('')
     const [settings,setSettings] = useState({})
-    const [selection,setSelection] = useState('Ghost')
     const dispatch = useDispatch()
     const permit = useSelector((state)=>{return state.settings.permitted})
 
     useEffect(()=>{
         selecType(permit)
-    },[])
+    },[props.email])
 
     selecType = (selection) => {
         if(selection == 'Public'){
@@ -36,22 +37,31 @@ export default Locationshare = () => {
         }
     }
 
+    updateFamilies = (currentFam,selection) => {
+        firebase.database().ref('FamilyGroups/'+currentFam.ID+'/Members/'+props.email.replace(punctuation,'').replace(spaceRE,'')).update({
+            locationShare: selection == 'Ghost' ? false : true
+        })
+    }
+
+    updateProfile = (selection) => {
+        firebase.database().ref('Users/'+props.email.replace(punctuation,'').replace(spaceRE,'')+'/').update({
+            locationShare: selection == 'Public' ? true : false
+        })
+    }
+
     updateChange = (selection) => {
         selecType(selection)
-        dispatch(locshare(id,selection))
-        fams.map((group)=>{
-            firebase.database().ref('FamilyGroups/'+group[0].id+'/'+id).update({
-                permitted: selection,
-            });
-        })
+        updateProfile(selection)
+        for(let fam in fams){
+            let currentFam = fams[fam]
+            updateFamilies(currentFam,selection)
+        }
+        dispatch(locshare(selection))
     }
 
     useSelector((state)=>{
         if(fams != state.family){
             setFams(state.family)
-        }
-        if(id != state.login.message.id){
-            setID(state.login.message.id)
         }
     })
 

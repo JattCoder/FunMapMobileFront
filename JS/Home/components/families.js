@@ -11,7 +11,7 @@ export default Families = (props) => {
 
     const [fams,setFams] = useState([])
     const [invis,setInvis] = useState([])
-    const [fam,setFam] = useState(0)
+    const [fam,setFam] = useState({Name:'',Users:[]})
     const [familyColor] = useState(new Animated.Value(0))
     const [rorateCard] = useState(new Animated.Value(0))
     const [inviColor] = useState(new Animated.Value(1))
@@ -23,7 +23,7 @@ export default Families = (props) => {
     useEffect(()=>{
         if(props.user.email) {
             dispatch(family(props.user.email))
-            //dispatch(invitations(props.user.email))
+            dispatch(invitations(props.user.email))
         }
         setFam(selectedFam)
     },[props.user.email])
@@ -31,7 +31,7 @@ export default Families = (props) => {
     useSelector((state)=>{
         if(fams != state.family){
             setFams(state.family)
-            if(state.family['First Group']) {
+            if(state.family['nothing']) {
                 setFam(state.family['First Group'])
                 count = 0
                 for(let selection in state.family){
@@ -42,7 +42,7 @@ export default Families = (props) => {
                 }
                  setGroupNumber(count)
             }else{
-                setFam(fams[Object.keys(state.family)[0]])
+                setFam(state.family[Object.keys(state.family)[0]])
                 setGroupNumber(0)
             //here set the first group as default because last saved group does not exists and update database with default group
             }
@@ -143,10 +143,7 @@ export default Families = (props) => {
                 </View>
             </View>
             <Animated.View style={{width:Dimensions.get('window').width,height:Dimensions.get('screen').height/2.3,opacity:1,transform: [{ rotateY: rotateCardInterpolate}]}}>
-                {fams.length != 0 ? <FamCard fam={fam} next={()=>nextFamily()} prev={()=>prevFamily()}/>
-                : <View style={{height:'100%',width:'100%',justifyContent:'center',alignItems:'center'}}>
-                    <ActivityIndicator color={'white'} size={'large'}/>
-                </View>}
+                <FamCard fam={fams} next={()=>nextFamily()} prev={()=>prevFamily()}/>
             </Animated.View>
         </View> 
     )
