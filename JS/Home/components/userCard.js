@@ -6,6 +6,10 @@ export default UserCard = (props) => {
 
     const [permitted,setPermitted] = useState('Ghost')
 
+    useEffect(()=>{
+        //console.warn(props.user.LocationShare)
+    })
+
     useSelector((state)=>{
         if(permitted != state.settings.permitted){
             setPermitted(state.settings.permitted)
@@ -22,8 +26,8 @@ export default UserCard = (props) => {
                     </View>
                     <View style={{marginHorizontal:'2%'}}>
                         <Text style={{fontSize:20,color:'#7F7FD5'}}>{props.user.Name}</Text>
-                        {permitted == 'Ghost' ? <Text style={{color:'#7F7FD5',width:Dimensions.get('screen').width/1.9}}>Ghost Mode</Text>
-                        : <Text style={{color:'white',width:Dimensions.get('screen').width/1.9}}>{props.user.Address}</Text>}
+                        {!props.user.LocationShare ? <Text style={{color:'#7F7FD5',width:Dimensions.get('screen').width/1.9}}>Ghost Mode</Text>
+                        : <Text style={{color:'#7F7FD5',width:Dimensions.get('screen').width/1.9}}>{props.user.Address}</Text>}
                     </View>
                     <View style={{position:'absolute',right:0,width:'10%'}}>
                         { props.user.Charging ? <View style={Style.battery}>

@@ -23,10 +23,9 @@ export default Families = (props) => {
     useEffect(()=>{
         if(props.user.email) {
             dispatch(family(props.user.email))
-            dispatch(invitations(props.user.email))
+            //dispatch(invitations(props.user.email))
         }
-        setFam(selectedFam)
-    },[props.user.email])
+    },[props.user])
 
     useSelector((state)=>{
         if(fams != state.family){
@@ -44,7 +43,6 @@ export default Families = (props) => {
             }else{
                 setFam(state.family[Object.keys(state.family)[0]])
                 setGroupNumber(0)
-            //here set the first group as default because last saved group does not exists and update database with default group
             }
         }
         // if(invis != state.invitations){
@@ -53,15 +51,23 @@ export default Families = (props) => {
     })
 
     nextFamily = () => {
-        if((groupNumber + 1) <= Object.keys(fams).length){
+        if((groupNumber + 1) < Object.keys(fams).length){
             setFam(fams[Object.keys(fams)[groupNumber+1]])
-        }else setFam(fams[Object.keys(fams)[0]])
+            setGroupNumber(groupNumber+1)
+        }else {
+            setFam(fams[Object.keys(fams)[0]])
+            setGroupNumber(0)
+        }
     }
 
     prevFamily = () => {
         if((groupNumber - 1) >= 0){
             setFam(fams[Object.keys(fams)[groupNumber-1]])
-        }else setFam(fams[Object.keys(fams)[Object.keys(fams).length]])
+            setGroupNumber(groupNumber - 1)
+        }else {
+            setFam(fams[Object.keys(fams)[Object.keys(fams).length - 1]])
+            setGroupNumber(Object.keys(fams).length)
+        }
     }
 
     showInvitations = () => {
@@ -143,7 +149,8 @@ export default Families = (props) => {
                 </View>
             </View>
             <Animated.View style={{width:Dimensions.get('window').width,height:Dimensions.get('screen').height/2.3,opacity:1,transform: [{ rotateY: rotateCardInterpolate}]}}>
-                <FamCard fam={fams} next={()=>nextFamily()} prev={()=>prevFamily()}/>
+                {Object.keys(fams).length > 0 ? <FamCard Name={fam.Name} Message={fam.Message} Users={fam.Users} next={()=>nextFamily()} prev={()=>prevFamily()} />
+                : <Text>No Families</Text>}
             </Animated.View>
         </View> 
     )

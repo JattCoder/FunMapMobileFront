@@ -79,14 +79,6 @@ export default FamCard = (props) => {
         outputRange:['3%','2.5%','2%']
     })
 
-    useEffect(()=>{
-        // setFam({
-        //     Name: props.fam.Name,
-        //     Users: props.fam.Users
-        // })
-        console.warn(props.fam)
-    },[props.fam])
-
     return(
         <View style={{width:Dimensions.get('window').width,height:'100%',alignItems:'center',justifyContent:'center',marginTop:'5%'}}>
             <Animated.View style={{opacity:famOpacity,width:Dimensions.get('screen').width/1.07,height:famHeight,shadowColor: "#000",shadowOffset: { width: 0,height: 4 },shadowOpacity: 0.30,shadowRadius: 4.65,elevation: 8,backgroundColor:'rgba(211,204,227,1)',borderRadius:10,alignItems:'center'}}>
@@ -95,7 +87,7 @@ export default FamCard = (props) => {
                         <TouchableOpacity activeOpacity={1} onPress={()=>{props.prev()}} style={{backgroundColor:'rgba(0,0,0,0.5)',borderRadius:50,width:'170%',justifyContent:'center',alignItems:'center',width:'100%',height:'100%'}}/>
                     </Animated.View>
                     <View style={{marginTop:'3%',borderRadius:10,backgroundColor:'#7F7FD5',justifyContent:'center',alignItems:'center'}}>
-                        <Text style={{margin:5,fontSize:20,justifyContent:'center',color:'white'}}>{fam.Name}</Text>
+                        <Text style={{margin:5,fontSize:20,justifyContent:'center',color:'white'}}>{props.Name}</Text>
                     </View>
                     <Animated.View style={{marginTop:RightButtonInterpolate,marginHorizontal:'4%',height:13,width:13}}>
                         <TouchableOpacity activeOpacity={1} onPress={()=>{props.next()}} style={{backgroundColor:'rgba(0,0,0,0.5)',borderRadius:50,width:'170%',justifyContent:'center',alignItems:'center',width:'100%',height:'100%'}}/>
@@ -111,7 +103,7 @@ export default FamCard = (props) => {
                 </View>
                 <View style={{height:'75%',width:'100%',margin:20}}>
                     <ScrollView>
-                        {fam.Users.map((member)=>{
+                        {props.Users.map((member)=>{
                             return <UserCard user={member} />
                         })}
                     </ScrollView>

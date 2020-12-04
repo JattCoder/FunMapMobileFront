@@ -6,7 +6,7 @@ let spaceRE = /\s+/g
 export const family = (email) => {
     return (dispatch) => {
         let families = {}
-        firebase.database().ref(`FamilyGroups/`).once('value',(allGroups) => {
+        firebase.database().ref(`FamilyGroups/`).on('value',(allGroups) => {
             if(allGroups.val()){ allGroups.forEach( group => {
                    if(group.child('Members/'+email.replace(punctuation,'').replace(spaceRE,''))){
                         firebase.database().ref('FamilyGroups/'+group.key).on('value',(myGroup)=>{
@@ -33,8 +33,8 @@ export const family = (email) => {
                                     BatteryLevel: member.child('batteryLevel').val()
                                 }
                                 families[myGroup.child('Name').val()]['Users'].push(user)
-                                return dispatch({type: FAMILY, family: families})
                             })
+                            return dispatch({type: FAMILY, family: families})
                         })
                    }
             })}
