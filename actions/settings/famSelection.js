@@ -1,18 +1,15 @@
 export const FAMSELECTION = 'FAMSELECTION'
+import firebase from 'firebase'
+const punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~]/g
+const spaceRE = /\s+/g
 
-export const famselection = (id,famSelection) => {
+export const famselection = (email,famSelection) => {
     return async (dispatch) => {
-        return await fetch(`http://localhost:3000/account/${id}/settings/update/famSelection`,{
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({id,famSelection})
+        firebase.database().ref('Users/'+email.replace(punctuation,'').replace(spaceRE,'')).update({
+            famSelection
+        }).catch(err => {
+            console.warn(err)
         })
-        .then(res => {return res.json()})
-        .then(data => {
-            dispatch({type: FAMSELECTION, settings: data.message})
-        })
-        .catch(err => console.log(err))
+        dispatch({type: FAMSELECTION, settings: famSelection})
     }
 }

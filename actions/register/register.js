@@ -1,11 +1,11 @@
 export const REGISTER = 'REGISTER'
 import auth from '@react-native-firebase/auth'
 import firebase from 'firebase'
+const punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~]/g
+const spaceRE = /\s+/g
 
 export const register = (name,email,phone,photo,password,rec,mac) => {
     return async (dispatch) => {
-        let punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~]/g
-        let spaceRE = /\s+/g
         await auth()
         .createUserWithEmailAndPassword(email, password)
         .then(() => {

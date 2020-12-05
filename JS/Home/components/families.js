@@ -18,7 +18,11 @@ export default Families = (props) => {
     const [groupNumber,setGroupNumber] = useState(0)
     const [showInvi,setShowInvi] = useState(false)
     const dispatch = useDispatch()
-    const selectedFam = useSelector((state) => {return state.settings.familySelection})
+    const [selectedFam,setSelectedFam] = useState('')
+
+    currentFamily = (email = '') => {
+        dispatch(famselection(email,fam.Name))
+    }
 
     useEffect(()=>{
         if(props.user.email) {
@@ -28,13 +32,15 @@ export default Families = (props) => {
     },[props.user])
 
     useSelector((state)=>{
+        if(state.settings.familySelection != selectedFam) 
+            setSelectedFam(state.settings.familySelection)
         if(fams != state.family){
             setFams(state.family)
-            if(state.family['nothing']) {
-                setFam(state.family['First Group'])
+            if(state.family[selectedFam]) {
+                setFam(state.family[selectedFam])
                 count = 0
                 for(let selection in state.family){
-                    if(selection == 'First Group'){
+                    if(selection == selectedFam){
                         break
                     }
                     count += 1
@@ -45,6 +51,7 @@ export default Families = (props) => {
                 setGroupNumber(0)
             }
         }
+        //console.warn(props.user.famSelection)
         // if(invis != state.invitations){
         //     setInvis(state.invitations)
         // }
@@ -53,14 +60,17 @@ export default Families = (props) => {
     nextFamily = () => {
         if((groupNumber + 1) < Object.keys(fams).length){
             setFam(fams[Object.keys(fams)[groupNumber+1]])
+            dispatch(famselection(props.user.email,fams[Object.keys(fams)[groupNumber+1]].Name))
             setGroupNumber(groupNumber+1)
         }else {
             setFam(fams[Object.keys(fams)[0]])
+            dispatch(famselection(props.user.email,fams[Object.keys(fams)[0]].Name))
             setGroupNumber(0)
         }
     }
 
     prevFamily = () => {
+        //console.warn(selectedFam)
         if((groupNumber - 1) >= 0){
             setFam(fams[Object.keys(fams)[groupNumber-1]])
             setGroupNumber(groupNumber - 1)
@@ -68,6 +78,7 @@ export default Families = (props) => {
             setFam(fams[Object.keys(fams)[Object.keys(fams).length - 1]])
             setGroupNumber(Object.keys(fams).length)
         }
+        dispatch(famselection(props.user.email,fam.Name))
     }
 
     showInvitations = () => {

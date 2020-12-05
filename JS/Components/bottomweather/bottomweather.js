@@ -7,6 +7,8 @@ import Checkbattery from './checkbattery'
 import { View, Text, Image } from 'react-native'
 import Weathericon from './weathericon'
 import History from '../../Home/components/history'
+const punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~]/g
+const spaceRE = /\s+/g
 
 export default Bottomweather = (props) => {
 
@@ -17,7 +19,7 @@ export default Bottomweather = (props) => {
     })
     const[temp,setTemp] = useState('F°')
     const[fams,setFams] = useState([])
-    const[id,setID] = useState(-1)
+    const[email,setEmail] = useState('')
     const dispatch = useDispatch()
     let city = ''
     let date = new Date().getHours()
@@ -25,7 +27,7 @@ export default Bottomweather = (props) => {
     useSelector((state)=>{
         if(fams != state.family && currentCity != ''){
             setFams(state.family)
-            setID(state.login.message.id)
+            setEmail(props.email)
         }
         if(temp != state.settings.temperature) setTemp(state.settings.temperature)
     })
@@ -35,31 +37,19 @@ export default Bottomweather = (props) => {
     },[props.position.latitude,props.position.longitude])
 
     updateLocation = (location,res) => {
-        fams.length > 0 && id != -1 ? fams.map((fam)=>{
-            dispatch(mylocation({
+        Object.keys(fams).length > 0 && email != '' ? updateGroups(location) : null
+    }
+
+    updateGroups = (location) => {
+        for(let fam in fams){
+            firebase.database().ref('FamilyGroups/'+fams[fam].ID+'/Members/'+email.replace(punctuation,'').replace(spaceRE,'')).update({
+                address: location,
                 latitude: props.position.latitude,
                 longitude: props.position.longitude,
                 speed: props.position.speed,
-                heading: props.position.heading,
-                altitude: props.position.altitude,
-                altitudeAccuracy: props.position.altitudeAccuracy,
-                accuracy: props.position.accuracy,
-                complete: location,
-                street: res.streetName,
-                city: res.locality,
-                state: res.adminArea,
-                zip: res.postalCode,
-                permitted: true,
-                message: ''
-            }))
-            firebase.database().ref(`FamilyGroups/${fam[0].id}/${id}`).update({
-                location: currentCity,
-                heading: position.heading,
-                latitude: props.position.latitude,
-                longitude: props.position.longitude,
-                speed: position.speed
+                heading: props.position.heading
             })
-        }) : null
+        }
     }
 
     geocode = () => {
@@ -75,9 +65,9 @@ export default Bottomweather = (props) => {
                 if(res[0].locality != null) location += res[0].locality + ', '
                 if(res[0].adminArea != null) location += res[0].adminArea + ' '
                 if(res[0].postalCode != null) location += res[0].postalCode
+                updateLocation(location,res[0])
                 if(currentCity != location){
                     setcurrentCity(location)
-                    updateLocation(location,res[0])
                     if(res[0].locality != city){
                         city = res[0].locality
                         fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=726db19d90971027a329515b851bfddc`)
@@ -117,7 +107,7 @@ export default Bottomweather = (props) => {
     return(
         <View>
             {/* <History current={{lat: props.position.latitude, lng: props.position.longitude}} city={currentCity} speed={props.position.speed}/> */}
-            <Checkbattery />
+            {email != '' ? <Checkbattery email={email}/> : null}
             {currentCity != '' ? <View style={{flexDirection:'row',width:'100%',alignItems:'center'}}>
                 <View style={{left:0,width:'77%'}}>
                     <Text style={{fontSize:20,color:'#7F7FD5'}}>{props.name}</Text>
