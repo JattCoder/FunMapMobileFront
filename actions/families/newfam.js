@@ -4,7 +4,7 @@ export const NEWFAM = 'NEWFAM'
 const punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~]/g
 const spaceRE = /\s+/g
 
-export const newfam = (email,name) => {
+export const newfam = (email,name,Uname,phone,photo) => {
     
     return (dispatch) => {
         firebase.database().ref('FamilyGroups/').once('value', data => {
@@ -26,9 +26,9 @@ export const newfam = (email,name) => {
                     locationShare: false,
                     longitude: 0,
                     member: 'Admin',
-                    name: '',
-                    phone: 0,
-                    photo: '',
+                    name: Uname,
+                    phone: phone,
+                    photo: photo,
                     speed: 0
                 }).catch(err => console.warn(err))
             }).catch((error)=>{

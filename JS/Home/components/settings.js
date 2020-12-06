@@ -1,4 +1,4 @@
-import React,{ useState } from 'react'
+import React,{ useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { settingsupdate } from '../../../actions/settings/settingupdate' 
 import { View, StyleSheet, Dimensions, ScrollView, Switch, Text, Image, Animated } from 'react-native'
@@ -8,7 +8,7 @@ import Account from '../../Components/settings/account'
 
 export default Settings = (props) => {
 
-    const [user,setUser] = useState(-1)
+    const [user,setUser] = useState('')
     const [drivingMode,setDrivingMode] = useState(false)
     const drivingSwitch = () => setDrivingMode(previousState => !previousState)
     const [avoidHighways,setAvoidHighways] = useState(false)
@@ -39,7 +39,7 @@ export default Settings = (props) => {
             tolls: avoidTolls,
             ferries: avoidFerries,
             temperature: temperature == false ? 'C°' : 'F°',
-        },user.id))
+        },user.email))
     }
 
     openBackgroundColor = () => {
@@ -117,26 +117,38 @@ export default Settings = (props) => {
         ]).start()
     }
 
-    useSelector((state)=>{
-        if(added == false){
-            set = state.settings
-            setUser(state.login.message)
-            if(drivingMode != (set.drivingMode == 'driving' ? false : true)){
-                setDrivingMode(previousState => !previousState)
-            }
-            if(avoidHighways != set.avoidHighways){
-                setAvoidHighways(previousState => !previousState)
-            }
-            if(avoidTolls != set.avoidTolls){
-                setAvoidTolls(previousState => !previousState)
-            }
-            if(avoidFerries != set.avoidFerries){
-                setAvoidFerries(previousState => !previousState)
-            }
-            if(temperature != (set.temperature == 'F°' ? true : false)){
-                setTemperature(previousState => !previousState)
-            }
-            setAdded(true)
+    // {"drivingMode": "driving", 
+    // "email": "harmandeepmand.hm@gmail.com", 
+    // "famSelection": "New Fam Again", 
+    // "ferries": false, 
+    // "highways": false, 
+    // "home": "5625 W Longridge dr, Seven Hills, OH 44131", 
+    // "km": "miles", 
+    // "locationShare": false, 
+    // "mac": "02:00:00:00:00:00", 
+    // "name": "Harmandeep Mand", 
+    // "phone": "4403171521", 
+    // "photo": "", 
+    // "rec": "1234", 
+    // "tolls": false, 
+    // "weather": "F°", 
+    // "work": "4621 Broadview Rd, Cleveland, OH 44109"}
+
+    useEffect(()=>{
+        if(drivingMode != (props.user.drivingMode == 'driving' ? false : true)){
+            setDrivingMode(previousState => !previousState)
+        }
+        if(avoidHighways != props.user.highways){
+            setAvoidHighways(previousState => !previousState)
+        }
+        if(avoidTolls != props.user.tolls){
+            setAvoidTolls(previousState => !previousState)
+        }
+        if(avoidFerries != props.user.ferries){
+            setAvoidFerries(previousState => !previousState)
+        }
+        if(temperature != (props.user.weather == 'F°' ? true : false)){
+            setTemperature(previousState => !previousState)
         }
     })
 
@@ -151,11 +163,11 @@ export default Settings = (props) => {
                 </TouchableOpacity>
                 <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false} style={{marginTop:'5%'}}>
                     <View style={{width:Dimensions.get('screen').width,marginTop:'4%',alignItems:'center',justifyContent:'center',marginBottom:'2%',flexDirection:'row'}}>
-                        <TouchableOpacity activeOpacity={1} style={{height:0,width:30,marginRight:10,borderWidth:0.5,borderColor:'white'}}/>
-                        <Text style={{fontSize:20,fontweight:'bold',color:'white'}}>Navigation</Text>
-                        <TouchableOpacity activeOpacity={1} style={{height:0,width:230,marginLeft:10,borderWidth:0.5,borderColor:'white'}}/>
+                        <TouchableOpacity activeOpacity={1} style={{height:0,width:30,marginRight:10,borderWidth:0.5,borderColor:'#7F7FD5'}}/>
+                        <Text style={{fontSize:20,fontweight:'bold',color:'#000C40'}}>Navigation</Text>
+                        <TouchableOpacity activeOpacity={1} style={{height:0,width:230,marginLeft:10,borderWidth:0.5,borderColor:'#7F7FD5'}}/>
                     </View>
-                    <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/15.2,justifyContent:'center',alignItems:'center'}}>
+                    <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/15.5,justifyContent:'center',alignItems:'center'}}>
                         <View style={Styles.Tab}>
                             <View style={{position:'absolute',left:25,flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
                                 <Image style={{height:30,width:30}} source={require('../../settingsIcons/mode.png')}/>
@@ -205,9 +217,9 @@ export default Settings = (props) => {
                         </View>
                     </View>
                     <View style={{width:Dimensions.get('screen').width,marginTop:'4%',alignItems:'center',justifyContent:'center',marginBottom:'2%',flexDirection:'row'}}>
-                        <TouchableOpacity activeOpacity={1} style={{height:0,width:30,marginRight:10,borderWidth:0.5,borderColor:'white'}}/>
-                        <Text style={{fontSize:20,fontweight:'bold',color:'white'}}>Guidance</Text>
-                        <TouchableOpacity activeOpacity={1} style={{height:0,width:230,marginLeft:10,borderWidth:0.5,borderColor:'white'}}/>
+                        <TouchableOpacity activeOpacity={1} style={{height:0,width:30,marginRight:10,borderWidth:0.5,borderColor:'#7F7FD5'}}/>
+                        <Text style={{fontSize:20,fontweight:'bold',color:'#000C40'}}>Guidance</Text>
+                        <TouchableOpacity activeOpacity={1} style={{height:0,width:230,marginLeft:10,borderWidth:0.5,borderColor:'#7F7FD5'}}/>
                     </View>
                     <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/15.2,justifyContent:'center',alignItems:'center',marginTop:'3%'}}>
                         <View style={[Styles.Tab,{justifyContent:'center',alignItems:'center'}]}>
@@ -215,9 +227,9 @@ export default Settings = (props) => {
                         </View>
                     </View>
                     <View style={{width:Dimensions.get('screen').width,marginTop:'4%',alignItems:'center',justifyContent:'center',marginBottom:'2%',flexDirection:'row'}}>
-                        <TouchableOpacity activeOpacity={1} style={{height:0,width:37,marginRight:10,borderWidth:0.5,borderColor:'white'}}/>
-                        <Text style={{fontSize:20,fontweight:'bold',color:'white'}}>Weather</Text>
-                        <TouchableOpacity activeOpacity={1} style={{height:0,width:237,marginLeft:10,borderWidth:0.5,borderColor:'white'}}/>
+                        <TouchableOpacity activeOpacity={1} style={{height:0,width:37,marginRight:10,borderWidth:0.5,borderColor:'#7F7FD5'}}/>
+                        <Text style={{fontSize:20,fontweight:'bold',color:'#000C40'}}>Weather</Text>
+                        <TouchableOpacity activeOpacity={1} style={{height:0,width:237,marginLeft:10,borderWidth:0.5,borderColor:'#7F7FD5'}}/>
                     </View>
                     <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/15.2,justifyContent:'center',alignItems:'center',marginTop:'3%'}}>
                         <View style={Styles.Tab}>
@@ -243,9 +255,9 @@ export default Settings = (props) => {
                         </TouchableOpacity>
                     </View> */}
                     <View style={{width:Dimensions.get('screen').width,marginTop:'4%',alignItems:'center',justifyContent:'center',marginBottom:'2%',flexDirection:'row'}}>
-                        <TouchableOpacity activeOpacity={1} style={{height:0,width:'100%',marginRight:10,borderWidth:0.5,borderColor:'white'}}/>
-                        <Text style={{fontSize:20,fontweight:'bold',color:'white'}}>Account</Text>
-                        <TouchableOpacity activeOpacity={1} style={{height:0,width:240,marginLeft:10,borderWidth:0.5,borderColor:'white'}}/>
+                        <TouchableOpacity activeOpacity={1} style={{height:0,width:'100%',marginRight:10,borderWidth:0.5,borderColor:'#7F7FD5'}}/>
+                        <Text style={{fontSize:20,fontweight:'bold',color:'#000C40'}}>Account</Text>
+                        <TouchableOpacity activeOpacity={1} style={{height:0,width:240,marginLeft:10,borderWidth:0.5,borderColor:'#7F7FD5'}}/>
                     </View>
                     <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/15.2,alignItems:'center'}}>
                         <TouchableOpacity onPress={()=>openAccount()} style={Styles.ASettings}>
@@ -260,7 +272,7 @@ export default Settings = (props) => {
                 </ScrollView>
             </Animated.View>
             <Animated.View style={{opacity:accountOpacity,height:accountHeight}}>
-                <Account user={user} close={()=>closeAccount()}/>
+                {/* <Account user={user} close={()=>closeAccount()}/> */}
             </Animated.View>
             <Animated.View style={{opacity:backgroundColorOpacity,height:backgroundColorHeight}}>
                 <BackgroundColor />
