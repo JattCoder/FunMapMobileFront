@@ -11,7 +11,7 @@ export default NewFamily = (props) => {
     const dispatch = useDispatch()
 
     create = () => {
-        dispatch(newfam(props.user.id,props.user.email,name,props.user.name))
+        dispatch(newfam(props.user.email,name))
         //props.finish()
     }
 

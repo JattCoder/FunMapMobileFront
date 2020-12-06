@@ -70,7 +70,7 @@ const Login = (props) => {
             auth().onAuthStateChanged(user => {
                 if(user){
                     firebase.database().ref(`Users/${user.email.replace(punctuation,'').replace(spaceRE,'')}`)
-                    .once('value',snapshot => {
+                    .on('value',snapshot => {
                         props.navigation.navigate('Home',{user: snapshot.val()})
                     })
                 }else{

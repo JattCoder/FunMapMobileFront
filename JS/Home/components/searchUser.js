@@ -1,29 +1,33 @@
-import React,{ useState } from 'react'
+import React,{ useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import firebase from 'firebase'
 import { View, TextInput, Text, ScrollView, Dimensions, Image, FlatList, ActivityIndicator, TouchableOpacity, Animated } from 'react-native'
+const punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~]/g
+const spaceRE = /\s+/g
 
 export default SearchUser = (props) => {
 
     const [users,setUsers] = useState([])
+    const [allUsers,setAllUsers] = useState({})
     const [search,setSearch] = useState('')
     const [senderId,setSenderId] = useState('')
     const [action,setAction] = useState('')
     const [resultsHeight] = useState(new Animated.Value(0))
     const [resultsOpacity] = useState(new Animated.Value(0))
 
+    getallUsers = () => {
+        firebase.database().ref('Users/').on('value',snapShot => {
+            setAllUsers(snapShot.val())
+        })
+    }
+
     searchUser = (input) => {
         if(input.length > 0){
-            fetch(`http://localhost:3000/account/search?search=${input}`)
-            .then(res => {return res.json()})
-            .then(data => {
-                if(data.result == false){
-                    alert(data.message)
-                }else{
-                    setSearch(input)
-                    setUsers(data.message)
+            for(let user in allUsers){
+                if(allUsers[user].name.includes(input) || allUsers[user].email.includes(input)){
+                    setUsers(...users,allUsers[user])
                 }
-            })
+            }
         }else{
             setSearch(input)
             setUsers([])
@@ -33,28 +37,17 @@ export default SearchUser = (props) => {
     sendInvitation = (input) => {
         //i need group name, group code, group id
         setAction('loading')
-        let url = new URL("http://localhost:3000/account/invite"),
-            params = {sid: senderId, gid: props.groupId, email: input}
-            Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
-        fetch(url)
-        .then(res => {return res.json()})
-        .then(data => {
-            if(data.result == true && data.message != 'Not-Registered'){
-                firebase.database().ref('Invitations/'+data.message.id+'/'+props.groupId).set({
-                    gid:props.groupId,
-                    gname:props.groupName,
-                    gcode:props.groupCode,
-                    sender:senderId
-                }).then((data)=>{
-                    //success callback
-                    setAction('')
-                }).catch((error)=>{
-                    //error callback
-                    console.log('error ' , error)
-                })
-            }else{
-                console.warn('Failed')
-            }
+        firebase.database().ref('Invitations/'+data.message.id+'/'+props.groupId).set({
+            gid:props.groupId,
+            gname:props.groupName,
+            gcode:props.groupCode,
+            sender:senderId
+        }).then((data)=>{
+            //success callback
+            setAction('')
+        }).catch((error)=>{
+            //error callback
+            console.log('error ' , error)
         })
     }
 
@@ -63,6 +56,10 @@ export default SearchUser = (props) => {
             setSenderId(state.login.message.id)
         }
     })
+
+    useEffect(()=>{
+        getallUsers()
+    },[])
 
 
     return(

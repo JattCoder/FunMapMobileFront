@@ -37,7 +37,8 @@ export default Bottomweather = (props) => {
     },[props.position.latitude,props.position.longitude])
 
     updateLocation = (location,res) => {
-        Object.keys(fams).length > 0 && email != '' ? updateGroups(location) : null
+        //Unblock this code to update user location
+        //Object.keys(fams).length > 0 && email != '' ? updateGroups(location) : null
     }
 
     updateGroups = (location) => {
