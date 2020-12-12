@@ -20,6 +20,7 @@ export const family = (email) => {
                                 //Member key => member.key, value => member.val()
                                 user = {
                                     Name: member.child('name').val(),
+                                    Email: member.child('email').val(),
                                     Phone: member.child('phone').val(),
                                     Photo: member.child('photo').val(),
                                     Address: member.child('address').val(),

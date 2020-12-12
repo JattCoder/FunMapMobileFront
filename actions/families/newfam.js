@@ -19,6 +19,7 @@ export const newfam = (email,name,Uname,phone,photo) => {
                 //dispatch(family(id))
                 firebase.database().ref('FamilyGroups/'+(count+1)+'/Members/'+email.replace(punctuation,'').replace(spaceRE,'')).set({
                     address: '',
+                    email,
                     batteryLevel: 0,
                     charging: false,
                     heading: 0,

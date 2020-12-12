@@ -10,16 +10,23 @@ export default Locationshare = (props) => {
 
     const [publiColor,setPubliColor] = useState('rgba(142, 144, 145, 0.4)')
     const [familyColor,setFamilyColor] = useState('rgba(142, 144, 145, 0.4)')
-    const [ghostColor,setGhoftColor] = useState('#00BFFF')
+    const [ghostColor,setGhoftColor] = useState('#7F7FD5')
     const [fams,setFams] = useState([])
     const [email,setEmail] = useState('')
     const [settings,setSettings] = useState({})
     const dispatch = useDispatch()
-    const permit = useSelector((state)=>{return state.settings.permitted})
 
     useEffect(()=>{
-        selecType(permit)
-    },[props.email])
+        if(Object.keys(fams).length > 0){
+            users = fams[Object.keys(fams)[0]].Users
+            for(let urs in users){
+                if(users[urs].Email == props.email)
+                    if(props.share == false && users[urs].LocationShare == false) selecType('Ghost')
+                    else if(props.share == false && users[urs].LocationShare == true) selecType('Family')
+                    else if(props.share == true) selecType('Public')
+            }
+        }
+    })
 
     selecType = (selection) => {
         if(selection == 'Public'){
@@ -56,7 +63,7 @@ export default Locationshare = (props) => {
             let currentFam = fams[fam]
             updateFamilies(currentFam,selection)
         }
-        dispatch(locshare(selection))
+        //dispatch(locshare(selection))
     }
 
     useSelector((state)=>{

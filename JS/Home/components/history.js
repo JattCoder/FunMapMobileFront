@@ -1,23 +1,30 @@
 import React,{ useEffect, useState } from 'react'
+import firebase from 'firebase'
 import { useSelector } from 'react-redux'
+const punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~]/g
+const spaceRE = /\s+/g
 
 export default History = (props) => {
 
-    const[today,setToday] = useState('')
     const[positionList,setPositionList] = useState([])
-    const[scheduled,setScheduled] = useState(false)
+    const[email,setEmail] = useState('')
+    const[todaY,setToday] = useState({
+        string:'',
+        timestamp:0
+    })
     const time = (60 * 5) * 1000
 
     updateDB = () => {
-        setScheduled(true)
         setTimeout(()=>{
             sendResults()
         },time)
     }
 
     sendResults = () => {
-        console.warn(positionList)
-        //setScheduled(false)
+        firebase.database().ref('History/'+email.replace(punctuation,'').replace(spaceRE,'')+'/'+todaY.string).set({
+            positionList
+        })
+        .catch(err => console.warn(err))
     }
     
     Info = () => {
@@ -25,18 +32,19 @@ export default History = (props) => {
         let dd = String(today.getDate()).padStart(2, '0');
         let mm = String(today.getMonth() + 1).padStart(2, '0')
         let yyyy = today.getFullYear();
-        td = mm + '/' + dd + '/' + yyyy
-        if(today != td) setToday(td)
-        setPositionList([...positionList,{date:today,geo:props.current,speed:props.speed}])
-        if(!scheduled) updateDB()
+        td = mm + '-' + dd + '-' + yyyy
+        if(todaY.string != td) setToday({string:td, timestamp:today})
+        if(email != ''){
+            setPositionList([...positionList,{time:today.getTime(),geo:props.current,speed:props.speed}])
+            setTimeout(()=>{sendResults()},20000)
+        }
     }
 
-    useSelector((state)=>{
-        if(state.login.result == false) sendResults()
-    })
-
     useEffect(()=>{
-        Info()
+        if(props.email && props.current.lat != 0 && props.current.lng != 0){
+            setEmail(props.email)
+            Info()
+        }
     },[props.current])
 
     return null

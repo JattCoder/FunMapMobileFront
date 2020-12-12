@@ -107,7 +107,7 @@ export default Bottomweather = (props) => {
 
     return(
         <View>
-            {/* <History current={{lat: props.position.latitude, lng: props.position.longitude}} city={currentCity} speed={props.position.speed}/> */}
+            <History email={props.email} current={{lat: props.position.latitude, lng: props.position.longitude}} speed={props.position.speed}/>
             {email != '' ? <Checkbattery email={email}/> : null}
             {currentCity != '' ? <View style={{flexDirection:'row',width:'100%',alignItems:'center'}}>
                 <View style={{left:0,width:'77%'}}>

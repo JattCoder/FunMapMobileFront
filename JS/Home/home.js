@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import Styles from './styles'
 import { selmarker } from '../../actions/marker/selmarker'
 import { View, TouchableOpacity, Dimensions, Animated, Image } from 'react-native'
-import MapView,{Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView,{Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import Mrker from '../Markers/marker'
 import Location from '../FindMe/location'
 import Navigate from '../Components/navigation/navigate'
@@ -107,7 +107,7 @@ const Home = (props) => {
 
     return (
         <View style={{ height: dimensions.height, width: dimensions.width}}>
-            {showme == false ? <Location /> : null}
+            {regionPosition.speed == 0 ? <Location /> : null}
             <View style={Styles.Page}>
                 <MapView provider={PROVIDER_GOOGLE}
                     ref={ref => { setmap(ref) }}

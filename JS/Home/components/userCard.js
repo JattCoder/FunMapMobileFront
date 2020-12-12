@@ -10,12 +10,6 @@ export default UserCard = (props) => {
         //console.warn(props.user.LocationShare)
     })
 
-    useSelector((state)=>{
-        if(permitted != state.settings.permitted){
-            setPermitted(state.settings.permitted)
-        }
-    })
-
     // {"Address": null, "Email": "harmandeepmand.hm@gmail.com", "Heading": null, "Latitude": null, "LocationShare": false, "Longitute": null, "Member": "Member", "Name": "Harmandeep Mand", "Phone": "4403171521", "Photo": "", "Speed": null} 
 
         return(

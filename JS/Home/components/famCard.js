@@ -93,18 +93,21 @@ export default FamCard = (props) => {
                         <TouchableOpacity activeOpacity={1} onPress={()=>{props.next()}} style={{backgroundColor:'rgba(0,0,0,0.5)',borderRadius:50,width:'170%',justifyContent:'center',alignItems:'center',width:'100%',height:'100%'}}/>
                     </Animated.View>
                 </View>
-                <View style={{width:'100%',height:'5%',justifyContent:'center'}}>
-                    <TouchableOpacity onPress={()=>openSearch()} style={{zIndex:500,flexDirection:'row',alignItems:'center',position:'absolute',left:15,top:0}}>
-                        <Image style={{width:35,height:35}} source={require('../../settingsIcons/plus.png')} />
+                <View style={{width:'100%',height:'7%',justifyContent:'center',alignItems:'center',flexDirection:'row',marginTop:'2%'}}>
+                    <TouchableOpacity onPress={()=>openSearch()} style={{alignItems:'center',borderWidth:1,borderRadius:50,borderColor:'white',justifyContent:'center',alignItems:'center',height:30,width:30}}>
+                        <Image style={{width:20,height:20}} source={require('../../settingsIcons/plus.png')} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={()=>alert('Settings')} style={{flexDirection:'row',alignItems:'center',position:'absolute',right:15,top:0}}>
-                        <Image style={{width:35,height:35}} source={require('../../settingsIcons/setting.png')} />
+                    <TouchableOpacity onPress={()=>alert('Settings')} style={{alignItems:'center',marginHorizontal:'2%',borderWidth:1,borderRadius:50,borderColor:'white',justifyContent:'center',alignItems:'center',height:30,width:30}}>
+                        <Image style={{width:20,height:20}} source={require('../../settingsIcons/setting.png')} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={()=>alert('Settings')} style={{alignItems:'center',borderWidth:1,borderRadius:50,borderColor:'white',justifyContent:'center',alignItems:'center',height:30,width:30}}>
+                        <Image style={{width:20,height:20}} source={require('../../settingsIcons/time.png')} />
                     </TouchableOpacity>
                 </View>
                 <View style={{height:'75%',width:'100%',margin:20}}>
                     <ScrollView>
                         {props.Users.map((member)=>{
-                            return <UserCard user={member} />
+                            return <UserCard user={member} locShare={props.locShare}/>
                         })}
                     </ScrollView>
                 </View>

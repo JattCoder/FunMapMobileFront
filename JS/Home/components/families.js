@@ -5,7 +5,8 @@ import { invitations } from '../../../actions/families/invitations'
 import { View, Text, Dimensions, TouchableOpacity, ActivityIndicator, Animated, StyleSheet } from 'react-native'
 import { famselection } from '../../../actions/settings/famSelection'
 import FamCard from './famCard'
-import Invitations from './invitations'
+import InviCard from './inviCard'
+import NoFamInvi from './noFamInvi'
 
 export default Families = (props) => {
 
@@ -16,6 +17,11 @@ export default Families = (props) => {
     const [rorateCard] = useState(new Animated.Value(0))
     const [inviColor] = useState(new Animated.Value(1))
     const [groupNumber,setGroupNumber] = useState(0)
+    const [familyCardOpacity] = useState(new Animated.Value(1))
+    const [invitationCardOpacity] = useState(new Animated.Value(0))
+    const [rotateInvitations] = useState(new Animated.Value(1))
+    const [familyPopUp] = useState(new Animated.Value(1))
+    const [InviPopUp] = useState(new Animated.Value(-1))
     const [showInvi,setShowInvi] = useState(false)
     const dispatch = useDispatch()
 
@@ -98,9 +104,36 @@ export default Families = (props) => {
                 toValue:1,
                 duration:500,
                 useNativeDriver:false
+            }),
+            Animated.timing(familyCardOpacity,{
+                toValue:0,
+                duration:10,
+                useNativeDriver:false
+            }),
+            Animated.timing(familyPopUp,{
+                toValue:-1,
+                duration:10,
+                useNativeDriver:false
+            }),
+            Animated.timing(rotateInvitations,{
+                toValue:0,
+                duration:500,
+                useNativeDriver:false
+            }),
+            Animated.timing(invitationCardOpacity,{
+                toValue:1,
+                duration:1000,
+                useNativeDriver:false
+            }),
+            Animated.timing(InviPopUp,{
+                toValue:1,
+                duration:10,
+                useNativeDriver:false
             })
         ]).start(()=>{
-            setShowInvi(true)
+            Animated.parallel([
+                
+            ]).start(()=>setShowInvi(true))
         })
     }
 
@@ -120,6 +153,31 @@ export default Families = (props) => {
                 toValue:0,
                 duration:500,
                 useNativeDriver:false
+            }),
+            Animated.timing(familyCardOpacity,{
+                toValue:1,
+                duration:1000,
+                useNativeDriver:false
+            }),
+            Animated.timing(familyPopUp,{
+                toValue:1,
+                duration:10,
+                useNativeDriver:false
+            }),
+            Animated.timing(rotateInvitations,{
+                toValue:1,
+                duration:500,
+                useNativeDriver:false
+            }),
+            Animated.timing(invitationCardOpacity,{
+                toValue:0,
+                duration:10,
+                useNativeDriver:false
+            }),
+            Animated.timing(InviPopUp,{
+                toValue:-1,
+                duration:10,
+                useNativeDriver:false
             })
         ]).start(()=>{
             setShowInvi(false)
@@ -137,6 +195,11 @@ export default Families = (props) => {
     })
 
     const rotateCardInterpolate = rorateCard.interpolate({
+        inputRange:[0,1],
+        outputRange:['0deg','180deg']
+    })
+
+    const rotateInvitaionsInterpolate = rotateInvitations.interpolate({
         inputRange:[0,1],
         outputRange:['0deg','180deg']
     })
@@ -160,9 +223,12 @@ export default Families = (props) => {
                     </Animated.View>
                 </View>
             </View>
-            <Animated.View style={{width:Dimensions.get('window').width,height:Dimensions.get('screen').height/2.3,opacity:1,transform: [{ rotateY: rotateCardInterpolate}]}}>
-                {Object.keys(fams).length > 0 ? <FamCard Name={fam.Name} Message={fam.Message} Users={fam.Users} next={()=>nextFamily()} prev={()=>prevFamily()} />
-                : <Text>No Families</Text>}
+            <Animated.View style={{position:'absolute',width:Dimensions.get('window').width,height:Dimensions.get('screen').height/2.3,opacity:familyCardOpacity,zIndex:familyPopUp,transform: [{ rotateY: rotateCardInterpolate}]}}>
+                {Object.keys(fams).length > 0 ? <FamCard Name={fam.Name} Message={fam.Message} Users={fam.Users} locShare={props.user.locationShare} next={()=>nextFamily()} prev={()=>prevFamily()} />
+                : <NoFamInvi message={'Family'}/>}
+            </Animated.View>
+            <Animated.View style={{position:'absolute',width:Dimensions.get('window').width,height:Dimensions.get('screen').height/2.3,opacity:invitationCardOpacity,zIndex:InviPopUp,transform: [{ rotateY: rotateInvitaionsInterpolate}]}}>
+                {Object.keys(invis).length > 0 ? <InviCard /> : <NoFamInvi message={'Invitations'}/>}
             </Animated.View>
         </View> 
     )
