@@ -1,14 +1,17 @@
 import React,{ useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { settingsupdate } from '../../../actions/settings/settingupdate' 
+import { updateDrivingMode, updateFerries, updateHighways, updateKm } from './changeSettings' 
 import { View, StyleSheet, Dimensions, ScrollView, Switch, Text, Image, Animated } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import BackgroundColor from './backgroundColor'
+import LinearGradient from 'react-native-linear-gradient'
 import Account from '../../Components/settings/account'
+import firebase from 'firebase'
+const punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~]/g
+const spaceRE = /\s+/g
 
 export default Settings = (props) => {
 
-    const [user,setUser] = useState('')
     const [drivingMode,setDrivingMode] = useState(false)
     const drivingSwitch = () => setDrivingMode(previousState => !previousState)
     const [avoidHighways,setAvoidHighways] = useState(false)
@@ -33,13 +36,13 @@ export default Settings = (props) => {
 
     saveAndExit = () => {
         props.close()
-        dispatch(settingsupdate({
+        firebase.database().ref('Users/'+props.email.replace(punctuation,'').replace(spaceRE,'')).update({
             drivingMode: drivingMode == false ? 'driving' : 'walking',
             highways: avoidHighways,
             tolls: avoidTolls,
             ferries: avoidFerries,
             temperature: temperature == false ? 'C°' : 'F°',
-        },user.email))
+        }).catch(err => console.warn(err))
     }
 
     openBackgroundColor = () => {
@@ -134,23 +137,35 @@ export default Settings = (props) => {
     // "weather": "F°", 
     // "work": "4621 Broadview Rd, Cleveland, OH 44109"}
 
+    uDateDM = () => {
+        setDrivingMode(!drivingMode)
+        console.warn(props.email.replace(punctuation,'').replace(spaceRE,''))
+        firebase.database().ref('Users/'+props.email.replace(punctuation,'').replace(spaceRE,'')).update({
+            drivingMode: !drivingMode == true ? 'driving' : 'walking'
+        }).catch(err => {
+            console.warn(err)
+        })
+    }
+
     useEffect(()=>{
-        if(drivingMode != (props.user.drivingMode == 'driving' ? false : true)){
-            setDrivingMode(previousState => !previousState)
-        }
-        if(avoidHighways != props.user.highways){
-            setAvoidHighways(previousState => !previousState)
-        }
-        if(avoidTolls != props.user.tolls){
-            setAvoidTolls(previousState => !previousState)
-        }
-        if(avoidFerries != props.user.ferries){
-            setAvoidFerries(previousState => !previousState)
-        }
-        if(temperature != (props.user.weather == 'F°' ? true : false)){
-            setTemperature(previousState => !previousState)
-        }
-    })
+        if(props.email) firebase.database().ref('Users/'+props.email.replace(punctuation,'').replace(spaceRE,'')).once('value',snapShot=>{
+            if(drivingMode != (snapShot.child('drivingMode').val() == 'driving' ? false : true)){
+                    setDrivingMode(previousState => !previousState)
+                }
+                if(avoidHighways != snapShot.child('highways').val()){
+                    setAvoidHighways(previousState => !previousState)
+                }
+                if(avoidTolls != snapShot.child('tolls').val()){
+                    setAvoidTolls(previousState => !previousState)
+                }
+                if(avoidFerries != snapShot.child('ferries').val()){
+                    setAvoidFerries(previousState => !previousState)
+                }
+                if(temperature != (snapShot.child('weather').val() == 'F°' ? true : false)){
+                    setTemperature(previousState => !previousState)
+                }
+        })
+    },[props.email])
 
     return(
         <View style={Styles.Page}>

@@ -83,25 +83,25 @@ export default FamCard = (props) => {
         <View style={{width:Dimensions.get('window').width,height:'100%',alignItems:'center',justifyContent:'center',marginTop:'5%'}}>
             <Animated.View style={{opacity:famOpacity,width:Dimensions.get('screen').width/1.07,height:famHeight,shadowColor: "#000",shadowOffset: { width: 0,height: 4 },shadowOpacity: 0.30,shadowRadius: 4.65,elevation: 8,backgroundColor:'rgba(211,204,227,1)',borderRadius:10,alignItems:'center'}}>
                 <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
-                    <Animated.View style={{marginTop:leftButtonInterpolate,marginHorizontal:'4%',height:13,width:13}}>
+                    {props.size > 1 ? <Animated.View style={{marginTop:leftButtonInterpolate,marginHorizontal:'4%',height:13,width:13}}>
                         <TouchableOpacity activeOpacity={1} onPress={()=>{props.prev()}} style={{backgroundColor:'rgba(0,0,0,0.5)',borderRadius:50,width:'170%',justifyContent:'center',alignItems:'center',width:'100%',height:'100%'}}/>
-                    </Animated.View>
+                    </Animated.View> : null}
                     <View style={{marginTop:'3%',borderRadius:10,backgroundColor:'#7F7FD5',justifyContent:'center',alignItems:'center'}}>
                         <Text style={{margin:5,fontSize:20,justifyContent:'center',color:'white'}}>{props.Name}</Text>
                     </View>
-                    <Animated.View style={{marginTop:RightButtonInterpolate,marginHorizontal:'4%',height:13,width:13}}>
+                    {props.size > 1 ? <Animated.View style={{marginTop:RightButtonInterpolate,marginHorizontal:'4%',height:13,width:13}}>
                         <TouchableOpacity activeOpacity={1} onPress={()=>{props.next()}} style={{backgroundColor:'rgba(0,0,0,0.5)',borderRadius:50,width:'170%',justifyContent:'center',alignItems:'center',width:'100%',height:'100%'}}/>
-                    </Animated.View>
+                    </Animated.View> : null}
                 </View>
                 <View style={{width:'100%',height:'7%',justifyContent:'center',alignItems:'center',flexDirection:'row',marginTop:'2%'}}>
-                    <TouchableOpacity onPress={()=>openSearch()} style={{alignItems:'center',borderWidth:1,borderRadius:50,borderColor:'white',justifyContent:'center',alignItems:'center',height:30,width:30}}>
+                    <TouchableOpacity onPress={()=>openSearch()} style={{alignItems:'center',borderWidth:1,borderRadius:50,borderColor:'#7F7FD5',justifyContent:'center',alignItems:'center',height:30,width:30}}>
                         <Image style={{width:20,height:20}} source={require('../../settingsIcons/plus.png')} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={()=>alert('Settings')} style={{alignItems:'center',marginHorizontal:'2%',borderWidth:1,borderRadius:50,borderColor:'white',justifyContent:'center',alignItems:'center',height:30,width:30}}>
+                    <TouchableOpacity onPress={()=>alert('Settings')} style={{alignItems:'center',marginHorizontal:'2%',borderWidth:1,borderRadius:50,borderColor:'#7F7FD5',justifyContent:'center',alignItems:'center',height:30,width:30}}>
                         <Image style={{width:20,height:20}} source={require('../../settingsIcons/setting.png')} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={()=>alert('Settings')} style={{alignItems:'center',borderWidth:1,borderRadius:50,borderColor:'white',justifyContent:'center',alignItems:'center',height:30,width:30}}>
-                        <Image style={{width:20,height:20}} source={require('../../settingsIcons/time.png')} />
+                    <TouchableOpacity onPress={()=>alert('Get Together')} style={{alignItems:'center',borderWidth:1,borderRadius:50,borderColor:'#7F7FD5',justifyContent:'center',alignItems:'center',height:30,width:30}}>
+                        <Image style={{width:20,height:20}} source={require('../../settingsIcons/mail.png')} />
                     </TouchableOpacity>
                 </View>
                 <View style={{height:'75%',width:'100%',margin:20}}>

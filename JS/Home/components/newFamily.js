@@ -1,7 +1,7 @@
 import React,{ useState, useEffect } from 'react'
 import { family } from '../../../actions/families/family'
 import { newfam } from '../../../actions/families/newfam'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import firebase from 'firebase'
 import { View, Text, Dimensions, TouchableOpacity, TextInput } from 'react-native'
 
@@ -14,6 +14,17 @@ export default NewFamily = (props) => {
         dispatch(newfam(props.user.email,name,props.user.name,props.user.phone,props.user.photo))
         //props.finish()
     }
+
+    useSelector((state)=>{
+        if(Object.keys(state.family) > 0){
+            for(let i in state.family){
+                if(name == i){
+                    setName('')
+                    props.finish()
+                }
+            }
+        }
+    })
 
     return(
         <View style={{width:Dimensions.get('screen').width,height:'100%',justifyContent:'center',alignItems:'center'}}>

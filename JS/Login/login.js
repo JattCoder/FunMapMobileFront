@@ -4,7 +4,7 @@ import { TouchableOpacity, TextInput } from 'react-native-gesture-handler'
 import { useSelector, useDispatch } from 'react-redux'
 import { login } from '../../actions/login/login'
 import { reslogin } from '../../actions/login/reslogin'
-import { settings } from '../../actions/settings/settings'
+//import { settings } from '../../actions/settings/settings'
 import Dialog from "react-native-dialog"
 import firebase from 'firebase'
 import LinearGradient from 'react-native-linear-gradient'

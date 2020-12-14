@@ -7,17 +7,18 @@ const spaceRE = /\s+/g
 export const newfam = (email,name,Uname,phone,photo) => {
     
     return (dispatch) => {
-        firebase.database().ref('FamilyGroups/').once('value', data => {
-            let count = Object.keys(data.val()).length
-            firebase.database().ref('FamilyGroups/'+(count+1)+'/').set({
+        let count = 0
+        firebase.database().ref('FamilyGroups/').orderByKey().limitToLast(1).once('value',snap=>{
+            for(let i in snap.val()){
+                count = i
+            }
+            firebase.database().ref('FamilyGroups/'+(parseInt(count)+1)+'/').set({
                 ID: count+1,
                 Message: 'Welcome to '+name,
                 Name: name,
                 Members: []
             }).then((result)=>{
-                //success callback
-                //dispatch(family(id))
-                firebase.database().ref('FamilyGroups/'+(count+1)+'/Members/'+email.replace(punctuation,'').replace(spaceRE,'')).set({
+                firebase.database().ref('FamilyGroups/'+(parseInt(count)+1)+'/Members/'+email.replace(punctuation,'').replace(spaceRE,'')).set({
                     address: '',
                     email,
                     batteryLevel: 0,

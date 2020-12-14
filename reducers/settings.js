@@ -1,5 +1,5 @@
-import { SETTINGS } from '../actions/settings/settings'
-import { SETTINGSUPDATE } from '../actions/settings/settingupdate'
+//import { SETTINGS } from '../actions/settings/settings'
+//import { SETTINGSUPDATE } from '../actions/settings/settingupdate'
 import { LOCSHARE } from '../actions/settings/locShare'
 import { BACKCOLOR } from '../actions/settings/backColor'
 import { FAMSELECTION } from '../actions/settings/famSelection'
@@ -20,10 +20,10 @@ let initialState = {
 
 const settings = (settings = initialState, action) => {
     switch(action.type){
-        case SETTINGS:
-            return action.settings
-        case SETTINGSUPDATE:
-            return action.settings
+        // case SETTINGS:
+        //     return action.settings
+        // case SETTINGSUPDATE:
+        //     return action.settings
         case LOCSHARE:
             return {...settings, permitted: action.settings}
         case BACKCOLOR:
