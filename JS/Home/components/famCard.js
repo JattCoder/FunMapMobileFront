@@ -1,6 +1,7 @@
 import React,{ useState, useEffect } from 'react'
 import UserCard from './userCard'
 import SearchUser from './searchUser'
+import GetTogether from './getTogether'
 import { useDispatch } from 'react-redux'
 import { currentfamily } from '../../../actions/mapFamily/currentfamily'
 import { View, Text, TouchableOpacity, Image, Dimensions, ScrollView, Animated } from 'react-native'
@@ -17,6 +18,11 @@ export default FamCard = (props) => {
     const[searchOpacity] = useState(new Animated.Value(0))
     const[rightButtonMarginTop] = useState(new Animated.Value(0))
     const[leftButtonMarginTop] = useState(new Animated.Value(0))
+    const[usersOpacity] = useState(new Animated.Value(1))
+    const[usersHeight] = useState(new Animated.Value(1))
+    const[getTogetherOpacity] = useState(new Animated.Value(0))
+    const[getTogetherHeight] = useState(new Animated.Value(0))
+    const[getTogetherDisplay,setGetTogetherDisplay] = useState('none')
     const dispatch = useDispatch()
 
     openSearch = () => {
@@ -69,6 +75,56 @@ export default FamCard = (props) => {
         ]).start()
     }
 
+    openGetTopethers = () => {
+        Animated.parallel([
+            Animated.timing(usersHeight,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(usersOpacity,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(getTogetherHeight,{
+                toValue:1,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(getTogetherOpacity,{
+                toValue:1,
+                duration:250,
+                useNativeDriver:false
+            })
+        ]).start(()=>setGetTogetherDisplay(''))
+    }
+
+    closeGetTopethers = () => {
+        Animated.parallel([
+            Animated.timing(usersHeight,{
+                toValue:1,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(usersOpacity,{
+                toValue:1,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(getTogetherHeight,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(getTogetherOpacity,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            })
+        ]).start(()=>setGetTogetherDisplay('none'))
+    }
+
     const leftButtonInterpolate = leftButtonMarginTop.interpolate({
         inputRange:[0,1,2],
         outputRange:['3%','2.5%','2%']
@@ -77,6 +133,16 @@ export default FamCard = (props) => {
     const RightButtonInterpolate = rightButtonMarginTop.interpolate({
         inputRange:[0,1,2],
         outputRange:['3%','2.5%','2%']
+    })
+
+    const usersHeightInterpolate = usersHeight.interpolate({
+        inputRange:[0,1],
+        outputRange:['0%','75%']
+    })
+
+    const getTogetherHeightInterpolate = getTogetherHeight.interpolate({
+        inputRange:[0,1],
+        outputRange:['0%','75%']
     })
 
     return(
@@ -100,17 +166,20 @@ export default FamCard = (props) => {
                     <TouchableOpacity onPress={()=>alert('Settings')} style={{alignItems:'center',marginHorizontal:'2%',borderWidth:1,borderRadius:50,borderColor:'#7F7FD5',justifyContent:'center',alignItems:'center',height:30,width:30}}>
                         <Image style={{width:20,height:20}} source={require('../../settingsIcons/setting.png')} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={()=>alert('Get Together')} style={{alignItems:'center',borderWidth:1,borderRadius:50,borderColor:'#7F7FD5',justifyContent:'center',alignItems:'center',height:30,width:30}}>
+                    <TouchableOpacity onPress={()=>openGetTopethers()} style={{alignItems:'center',borderWidth:1,borderRadius:50,borderColor:'#7F7FD5',justifyContent:'center',alignItems:'center',height:30,width:30}}>
                         <Image style={{width:20,height:20}} source={require('../../settingsIcons/mail.png')} />
                     </TouchableOpacity>
                 </View>
-                <View style={{height:'75%',width:'100%',margin:20}}>
+                <Animated.View style={{height:getTogetherHeightInterpolate,width:'100%',margin:20,opacity:getTogetherOpacity,display:getTogetherDisplay}}>
+                    <GetTogether gettogether={props.gettogether} close={()=>closeGetTopethers()}/>
+                </Animated.View>
+                <Animated.View style={{height:usersHeightInterpolate,width:'100%',margin:20,opacity:usersOpacity}}>
                     <ScrollView>
                         {props.Users.map((member)=>{
                             return <UserCard user={member} locShare={props.locShare}/>
                         })}
                     </ScrollView>
-                </View>
+                </Animated.View>
             </Animated.View>
             <Animated.View style={{height:searchHeight,width:'100%',opacity:searchOpacity,alignItems:'center'}}>
                 <View style={{width:Dimensions.get('screen').width/1.1}}>

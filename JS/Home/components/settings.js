@@ -22,7 +22,6 @@ export default Settings = (props) => {
     const ferriesSwitch = () => setAvoidFerries(previousState => !previousState)
     const [temperature,setTemperature] = useState(false)
     const temperatureSwitch = () => setTemperature(previousState => !previousState)
-    const [added,setAdded] = useState(false)
     const dispatch = useDispatch()
     const [settingsHeight] = useState(new Animated.Value(Dimensions.get('screen').height/1.85))
     const [settingsOpacity] = useState(new Animated.Value(1))
@@ -136,16 +135,6 @@ export default Settings = (props) => {
     // "tolls": false, 
     // "weather": "F°", 
     // "work": "4621 Broadview Rd, Cleveland, OH 44109"}
-
-    uDateDM = () => {
-        setDrivingMode(!drivingMode)
-        console.warn(props.email.replace(punctuation,'').replace(spaceRE,''))
-        firebase.database().ref('Users/'+props.email.replace(punctuation,'').replace(spaceRE,'')).update({
-            drivingMode: !drivingMode == true ? 'driving' : 'walking'
-        }).catch(err => {
-            console.warn(err)
-        })
-    }
 
     useEffect(()=>{
         if(props.email) firebase.database().ref('Users/'+props.email.replace(punctuation,'').replace(spaceRE,'')).once('value',snapShot=>{

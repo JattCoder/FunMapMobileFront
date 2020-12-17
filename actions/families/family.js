@@ -14,8 +14,19 @@ export const family = (email) => {
                                 Name: myGroup.child('Name').val(),
                                 Message: myGroup.child('Message').val(),
                                 ID: myGroup.child('ID').val(),
-                                Users:[]
+                                Users:[],
+                                GetTogether:[]
                             }
+                            myGroup.child('GetTogether').forEach(gettogether => {
+                                gt = {
+                                    Name: gettogether.child('Name').val(),
+                                    Address: gettogether.child('Address').val(),
+                                    Time: gettogether.child('Time').val(),
+                                    HostName: gettogether.child('HostName').val(),
+                                    HostEmail: gettogether.child('HostEmail').val(),
+                                }
+                                families[myGroup.child('Name').val()]['GetTogether'].push(gt)
+                            })
                             myGroup.child('Members').forEach(member => {
                                 //Member key => member.key, value => member.val()
                                 user = {
