@@ -1,12 +1,16 @@
 import React,{ useEffect, useState } from 'react'
-import { ScrollView, Text, Animated, View, TouchableOpacity } from 'react-native'
+import { ScrollView, Text, Animated, View, TouchableOpacity, TextInput } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
+import DatePicker from 'react-native-date-picker'
 
 export default GetTogether = (props) => {
 
     const[pageHeight] = useState(new Animated.Value(0))
     const[newGetTogetherIndex] = useState(new Animated.Value(-1))
     const[newGetTogetherOpacity] = useState(new Animated.Value(0))
+    const[title,setTitle] = useState('')
+    const[address,setAddress] = useState('')
+    const[date, setDate] = useState(new Date())
 
     const pageHeightInterpolate = pageHeight.interpolate({
         inputRange:[0,1],
@@ -27,6 +31,7 @@ export default GetTogether = (props) => {
             })
         ]).start()
     }
+    //https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=4621%20broadview%20rd&inputtype=textquery&fields=formatted_address&key=AIzaSyDMCLs_nBIfA8Bw9l50nSRwLOUByiDel9U
 
     useEffect(()=>{
         Animated.timing(pageHeight,{
@@ -69,7 +74,20 @@ export default GetTogether = (props) => {
                 </TouchableOpacity>
             </View>
             <Animated.View style={{position:'absolute',height:'100%',width:'95%',backgroundColor:'rgba(0,0,0,0.6)',borderRadius:10,right:7,left:7,zIndex:newGetTogetherIndex,opacity:newGetTogetherOpacity,justifyContent:'center',alignItems:'center'}}>
-                <Text>Hello</Text>
+                <View style={{width:'100%',height:'13%',marginTop:'3%',justifyContent:'center',alignItems:'center'}}>
+                    <TextInput placeholder='Title' onChangeText={(e)=>setTitle(e)} placeholderTextColor='grey' style={{backgroundColor:'rgba(0,0,0,0.6)',color:'white',width:'70%',height:'100%',borderRadius:10,paddingHorizontal:'3%'}}/>
+                </View>
+                <View style={{width:'100%',height:'13%',justifyContent:'center',alignItems:'center',marginTop:'2%'}}>
+                    <TextInput placeholder='Address' onChangeText={(e)=>setAddress(e)} placeholderTextColor='grey' style={{backgroundColor:'rgba(0,0,0,0.6)',color:'white',width:'70%',height:'100%',borderRadius:10,paddingHorizontal:'3%'}}/>
+                </View>
+                <View style={{height:'50%',width:'85%'}}>
+                    <DatePicker date={date} onDateChange={setDate} textColor={'white'} style={{height:180,width:320}}/>
+                </View>
+                <View style={{width:'100%',height:'10%',justifyContent:'center',alignItems:'center'}}>
+                    <TouchableOpacity onPress={()=>console.warn(date)} style={{width:'70%',height:'100%',backgroundColor:'white',borderRadius:50,justifyContent:'center',alignItems:'center'}}>
+                        <Text>Send</Text>
+                    </TouchableOpacity>
+                </View>
             </Animated.View>
         </Animated.View>
     )
