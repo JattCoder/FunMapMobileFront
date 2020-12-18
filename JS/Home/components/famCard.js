@@ -7,11 +7,6 @@ import { currentfamily } from '../../../actions/mapFamily/currentfamily'
 import { View, Text, TouchableOpacity, Image, Dimensions, ScrollView, Animated } from 'react-native'
 
 export default FamCard = (props) => {
-
-    const[fam,setFam] = useState({
-        Name: 'Harmandeep Mand',
-        Users: []
-    })
     const[famHeight] = useState(new Animated.Value(Dimensions.get('screen').height/1.97))
     const[famOpacity] = useState(new Animated.Value(1))
     const[searchHeight] = useState(new Animated.Value(0))
@@ -171,7 +166,7 @@ export default FamCard = (props) => {
                     </TouchableOpacity>
                 </View>
                 <Animated.View style={{height:getTogetherHeightInterpolate,width:'100%',margin:20,opacity:getTogetherOpacity,display:getTogetherDisplay}}>
-                    <GetTogether gettogether={props.gettogether} close={()=>closeGetTopethers()}/>
+                    <GetTogether id={props.ID} gettogether={props.gettogether} name={props.UserName} email={props.UserEmail} close={()=>closeGetTopethers()}/>
                 </Animated.View>
                 <Animated.View style={{height:usersHeightInterpolate,width:'100%',margin:20,opacity:usersOpacity}}>
                     <ScrollView>

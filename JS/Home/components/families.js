@@ -224,7 +224,7 @@ export default Families = (props) => {
                 </View>
             </View>
             <Animated.View style={{position:'absolute',width:Dimensions.get('window').width,height:Dimensions.get('screen').height/2.3,opacity:familyCardOpacity,zIndex:familyPopUp,transform: [{ rotateY: rotateCardInterpolate}]}}>
-                {Object.keys(fams).length > 0 ? <FamCard Name={fam.Name} Message={fam.Message} Users={fam.Users} gettogether={fam.GetTogether} locShare={props.user.locationShare} next={()=>nextFamily()} prev={()=>prevFamily()} size={Object.keys(fams).length}/>
+                {Object.keys(fams).length > 0 ? <FamCard UserName={props.user.name} UserEmail={props.user.email} ID={fam.ID} Name={fam.Name} Message={fam.Message} Users={fam.Users} gettogether={fam.GetTogether} locShare={props.user.locationShare} next={()=>nextFamily()} prev={()=>prevFamily()} size={Object.keys(fams).length}/>
                 : <NoFamInvi message={'Family'}/>}
             </Animated.View>
             <Animated.View style={{position:'absolute',width:Dimensions.get('window').width,height:Dimensions.get('screen').height/2.3,opacity:invitationCardOpacity,zIndex:InviPopUp,transform: [{ rotateY: rotateInvitaionsInterpolate}]}}>
