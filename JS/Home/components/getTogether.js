@@ -77,7 +77,7 @@ export default GetTogether = (props) => {
                 HostEmail: props.email,
                 HostName: props.name,
                 Name: title,
-                Time: date
+                Time: new Date(date).getTime()
             }).then((data)=>{
                 //success callback
                 setTitle('')
@@ -93,6 +93,26 @@ export default GetTogether = (props) => {
         }
     }
 
+    getDate = (dateTime) => {
+        mth = dateTime.getMonth() + 1
+        dte = dateTime.getDate()
+        hr = dateTime.getHours()
+        mn = dateTime.getMinutes()
+        if(mth == 1) mth = ' Jan '
+        else if(mth == 2) mth = ' Feb '
+        else if(mth == 3) mth = ' Mar '
+        else if(mth == 4) mth = ' Apr '
+        else if(mth == 5) mth = ' May '
+        else if(mth == 6) mth = ' Jun '
+        else if(mth == 7) mth = ' Jul '
+        else if(mth == 8) mth = ' Aug '
+        else if(mth == 9) mth = ' Seb '
+        else if(mth == 10) mth = ' Oct '
+        else if(mth == 11) mth = ' Nov '
+        else if(mth == 12) mth = ' Dec '
+        return dte+mth+hr+':'+mn+(hr < 12 ? ' AM' : ' PM')
+    }
+
     return(
         <Animated.View style={{height:pageHeightInterpolate,width:'100%',shadowColor: "#000",shadowColor: "#000",shadowOffset: {width: 0,height: 5,},shadowOpacity: 0.36,shadowRadius: 6.68,elevation: 11,}}>
             <View style={{width:'100%',height:'80%'}}>
@@ -105,7 +125,7 @@ export default GetTogether = (props) => {
                                     <Text style={{color:'#7F7FD5',fontSize:13}}>Host: {gettogether.HostName}</Text>
                                 </View>
                                 <View style={{width:'20%',justifyContent:'center',alignItems:'center'}}>
-                                    <Text style={{color:'#7F7FD5',fontSize:13}}>{gettogether.Time}</Text>
+                                    <Text style={{color:'#7F7FD5',fontSize:13}}>{getDate(new Date(gettogether.Time))}</Text>
                                 </View>
                             </View>
                         </View>
@@ -117,15 +137,15 @@ export default GetTogether = (props) => {
                     <Text style={{color:'white',fontWeight:'bold'}}>Add New</Text>
                 </TouchableOpacity>
             </View>
-            <Animated.View style={{position:'absolute',height:'100%',width:'95%',backgroundColor:'rgba(0,0,0,0.6)',borderRadius:10,right:7,left:7,zIndex:newGetTogetherIndex,opacity:newGetTogetherOpacity,justifyContent:'center',alignItems:'center',display:newGetTogetherDisplay}}>
+            <Animated.View style={{position:'absolute',height:'100%',width:'95%',backgroundColor:'rgba(255,255,255,0.6)',borderRadius:10,right:7,left:7,zIndex:newGetTogetherIndex,opacity:newGetTogetherOpacity,justifyContent:'center',alignItems:'center',display:newGetTogetherDisplay}}>
                 <View style={{width:'100%',height:'13%',marginTop:'3%',justifyContent:'center',alignItems:'center'}}>
-                    <TextInput placeholder='Title' onChangeText={(e)=>setTitle(e)} value={title} placeholderTextColor='grey' style={{backgroundColor:'rgba(0,0,0,0.6)',color:'white',width:'70%',height:'100%',borderRadius:10,paddingHorizontal:'3%'}}/>
+                    <TextInput placeholder='Title' onChangeText={(e)=>setTitle(e)} value={title} placeholderTextColor='grey' style={{backgroundColor:'rgba(255,255,255,0.3)',color:'white',width:'70%',height:'100%',borderRadius:10,paddingHorizontal:'3%'}}/>
                 </View>
                 <View style={{width:'100%',height:'13%',justifyContent:'center',alignItems:'center',marginTop:'2%'}}>
-                    <TextInput placeholder='Address' onChangeText={(e)=>setAddress(e)} value={address} placeholderTextColor='grey' style={{backgroundColor:'rgba(0,0,0,0.6)',color:'white',width:'70%',height:'100%',borderRadius:10,paddingHorizontal:'3%'}}/>
+                    <TextInput placeholder='Address' onChangeText={(e)=>setAddress(e)} value={address} placeholderTextColor='grey' style={{backgroundColor:'rgba(255,255,255,0.3)',color:'white',width:'70%',height:'100%',borderRadius:10,paddingHorizontal:'3%'}}/>
                 </View>
                 <View style={{height:'50%',width:'85%'}}>
-                    <DatePicker date={date} onDateChange={setDate} textColor={'white'} style={{height:180,width:320}}/>
+                    <DatePicker date={date} is24hourSource="locale" locale='en' mode='datetime' onDateChange={setDate} textColor={'black'} style={{height:180,width:320}}/>
                 </View>
                 <View style={{width:'100%',height:'10%',justifyContent:'center',alignItems:'center'}}>
                     <TouchableOpacity onPress={()=>sendInvitation()} style={{width:'70%',height:'100%',backgroundColor:'white',borderRadius:50,justifyContent:'center',alignItems:'center'}}>
