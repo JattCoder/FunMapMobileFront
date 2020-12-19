@@ -25,24 +25,6 @@ export default SearchUser = (props) => {
         })
     }
 
-    // {"drivingMode": "driving", 
-    // "email": "harmandeepmand.hm@gmail.com", 
-    // "famSelection": "Nava fam", 
-    // "ferries": true, 
-    // "highways": true, 
-    // "home": "5625 W Longridge dr, Seven Hills, OH 44131", 
-    // "km": "miles", 
-    // "locationShare": false, 
-    // "mac": "02:00:00:00:00:00", 
-    // "name": "Harmandeep Mand", 
-    // "phone": "4403171521", 
-    // "photo": "", 
-    // "rec": "1234", 
-    // "temperature": "C°", 
-    // "tolls": true, 
-    // "weather": "C°", 
-    // "work": "4621 Broadview Rd, Cleveland, OH 44109"}
-
     searchUser = (input) => {
         usrs = []
         if(input.length > 0){

@@ -32,11 +32,13 @@ export default Drawerr = (props) => {
   const [groupHeight] = useState(new Animated.Value(Dimensions.get('window').height/1.7))
   const [newGroupFormOpacity] = useState(new Animated.Value(0))
   const [newGroupFormHeight] = useState(new Animated.Value(0))
+  const [newGroupFormDisplay,setnewGroupFormDisplay] = useState('')
   const [searchResultsOpacity] = useState(new Animated.Value(0))
   const [searchResultsHeight] = useState(new Animated.Value(0))
-  const [settingsHeight] = useState(new Animated.Value(0))
-  const [settingsWidth] = useState(new Animated.Value(0))
+  const [settingsHeight] = useState(new Animated.Value(Dimensions.get('screen').height/1.7))
+  const [settingsWidth] = useState(new Animated.Value(Dimensions.get('screen').width))
   const [settingsOpacity] = useState(new Animated.Value(0))
+  const [settingsDisplay,setSettingsDisplay] = useState('none')
   const [menuOpen,setMenuOpen] = useState(false)
   const dispatch = useDispatch()
 
@@ -183,6 +185,7 @@ export default Drawerr = (props) => {
   }
 
   const openForm = () => {
+    setnewGroupFormDisplay('')
     Animated.parallel([
       Animated.timing(groupOpacity,{
         toValue:0,
@@ -203,8 +206,13 @@ export default Drawerr = (props) => {
         toValue:1,
         duration:500,
         useNativeDriver:false
-      })
-    ]).start()
+      }),
+      Animated.timing(settingsOpacity,{
+        toValue:0,
+        duration:500,
+        useNativeDriver:false
+      }),
+    ]).start(()=>setSettingsDisplay('none'))
   }
 
   const closeForm = () => {
@@ -229,24 +237,15 @@ export default Drawerr = (props) => {
         duration:500,
         useNativeDriver:false
       })
-    ]).start()
+    ]).start(()=>setnewGroupFormDisplay('none'))
   }
 
   openSettings = () => {
+    setSettingsDisplay('')
     Animated.parallel([
-      Animated.timing(settingsHeight,{
-        toValue:Dimensions.get('screen').height/1.7,
-        duration:500,
-        useNativeDriver:false
-      }),
-      Animated.timing(settingsWidth,{
-        toValue:Dimensions.get('screen').width,
-        duration:500,
-        useNativeDriver:false
-      }),
       Animated.timing(settingsOpacity,{
         toValue:1,
-        duration:100,
+        duration:500,
         useNativeDriver:false
       }),
       Animated.timing(groupHeight,{
@@ -258,22 +257,22 @@ export default Drawerr = (props) => {
         toValue:0,
         duration:500,
         useNativeDriver:false
+      }),
+      Animated.timing(newGroupFormHeight,{
+        toValue:0,
+        duration:500,
+        useNativeDriver:false
+      }),
+      Animated.timing(newGroupFormOpacity,{
+        toValue:0,
+        duration:500,
+        useNativeDriver:false
       })
-    ]).start()
+    ]).start(()=>setnewGroupFormDisplay('none'))
   }
 
   closeSettings = () => {
     Animated.parallel([
-      Animated.timing(settingsHeight,{
-        toValue:0,
-        duration:500,
-        useNativeDriver:false
-      }),
-      Animated.timing(settingsWidth,{
-        toValue:0,
-        duration:500,
-        useNativeDriver:false
-      }),
       Animated.timing(settingsOpacity,{
         toValue:0,
         duration:100,
@@ -289,7 +288,7 @@ export default Drawerr = (props) => {
         duration:500,
         useNativeDriver:false
       })
-    ]).start()
+    ]).start(()=>setSettingsDisplay('none'))
   }
 
   const actionSheetIntropolate = alignment.interpolate({
@@ -372,11 +371,11 @@ export default Drawerr = (props) => {
             <Animated.View style={{height:groupHeight,width:'100%',opacity:groupOpacity,justifyContent:'center',alignItems:'center'}}>
               <Families user={props.user}/>
             </Animated.View>
-            <Animated.View style={{width:settingsWidth,height:settingsHeight,opacity:settingsOpacity,justifyContent:'center',alignItems:'center'}}>
+            <Animated.View style={{width:settingsWidth,height:settingsHeight,opacity:settingsOpacity,justifyContent:'center',alignItems:'center',display:settingsDisplay}}>
               <Settings close={()=>closeSettings()} email={props.user.email}/>
             </Animated.View>
             <Animated.View style={{height:newGroupFormHeight,width:'100%',opacity:newGroupFormOpacity,justifyContent:'center',alignItems:'center'}}>
-              <TouchableOpacity onPress={()=>closeForm()} style={{width:-Dimensions.get('screen').width,height:'8%',borderRadius:10,position:'absolute',top:20,right:25,zIndex:100}}>
+              <TouchableOpacity onPress={()=>closeForm()} style={{width:-Dimensions.get('screen').width,height:'8%',borderRadius:10,position:'absolute',top:20,right:25,zIndex:100,display:newGroupFormDisplay}}>
                   <Image style={{height:30,width:30}} source={require('../settingsIcons/close.png')}/>
               </TouchableOpacity>
               <NewFamily user={props.user} finish={()=>closeForm()}/>

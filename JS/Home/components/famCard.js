@@ -18,9 +18,9 @@ export default FamCard = (props) => {
     const[getTogetherSize] = useState(new Animated.Value(30))
     const[getTogetherColor] = useState(new Animated.Value(0))
     const[getTogetherDisplay,setGetTogetherDisplay] = useState('none')
-    const[settingsOpacity] = useState(new Animated.Value(0))
-    const[settingsHeight] = useState(new Animated.Value(0))
-    const[settingsSize] = useState(new Animated.Value(30))
+    const[gsettingsOpacity] = useState(new Animated.Value(0))
+    const[gsettingsHeight] = useState(new Animated.Value(0))
+    const[gsettingsSize] = useState(new Animated.Value(30))
     const[settingsColor] = useState(new Animated.Value(0))
     const[settingsDisplay,setSettingsDisplay] = useState('none')
     const[searchHeight] = useState(new Animated.Value(0))
@@ -62,17 +62,17 @@ export default FamCard = (props) => {
                 duration:250,
                 useNativeDriver:false
             }),
-            Animated.timing(settingsOpacity,{
+            Animated.timing(gsettingsOpacity,{
                 toValue:0,
                 duration:250,
                 useNativeDriver:false
             }),
-            Animated.timing(settingsHeight,{
+            Animated.timing(gsettingsHeight,{
                 toValue:0,
                 duration:250,
                 useNativeDriver:false
             }),
-            Animated.timing(settingsSize,{
+            Animated.timing(gsettingsSize,{
                 toValue:30,
                 duration:250,
                 useNativeDriver:false
@@ -172,17 +172,17 @@ export default FamCard = (props) => {
                 duration:250,
                 useNativeDriver:false
             }),
-            Animated.timing(settingsOpacity,{
+            Animated.timing(gsettingsOpacity,{
                 toValue:0,
                 duration:250,
                 useNativeDriver:false
             }),
-            Animated.timing(settingsHeight,{
+            Animated.timing(gsettingsHeight,{
                 toValue:0,
                 duration:250,
                 useNativeDriver:false
             }),
-            Animated.timing(settingsSize,{
+            Animated.timing(gsettingsSize,{
                 toValue:30,
                 duration:250,
                 useNativeDriver:false
@@ -250,7 +250,7 @@ export default FamCard = (props) => {
         ]).start(()=>setGetTogetherDisplay('none'))
     }
 
-    openSettings = () => {
+    openGSettings = () => {
         Animated.parallel([
             Animated.timing(usersHeight,{
                 toValue:0,
@@ -282,17 +282,17 @@ export default FamCard = (props) => {
                 duration:250,
                 useNativeDriver:false
             }),
-            Animated.timing(settingsOpacity,{
+            Animated.timing(gsettingsOpacity,{
                 toValue:1,
                 duration:250,
                 useNativeDriver:false
             }),
-            Animated.timing(settingsHeight,{
+            Animated.timing(gsettingsHeight,{
                 toValue:1,
                 duration:250,
                 useNativeDriver:false
             }),
-            Animated.timing(settingsSize,{
+            Animated.timing(gsettingsSize,{
                 toValue:40,
                 duration:250,
                 useNativeDriver:false
@@ -325,7 +325,7 @@ export default FamCard = (props) => {
         ]).start(()=>setGetTogetherDisplay('none'),setSettingsDisplay(''),setSearchDisplay('none'))
     }
 
-    closeSettings = () => {
+    closeGSettings = () => {
         Animated.parallel([
             Animated.timing(usersHeight,{
                 toValue:1,
@@ -337,17 +337,17 @@ export default FamCard = (props) => {
                 duration:250,
                 useNativeDriver:false
             }),
-            Animated.timing(settingsOpacity,{
+            Animated.timing(gsettingsOpacity,{
                 toValue:0,
                 duration:250,
                 useNativeDriver:false
             }),
-            Animated.timing(settingsHeight,{
+            Animated.timing(gsettingsHeight,{
                 toValue:0,
                 duration:250,
                 useNativeDriver:false
             }),
-            Animated.timing(settingsSize,{
+            Animated.timing(gsettingsSize,{
                 toValue:30,
                 duration:250,
                 useNativeDriver:false
@@ -380,7 +380,7 @@ export default FamCard = (props) => {
         outputRange:['0%','75%']
     })
 
-    const settingsHeightInterpolate = settingsHeight.interpolate({
+    const settingsHeightInterpolate = gsettingsHeight.interpolate({
         inputRange:[0,1],
         outputRange:['0%','75%']
     })
@@ -395,7 +395,7 @@ export default FamCard = (props) => {
         outputRange:['rgba(0,0,0,0)','#7F7FD5']
     })
 
-    const settingsColorOpacity = settingsColor.interpolate({
+    const gsettingsColorOpacity = settingsColor.interpolate({
         inputRange:[0,1],
         outputRange:['rgba(0,0,0,0)','#7F7FD5']
     })
@@ -425,8 +425,8 @@ export default FamCard = (props) => {
                             <Image style={{width:20,height:20}} source={require('../../settingsIcons/plus.png')} />
                         </TouchableOpacity>
                     </Animated.View>
-                    <Animated.View style={{height:settingsSize,width:settingsSize,backgroundColor:settingsColorOpacity,borderRadius:50,marginHorizontal:'2%'}}>
-                        <TouchableOpacity onPress={()=>settingsDisplay == '' ? closeSettings() : openSettings()} style={{alignItems:'center',borderWidth:1,borderRadius:50,borderColor:'#7F7FD5',justifyContent:'center',alignItems:'center',height:'100%',width:'100%'}}>
+                    <Animated.View style={{height:gsettingsSize,width:gsettingsSize,backgroundColor:gsettingsColorOpacity,borderRadius:50,marginHorizontal:'2%'}}>
+                        <TouchableOpacity onPress={()=>settingsDisplay == '' ? closeGSettings() : openGSettings()} style={{alignItems:'center',borderWidth:1,borderRadius:50,borderColor:'#7F7FD5',justifyContent:'center',alignItems:'center',height:'100%',width:'100%'}}>
                             <Image style={{width:20,height:20}} source={require('../../settingsIcons/setting.png')} />
                         </TouchableOpacity>
                     </Animated.View>
@@ -439,7 +439,7 @@ export default FamCard = (props) => {
                 <Animated.View style={{height:getTogetherHeightInterpolate,width:'100%',margin:20,opacity:getTogetherOpacity,display:getTogetherDisplay}}>
                     <GetTogether id={props.ID} gettogether={props.gettogether} name={props.UserName} email={props.UserEmail} close={()=>closeGetTopethers()}/>
                 </Animated.View>
-                <Animated.View style={{height:settingsHeightInterpolate,width:'100%',margin:20,opacity:settingsOpacity,display:settingsDisplay}}>
+                <Animated.View style={{height:settingsHeightInterpolate,width:'100%',margin:20,opacity:gsettingsOpacity,display:settingsDisplay}}>
                     <GroupSettings />
                 </Animated.View>
                 <Animated.View style={{height:searchHeightInterpolate,width:'100%',margin:20,opacity:searchOpacity,display:searchDisplay}}>

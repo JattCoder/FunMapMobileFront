@@ -29,12 +29,13 @@ export default Settings = (props) => {
     const [accountOpacity] = useState(new Animated.Value(0))
     const [backgroundColorHeight] = useState(new Animated.Value(0))
     const [backgroundColorOpacity] = useState(new Animated.Value(0))
+    const [saveExitOpacity] = useState(new Animated.Value(0))
+    const [saveExitSize] = useState(new Animated.Value(0)) 
 
     // {"backgroundColor": "", "drivingMode": "driving", "familySelection": 0, "ferries": false, 
     // "highways": false, "id": 1, "permitted": "Ghost", "temperature": "F°", "tolls": false, "user_id": 1}
 
     saveAndExit = () => {
-        props.close()
         firebase.database().ref('Users/'+props.email.replace(punctuation,'').replace(spaceRE,'')).update({
             drivingMode: drivingMode == false ? 'driving' : 'walking',
             highways: avoidHighways,
@@ -42,6 +43,19 @@ export default Settings = (props) => {
             ferries: avoidFerries,
             temperature: temperature == false ? 'C°' : 'F°',
         }).catch(err => console.warn(err))
+        Animated.parallel([
+            Animated.timing(saveExitSize,{
+                toValue: 0,
+                duration:10,
+                useNativeDriver:false
+            }),
+            Animated.timing(saveExitOpacity,{
+                toValue:0,
+                duration:10,
+                useNativeDriver:false
+            })
+        ]).start()
+        props.close()
     }
 
     openBackgroundColor = () => {
@@ -119,23 +133,6 @@ export default Settings = (props) => {
         ]).start()
     }
 
-    // {"drivingMode": "driving", 
-    // "email": "harmandeepmand.hm@gmail.com", 
-    // "famSelection": "New Fam Again", 
-    // "ferries": false, 
-    // "highways": false, 
-    // "home": "5625 W Longridge dr, Seven Hills, OH 44131", 
-    // "km": "miles", 
-    // "locationShare": false, 
-    // "mac": "02:00:00:00:00:00", 
-    // "name": "Harmandeep Mand", 
-    // "phone": "4403171521", 
-    // "photo": "", 
-    // "rec": "1234", 
-    // "tolls": false, 
-    // "weather": "F°", 
-    // "work": "4621 Broadview Rd, Cleveland, OH 44109"}
-
     useEffect(()=>{
         if(props.email) firebase.database().ref('Users/'+props.email.replace(punctuation,'').replace(spaceRE,'')).once('value',snapShot=>{
             if(drivingMode != (snapShot.child('drivingMode').val() == 'driving' ? false : true)){
@@ -156,16 +153,16 @@ export default Settings = (props) => {
         })
     },[props.email])
 
+    closeScroll = (e) => {
+        if(e.nativeEvent.contentOffset.y < -10){
+            saveAndExit()
+        }
+    }
+
     return(
         <View style={Styles.Page}>
             <Animated.View style={{opacity:settingsOpacity,height:settingsHeight}}>
-                <TouchableOpacity onPress={()=>saveAndExit()} style={{width:'100%',height:'4%'}}>
-                    <View style={{justifyContent:'center',position:'absolute',alignItems:'center',flexDirection:'row'}}>
-                        <Image style={{height:20,width:20}} source={require('../../settingsIcons/back.png')}/>
-                        <Text style={{color:'white',fontSize:20}}>Family</Text>
-                    </View>
-                </TouchableOpacity>
-                <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false} style={{marginTop:'5%'}}>
+                <ScrollView onScroll={(e)=>closeScroll(e)} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false} style={{marginTop:'5%'}}>
                     <View style={{width:Dimensions.get('screen').width,marginTop:'4%',alignItems:'center',justifyContent:'center',marginBottom:'2%',flexDirection:'row'}}>
                         <TouchableOpacity activeOpacity={1} style={{height:0,width:30,marginRight:10,borderWidth:0.5,borderColor:'#7F7FD5'}}/>
                         <Text style={{fontSize:20,fontweight:'bold',color:'#000C40'}}>Navigation</Text>
