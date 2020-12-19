@@ -48,7 +48,6 @@ export default GetTogether = (props) => {
             })
         ]).start(()=>setNetGetTogetherDisplay('none'))
     }
-    //https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=4621%20broadview%20rd&inputtype=textquery&fields=formatted_address&key=AIzaSyDMCLs_nBIfA8Bw9l50nSRwLOUByiDel9U
 
     useEffect(()=>{
         Animated.timing(pageHeight,{

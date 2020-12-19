@@ -3,70 +3,140 @@ import UserCard from './userCard'
 import SearchUser from './searchUser'
 import GetTogether from './getTogether'
 import { useDispatch } from 'react-redux'
-import { currentfamily } from '../../../actions/mapFamily/currentfamily'
+import GroupSettings from './groupSettings'
 import { View, Text, TouchableOpacity, Image, Dimensions, ScrollView, Animated } from 'react-native'
 
 export default FamCard = (props) => {
     const[famHeight] = useState(new Animated.Value(Dimensions.get('screen').height/1.97))
     const[famOpacity] = useState(new Animated.Value(1))
-    const[searchHeight] = useState(new Animated.Value(0))
-    const[searchOpacity] = useState(new Animated.Value(0))
     const[rightButtonMarginTop] = useState(new Animated.Value(0))
     const[leftButtonMarginTop] = useState(new Animated.Value(0))
     const[usersOpacity] = useState(new Animated.Value(1))
     const[usersHeight] = useState(new Animated.Value(1))
     const[getTogetherOpacity] = useState(new Animated.Value(0))
     const[getTogetherHeight] = useState(new Animated.Value(0))
+    const[getTogetherSize] = useState(new Animated.Value(30))
+    const[getTogetherColor] = useState(new Animated.Value(0))
     const[getTogetherDisplay,setGetTogetherDisplay] = useState('none')
+    const[settingsOpacity] = useState(new Animated.Value(0))
+    const[settingsHeight] = useState(new Animated.Value(0))
+    const[settingsSize] = useState(new Animated.Value(30))
+    const[settingsColor] = useState(new Animated.Value(0))
+    const[settingsDisplay,setSettingsDisplay] = useState('none')
+    const[searchHeight] = useState(new Animated.Value(0))
+    const[searchOpacity] = useState(new Animated.Value(0))
+    const[searchSize] = useState(new Animated.Value(30))
+    const[searchColor] = useState(new Animated.Value(0))
+    const[searchDisplay,setSearchDisplay] = useState('none')
     const dispatch = useDispatch()
 
     openSearch = () => {
         Animated.parallel([
-            Animated.timing(famHeight,{
+            Animated.timing(usersHeight,{
                 toValue:0,
-                duration:500,
+                duration:250,
                 useNativeDriver:false
             }),
-            Animated.timing(famOpacity,{
+            Animated.timing(usersOpacity,{
                 toValue:0,
-                duration:500,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(getTogetherHeight,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(getTogetherOpacity,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(getTogetherSize,{
+                toValue:30,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(getTogetherColor,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(settingsOpacity,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(settingsHeight,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(settingsSize,{
+                toValue:30,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(settingsColor,{
+                toValue:0,
+                duration:250,
                 useNativeDriver:false
             }),
             Animated.timing(searchHeight,{
-                toValue:Dimensions.get('screen').height/1.85,
-                duration:500,
+                toValue:1,
+                duration:250,
                 useNativeDriver:false
             }),
             Animated.timing(searchOpacity,{
                 toValue:1,
-                duration:500,
+                duration:250,
                 useNativeDriver:false
-            })
-        ]).start()
+            }),
+            Animated.timing(searchSize,{
+                toValue:40,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(searchColor,{
+                toValue:1,
+                duration:250,
+                useNativeDriver:false
+            }),
+        ]).start(()=>setGetTogetherDisplay('none'),setSettingsDisplay('none'),setSearchDisplay(''))
     }
 
     closeSearch = () => {
         Animated.parallel([
-            Animated.timing(famHeight,{
-                toValue:Dimensions.get('screen').height/1.97,
-                duration:500,
+            Animated.timing(usersHeight,{
+                toValue:1,
+                duration:250,
                 useNativeDriver:false
             }),
-            Animated.timing(famOpacity,{
+            Animated.timing(usersOpacity,{
                 toValue:1,
-                duration:500,
+                duration:250,
                 useNativeDriver:false
             }),
             Animated.timing(searchHeight,{
                 toValue:0,
-                duration:500,
+                duration:250,
                 useNativeDriver:false
             }),
             Animated.timing(searchOpacity,{
                 toValue:0,
-                duration:500,
+                duration:250,
                 useNativeDriver:false
-            })
+            }),
+            Animated.timing(searchSize,{
+                toValue:30,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(searchColor,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
         ]).start()
     }
 
@@ -91,8 +161,58 @@ export default FamCard = (props) => {
                 toValue:1,
                 duration:250,
                 useNativeDriver:false
-            })
-        ]).start(()=>setGetTogetherDisplay(''))
+            }),
+            Animated.timing(getTogetherSize,{
+                toValue:40,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(getTogetherColor,{
+                toValue:1,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(settingsOpacity,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(settingsHeight,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(settingsSize,{
+                toValue:30,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(settingsColor,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(searchHeight,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(searchOpacity,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(searchSize,{
+                toValue:30,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(searchColor,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+        ]).start(()=>setGetTogetherDisplay(''),setSettingsDisplay('none'),setSearchDisplay('none'))
     }
 
     closeGetTopethers = () => {
@@ -116,8 +236,128 @@ export default FamCard = (props) => {
                 toValue:0,
                 duration:250,
                 useNativeDriver:false
-            })
+            }),
+            Animated.timing(getTogetherSize,{
+                toValue:30,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(getTogetherColor,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
         ]).start(()=>setGetTogetherDisplay('none'))
+    }
+
+    openSettings = () => {
+        Animated.parallel([
+            Animated.timing(usersHeight,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(usersOpacity,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(getTogetherHeight,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(getTogetherOpacity,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(getTogetherSize,{
+                toValue:30,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(getTogetherColor,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(settingsOpacity,{
+                toValue:1,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(settingsHeight,{
+                toValue:1,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(settingsSize,{
+                toValue:40,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(settingsColor,{
+                toValue:1,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(searchHeight,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(searchOpacity,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(searchSize,{
+                toValue:30,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(searchColor,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+        ]).start(()=>setGetTogetherDisplay('none'),setSettingsDisplay(''),setSearchDisplay('none'))
+    }
+
+    closeSettings = () => {
+        Animated.parallel([
+            Animated.timing(usersHeight,{
+                toValue:1,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(usersOpacity,{
+                toValue:1,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(settingsOpacity,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(settingsHeight,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(settingsSize,{
+                toValue:30,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(settingsColor,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+        ]).start(()=>setSearchDisplay('none'))
     }
 
     const leftButtonInterpolate = leftButtonMarginTop.interpolate({
@@ -140,6 +380,31 @@ export default FamCard = (props) => {
         outputRange:['0%','75%']
     })
 
+    const settingsHeightInterpolate = settingsHeight.interpolate({
+        inputRange:[0,1],
+        outputRange:['0%','75%']
+    })
+
+    const searchHeightInterpolate = searchHeight.interpolate({
+        inputRange:[0,1],
+        outputRange:['0%','75%']
+    })
+
+    const getTogetherColorOpacity = getTogetherColor.interpolate({
+        inputRange:[0,1],
+        outputRange:['rgba(0,0,0,0)','#7F7FD5']
+    })
+
+    const settingsColorOpacity = settingsColor.interpolate({
+        inputRange:[0,1],
+        outputRange:['rgba(0,0,0,0)','#7F7FD5']
+    })
+
+    const searchColorOpacity = searchColor.interpolate({
+        inputRange:[0,1],
+        outputRange:['rgba(0,0,0,0)','#7F7FD5']
+    })
+
     return(
         <View style={{width:Dimensions.get('window').width,height:'100%',alignItems:'center',justifyContent:'center',marginTop:'5%'}}>
             <Animated.View style={{opacity:famOpacity,width:Dimensions.get('screen').width/1.07,height:famHeight,shadowColor: "#000",shadowOffset: { width: 0,height: 4 },shadowOpacity: 0.30,shadowRadius: 4.65,elevation: 8,backgroundColor:'rgba(211,204,227,1)',borderRadius:10,alignItems:'center'}}>
@@ -155,18 +420,30 @@ export default FamCard = (props) => {
                     </Animated.View> : null}
                 </View>
                 <View style={{width:'100%',height:'7%',justifyContent:'center',alignItems:'center',flexDirection:'row',marginTop:'2%'}}>
-                    <TouchableOpacity onPress={()=>openSearch()} style={{alignItems:'center',borderWidth:1,borderRadius:50,borderColor:'#7F7FD5',justifyContent:'center',alignItems:'center',height:30,width:30}}>
-                        <Image style={{width:20,height:20}} source={require('../../settingsIcons/plus.png')} />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={()=>alert('Settings')} style={{alignItems:'center',marginHorizontal:'2%',borderWidth:1,borderRadius:50,borderColor:'#7F7FD5',justifyContent:'center',alignItems:'center',height:30,width:30}}>
-                        <Image style={{width:20,height:20}} source={require('../../settingsIcons/setting.png')} />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={()=>openGetTopethers()} style={{alignItems:'center',borderWidth:1,borderRadius:50,borderColor:'#7F7FD5',justifyContent:'center',alignItems:'center',height:30,width:30}}>
-                        <Image style={{width:20,height:20}} source={require('../../settingsIcons/mail.png')} />
-                    </TouchableOpacity>
+                    <Animated.View style={{height:searchSize,width:searchSize,backgroundColor:searchColorOpacity,borderRadius:50}}>
+                        <TouchableOpacity onPress={()=>searchDisplay == '' ? closeSearch() : openSearch()} style={{alignItems:'center',borderWidth:1,borderRadius:50,borderColor:'#7F7FD5',justifyContent:'center',alignItems:'center',height:'100%',width:'100%'}}>
+                            <Image style={{width:20,height:20}} source={require('../../settingsIcons/plus.png')} />
+                        </TouchableOpacity>
+                    </Animated.View>
+                    <Animated.View style={{height:settingsSize,width:settingsSize,backgroundColor:settingsColorOpacity,borderRadius:50,marginHorizontal:'2%'}}>
+                        <TouchableOpacity onPress={()=>settingsDisplay == '' ? closeSettings() : openSettings()} style={{alignItems:'center',borderWidth:1,borderRadius:50,borderColor:'#7F7FD5',justifyContent:'center',alignItems:'center',height:'100%',width:'100%'}}>
+                            <Image style={{width:20,height:20}} source={require('../../settingsIcons/setting.png')} />
+                        </TouchableOpacity>
+                    </Animated.View>
+                    <Animated.View style={{height:getTogetherSize,width:getTogetherSize,backgroundColor:getTogetherColorOpacity,borderRadius:50}}>
+                        <TouchableOpacity onPress={()=>getTogetherDisplay == '' ? closeGetTopethers() : openGetTopethers()} style={{alignItems:'center',borderWidth:1,borderRadius:50,borderColor:'#7F7FD5',justifyContent:'center',alignItems:'center',height:'100%',width:'100%'}}>
+                            <Image style={{width:20,height:20}} source={require('../../settingsIcons/mail.png')} />
+                        </TouchableOpacity>
+                    </Animated.View>
                 </View>
                 <Animated.View style={{height:getTogetherHeightInterpolate,width:'100%',margin:20,opacity:getTogetherOpacity,display:getTogetherDisplay}}>
                     <GetTogether id={props.ID} gettogether={props.gettogether} name={props.UserName} email={props.UserEmail} close={()=>closeGetTopethers()}/>
+                </Animated.View>
+                <Animated.View style={{height:settingsHeightInterpolate,width:'100%',margin:20,opacity:settingsOpacity,display:settingsDisplay}}>
+                    <GroupSettings />
+                </Animated.View>
+                <Animated.View style={{height:searchHeightInterpolate,width:'100%',margin:20,opacity:searchOpacity,display:searchDisplay}}>
+                    <SearchUser groupId={props.ID} groupName={props.Name} senderName={props.UserName} senderEmail={props.UserEmail}/>
                 </Animated.View>
                 <Animated.View style={{height:usersHeightInterpolate,width:'100%',margin:20,opacity:usersOpacity}}>
                     <ScrollView>
@@ -175,15 +452,6 @@ export default FamCard = (props) => {
                         })}
                     </ScrollView>
                 </Animated.View>
-            </Animated.View>
-            <Animated.View style={{height:searchHeight,width:'100%',opacity:searchOpacity,alignItems:'center'}}>
-                <View style={{width:Dimensions.get('screen').width/1.1}}>
-                    <TouchableOpacity onPress={()=>closeSearch()} style={{flexDirection:'row',alignItems:'center'}}>
-                        <Image style={{height:20,width:20}} source={require('../../settingsIcons/back.png')}/>
-                        <Text style={{fontSize:15,color:'#000046'}}>Family</Text>
-                    </TouchableOpacity>
-                </View>
-                {/* <SearchUser groupId={props.fam[0].id} groupName={props.fam[0].name} groupCode={props.fam[0].code}/> */}
             </Animated.View>
         </View>
     )

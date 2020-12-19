@@ -8,7 +8,7 @@ const spaceRE = /\s+/g
 export default SearchUser = (props) => {
 
     const [users,setUsers] = useState([])
-    const [allUsers,setAllUsers] = useState({})
+    const [allUsers,setAllUsers] = useState([])
     const [search,setSearch] = useState('')
     const [senderId,setSenderId] = useState('')
     const [action,setAction] = useState('')
@@ -16,18 +16,42 @@ export default SearchUser = (props) => {
     const [resultsOpacity] = useState(new Animated.Value(0))
 
     getallUsers = () => {
+        arr = []
         firebase.database().ref('Users/').on('value',snapShot => {
-            setAllUsers(snapShot.val())
+            for(let i in snapShot.val()){
+                arr.push(snapShot.val()[i])
+            }
+            setAllUsers(arr)
         })
     }
 
+    // {"drivingMode": "driving", 
+    // "email": "harmandeepmand.hm@gmail.com", 
+    // "famSelection": "Nava fam", 
+    // "ferries": true, 
+    // "highways": true, 
+    // "home": "5625 W Longridge dr, Seven Hills, OH 44131", 
+    // "km": "miles", 
+    // "locationShare": false, 
+    // "mac": "02:00:00:00:00:00", 
+    // "name": "Harmandeep Mand", 
+    // "phone": "4403171521", 
+    // "photo": "", 
+    // "rec": "1234", 
+    // "temperature": "C°", 
+    // "tolls": true, 
+    // "weather": "C°", 
+    // "work": "4621 Broadview Rd, Cleveland, OH 44109"}
+
     searchUser = (input) => {
+        usrs = []
         if(input.length > 0){
-            for(let user in allUsers){
-                if(allUsers[user].name.includes(input) || allUsers[user].email.includes(input)){
-                    setUsers(...users,allUsers[user])
+            allUsers.forEach(usr => {
+                if(usr.name.toLowerCase() == input.toLowerCase() || usr.email.toLowerCase() == input.toLowerCase()){
+                    usrs.push(usr)
                 }
-            }
+            })
+            setUsers(arr)
         }else{
             setSearch(input)
             setUsers([])
@@ -35,9 +59,7 @@ export default SearchUser = (props) => {
     }
 
     sendInvitation = (input) => {
-        //i need group name, group code, group id
-        setAction('loading')
-        firebase.database().ref('Invitations/'+data.message.id+'/'+props.groupId).set({
+        firebase.database().ref('Invitations/'+selectedUID+'/'+props.groupId).set({
             gid:props.groupId,
             gname:props.groupName,
             gcode:props.groupCode,
@@ -51,34 +73,25 @@ export default SearchUser = (props) => {
         })
     }
 
-    useSelector((state)=>{
-        if(senderId != state.login.message.id){
-            setSenderId(state.login.message.id)
-        }
-    })
-
     useEffect(()=>{
         getallUsers()
-    },[])
+    },[props.ID])
 
 
     return(
-        <View style={{justifyContent:'center',alignItems:'center',width:'70%'}}>
-            <Text style={{fontSize:25,color:'white'}}>New Family Member</Text>
-            <View style={{flexDirection:'row',width:'100%',borderRadius:50,backgroundColor:'white',height:45,alignItems:'center',marginTop:'5%'}}>
-                <Text style={{marginRight:'2%',marginLeft:'3%',fontSize:15}}>Search</Text>
-                <TouchableOpacity activeOpacity={1} style={{borderWidth:0.5,width:0,height:'60%',marginHorizontal:'2%'}}/>
-                <TextInput style={{fontSize:15,width:Dimensions.get('screen').width/2.1}} autoCapitalize='none' placeholder={'Name / Email'} onChangeText={(e)=>searchUser(e)}/>
+        <View style={{width:'100%',height:'100%',alignItems:'center'}}>
+            <View style={{justifyContent:'center',alignItems:'center',width:'70%'}}>
+            <View style={{width:'150%',height:'13%',marginTop:'3%',justifyContent:'center',alignItems:'center'}}>
+                    <TextInput placeholder='Email | Name' onChangeText={(e)=>searchUser(e)} placeholderTextColor='grey' style={{backgroundColor:'rgba(255,255,255,0.3)',color:'black',width:'70%',height:'100%',borderRadius:10,paddingHorizontal:'3%'}}/>
             </View>
-            {search.length > 0 ? <View style={{justifyContent:'center',alignItems:'center',width:'100%'}}>
-                {users.length == 0 ? <View style={{justifyContent:'center',alignItems:'center',height:'80%',width:'100%'}}>
+            {users.length == 0 && search.length > 0 ? <View style={{justifyContent:'center',alignItems:'center',height:'80%',width:'100%'}}>
                     <Text style={{color:'white',fontSize:20}}>Would you like us to Invite</Text>
                     <Text style={{color:'white',fontSize:20}}>{search}</Text>
                     <TouchableOpacity onPress={()=>sendInvitation(input)} style={{justifyContent:'center',alignItems:'center',borderRadius:25,backgroundColor:'black',width:200,height:35,marginTop:'5%'}}>
                         <Text style={{color:'white'}}>Yes</Text>
                     </TouchableOpacity>
                 </View>
-                : <ScrollView showsVerticalScrollIndicator={false} style={{width:Dimensions.get('screen').width/1.07,height:Dimensions.get('screen').height/2.55,marginTop:'5%',borderRadius:10,shadowColor: "#000",shadowOffset: { width: 0,height: 4 },shadowOpacity: 0.30,shadowRadius: 4.65,elevation: 8,backgroundColor:'rgba(0,0,0,0.4)'}}>
+                : <ScrollView showsVerticalScrollIndicator={false} style={{width:'135%',height:'78%',marginTop:'5%',borderRadius:10,shadowColor: "#000",shadowOffset: { width: 0,height: 4 },shadowOpacity: 0.30,shadowRadius: 4.65,elevation: 8,backgroundColor:'rgba(0,0,0,0.4)'}}>
                     <View style={{margin:'5%',width:'100%',height:'20%'}}>
                         {users.map((user)=>{
                             return <View style={{flexDirection:'row',width:'90%',alignItems:'center',marginBottom:'3%'}}>
@@ -99,7 +112,7 @@ export default SearchUser = (props) => {
                         })}
                     </View>
                 </ScrollView>}
-            </View> : null}
+            </View>
         </View>
     )
 }
