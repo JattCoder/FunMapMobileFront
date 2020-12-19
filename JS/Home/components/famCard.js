@@ -137,7 +137,7 @@ export default FamCard = (props) => {
                 duration:250,
                 useNativeDriver:false
             }),
-        ]).start()
+        ]).start(()=>setSearchDisplay('none'))
     }
 
     openGetTopethers = () => {
@@ -357,7 +357,7 @@ export default FamCard = (props) => {
                 duration:250,
                 useNativeDriver:false
             }),
-        ]).start(()=>setSearchDisplay('none'))
+        ]).start(()=>setSettingsDisplay('none'))
     }
 
     const leftButtonInterpolate = leftButtonMarginTop.interpolate({
