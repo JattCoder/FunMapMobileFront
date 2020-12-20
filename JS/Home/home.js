@@ -159,7 +159,7 @@ const Home = (props) => {
                     }}>
                         {userPosition.latitude == 0 ? <Navigate /> : null}
                         {search.map((place)=>{
-                            return <Marker key={place.id} onPress={()=>{dispatch(selmarker(place)),dispatch(bottomsheet('Search'))}} coordinate={{latitude: place.geo.lat, longitude: place.geo.lng}}/>
+                            return <Marker key={place.placeID} onPress={()=>{dispatch(selmarker(place)),dispatch(bottomsheet('Search'))}} coordinate={{latitude: place.location.lat, longitude: place.location.lng}}/>
                         })}
                 </MapView>
             </View>
@@ -167,7 +167,7 @@ const Home = (props) => {
                 <TouchableOpacity style={{width:'100%',height:'100%'}} onPress={()=>whereAmI()}/>
             </View>: null : null}
             <View style={{height:55,position:'absolute',right:'1%',top:'8%'}}>
-              <Search position={userPosition}/>
+              <Search position={regionPosition}/>
             </View>
             <View style={{width:dimensions.width,bottom:0,position:'absolute'}}>
               <Drawerr user={user} regionPosition={regionPosition} followMe={()=>whereAmI()} logout={props.navigation}/>

@@ -1,4 +1,4 @@
-import React,{ useState } from 'react'
+import React,{ useState, useEffect } from 'react'
 import { bottomsheet } from '../../../actions/animation/bottomsheet'
 import { useDispatch, useSelector } from 'react-redux'
 import Geocoder from 'react-native-geocoder-reborn'
@@ -16,12 +16,14 @@ export default Search = (props) => {
     const [shortcutsWidth] = useState(new Animated.Value(0))
     const [shortcutsOpacity] = useState(new Animated.Value(0))
     const [action,setAction] = useState('')
-    const [city,setCity] = useState('')
     const [saction,setSaction] = useState('')
+    const [location,setLocation] = useState({
+        lat:0,
+        lng:0
+    })
     let waitTime;
     let closeSrc;
     const dispatch = useDispatch()
-    const location = useSelector(state => {return state.mylocation.complete})
 
     const typeWidth = typeSearchWidth.interpolate({
         inputRange: [0, 1],
@@ -127,6 +129,7 @@ export default Search = (props) => {
         ]).start(()=>{
             setSaction('')
             dispatch(bottomsheet(''))
+            dispatch(clearsearch())
         })
     }
 
@@ -149,27 +152,37 @@ export default Search = (props) => {
     }
 
     searchPlaces = (input = '') => {
-        if(city != ''){
-            !input.includes(' in ') ? search = `${input} in ${city}` : search = input 
-            var url = new URL("http://localhost:3000/account/places/search"),
-                params = { input: search }
-                Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
-            fetch(url)
-            .then(res => { return res.json() })
-            .then(places => {
-                dispatch(submitsearch(places))
+        locationPack = []
+        if(location.lat != 0 && location.lng != 0){
+            fetch(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${input}&location=${location.lat},${location.lng}&radius=10000&key=AIzaSyDMCLs_nBIfA8Bw9l50nSRwLOUByiDel9U`)
+            .then(res => {return res.json()})
+            .then(result => {
+                result.results.map(place => {
+                    locationPack.push({
+                        status: place.business_status,
+                        address: place.formatted_address,
+                        location: place.geometry.location,
+                        open: place.opening_hours ? place.opening_hours.open_now : null,
+                        placeID: place.place_id,
+                        priceLevel: place.price_level ? place.price_level : null,
+                        rating : place.rating,
+                        types : place.types
+                    })
+                })
+                dispatch(submitsearch(locationPack))
             })
-            .catch(err => { console.log(err) })
+            .catch(err => console.warn(err))
         }else{
             console.warn('alert')
         }
     }
 
-    useSelector((state)=>{
-        if(state.mylocation.complete != '')
-            if(city != state.mylocation.complete)
-                setCity(state.mylocation.complete)
-    })
+    useEffect(()=>{
+        setLocation({
+            lat:props.position.latitude,
+            lng:props.position.longitude
+        })
+    },[props.position])
 
     return(
         <Animated.View style={{width:Dimensions.get('screen').width/1.12,height:55,position:'absolute',right:slide,borderRadius:10,alignItems:'center',flexDirection:'row'}}>
