@@ -33,11 +33,11 @@ export default NewFamily = (props) => {
                 <View activeOpacity={1} onPress={()=>openSearch()} style={{backgroundColor:'white',borderRadius:10,height:'100%',width:'18%',justifyContent:'center',alignItems:'center',zIndex:20}}>
                     <Text>Name</Text>
                 </View>
-                <View style={{opacity:1,height:'100%',width:'80%',backgroundColor:'#00BFFF',borderRadius:10,marginLeft:-15,justifyContent:'center',paddingLeft:25,paddingRight:10}}>
+                <View style={{opacity:1,height:'100%',width:'80%',backgroundColor:'#7F7FD5',borderRadius:10,marginLeft:-15,justifyContent:'center',paddingLeft:25,paddingRight:10}}>
                     <TextInput style={{fontSize:20,color:'white'}} value={name} onChangeText={(e)=>setName(e)}/>
                 </View>
             </View>
-            <TouchableOpacity onPress={()=>create()} style={{width:Dimensions.get('screen').width/2.4,height:'8%',borderRadius:10,justifyContent:'center',alignItems:'center',backgroundColor:'#00BFFF'}}>
+            <TouchableOpacity onPress={()=>create()} style={{width:Dimensions.get('screen').width/2.4,height:'8%',borderRadius:10,justifyContent:'center',alignItems:'center',backgroundColor:'#7F7FD5'}}>
                   <Text style={{color:'white'}}>Create</Text>
             </TouchableOpacity>
         </View> 

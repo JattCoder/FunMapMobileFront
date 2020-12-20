@@ -245,23 +245,13 @@ export default Settings = (props) => {
                                 value={temperature} style={{position:'absolute',right:25}}/>
                         </View>
                     </View>
-                    {/* <View style={{width:Dimensions.get('screen').width,marginTop:'4%',alignItems:'center',justifyContent:'center',marginBottom:'2%',flexDirection:'row'}}>
-                        <TouchableOpacity activeOpacity={1} style={{height:0,width:55,marginRight:10,borderWidth:0.5,borderColor:'white'}}/>
-                        <Text style={{fontSize:20,fontweight:'bold',color:'white'}}>Style</Text>
-                        <TouchableOpacity activeOpacity={1} style={{height:0,width:255,marginLeft:10,borderWidth:0.5,borderColor:'white'}}/>
-                    </View>
-                    <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/15.2,justifyContent:'center',alignItems:'center',marginTop:'3%'}}>
-                        <TouchableOpacity onPress={()=>openBackgroundColor()} style={[Styles.Tab,{justifyContent:'center',alignItems:'center'}]}>
-                            <Text style={{fontweight:'bold',fontSize:16,color:'black'}}>Background Color</Text>
-                        </TouchableOpacity>
-                    </View> */}
                     <View style={{width:Dimensions.get('screen').width,marginTop:'4%',alignItems:'center',justifyContent:'center',marginBottom:'2%',flexDirection:'row'}}>
                         <TouchableOpacity activeOpacity={1} style={{height:0,width:'100%',marginRight:10,borderWidth:0.5,borderColor:'#7F7FD5'}}/>
                         <Text style={{fontSize:20,fontweight:'bold',color:'#000C40'}}>Account</Text>
                         <TouchableOpacity activeOpacity={1} style={{height:0,width:240,marginLeft:10,borderWidth:0.5,borderColor:'#7F7FD5'}}/>
                     </View>
-                    <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/15.2,alignItems:'center'}}>
-                        <TouchableOpacity onPress={()=>openAccount()} style={Styles.ASettings}>
+                    <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/15.2,alignItems:'center',justifyContent:'center'}}>
+                        <TouchableOpacity onPress={()=>openAccount()} style={{width:Dimensions.get('screen').width/1.25,height:'96%',justifyContent:'center',alignItems:'center',borderRadius:10,backgroundColor:'white'}}>
                             <Text style={{fontweight:'bold',fontSize:16,color:'black'}}>Account Settings</Text>
                         </TouchableOpacity>
                     </View>
@@ -306,15 +296,15 @@ const Styles = StyleSheet.create({
         shadowOpacity: 0.58,
         shadowRadius: 16.00,
         elevation: 24,
-    },ASettings:{
+    },
+    ASettings:{
         height:'95%',
-        width:'95%',
+        width:'130%',
         backgroundColor:'white',
         borderRadius:10,
         alignItems:'center',
         justifyContent:'center',
         shadowColor: "white",
-        flexDirection:'row',
         shadowOffset: {
 	        width: 0,
 	        height: 12,
