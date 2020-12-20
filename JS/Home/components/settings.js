@@ -36,7 +36,7 @@ export default Settings = (props) => {
     // "highways": false, "id": 1, "permitted": "Ghost", "temperature": "F°", "tolls": false, "user_id": 1}
 
     saveAndExit = () => {
-        firebase.database().ref('Users/'+props.email.replace(punctuation,'').replace(spaceRE,'')).update({
+        firebase.database().ref('Users/'+props.user.email.replace(punctuation,'').replace(spaceRE,'')).update({
             drivingMode: drivingMode == false ? 'driving' : 'walking',
             highways: avoidHighways,
             tolls: avoidTolls,
@@ -134,7 +134,7 @@ export default Settings = (props) => {
     }
 
     useEffect(()=>{
-        if(props.email) firebase.database().ref('Users/'+props.email.replace(punctuation,'').replace(spaceRE,'')).once('value',snapShot=>{
+        if(props.user.email) firebase.database().ref('Users/'+props.user.email.replace(punctuation,'').replace(spaceRE,'')).once('value',snapShot=>{
             if(drivingMode != (snapShot.child('drivingMode').val() == 'driving' ? false : true)){
                     setDrivingMode(previousState => !previousState)
                 }
@@ -151,7 +151,7 @@ export default Settings = (props) => {
                     setTemperature(previousState => !previousState)
                 }
         })
-    },[props.email])
+    },[props.user])
 
     closeScroll = (e) => {
         if(e.nativeEvent.contentOffset.y < -10){
@@ -263,7 +263,7 @@ export default Settings = (props) => {
                 </ScrollView>
             </Animated.View>
             <Animated.View style={{opacity:accountOpacity,height:accountHeight}}>
-                {/* <Account user={user} close={()=>closeAccount()}/> */}
+                <Account user={props.user} close={()=>closeAccount()}/>
             </Animated.View>
             <Animated.View style={{opacity:backgroundColorOpacity,height:backgroundColorHeight}}>
                 <BackgroundColor />

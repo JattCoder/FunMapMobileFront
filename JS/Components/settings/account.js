@@ -130,7 +130,7 @@ export default Account = (props) => {
         //     if(res == null) setAutoLogin(false)
         //     else setAutoLogin(true)
         // })
-    })
+    },[props.user])
 
     autoLoginHandler = () => {
         setAutoLogin(!autoLogin)
@@ -244,14 +244,14 @@ export default Account = (props) => {
                     <Image style={{height:20,width:20}} source={require('../../settingsIcons/back.png')}/>
                     <Text style={{color:'#00BFFF',fontSize:15}}>Account</Text>
                 </TouchableOpacity>
-                <Passwordchange />
+                {/* <Passwordchange /> */}
             </Animated.View>
             <Animated.View style={{opacity:editAccountOpacity,height:editAccountHeight}}>
                 <TouchableOpacity onPress={()=>closeAccountEdit()} activeOpacity={1} style={{flexDirection:'row',width:'100%',alignItems:'center',marginHorizontal:'3%'}}>
                     <Image style={{height:20,width:20}} source={require('../../settingsIcons/back.png')}/>
                     <Text style={{color:'#00BFFF',fontSize:15}}>Account</Text>
                 </TouchableOpacity>
-                <Editaccount user={props.user}/>
+                {/* <Editaccount user={props.user}/> */}
             </Animated.View>
             <Animated.View style={{height:'100%',width:'100%',opacity:accountPageOpacity}}>
                 <View style={{height:'30%',width:'100%',alignItems:'center',justifyContent:'center'}}>
@@ -262,12 +262,12 @@ export default Account = (props) => {
                     </LinearGradient>
                 </Animated.View>
                 <View style={Style.ImageBox}>
-                    {props.user.photo != '' ? <Image source={{ uri: props.user.photo }} /> : <Uimage name={user.name} />}
+                    {props.user.photo != '' ? <Image source={{ uri: props.user.photo }} /> : <Uimage name={props.user.name} />}
                 </View>
             </View>
             <View style={{marginHorizontal:'10%'}}>
                 <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
-                    <Shimmer>
+                    <Shimmer duration={2000} pauseDuration={2000}>
                         <Text style={{fontSize:25,color:'white',fontWeight:'bold'}}>{props.user.name}</Text>
                     </Shimmer>
                 </View>
@@ -277,16 +277,12 @@ export default Account = (props) => {
                 {props.user.phone != '' ? <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
                     <Text style={{color:'white'}}>{props.user.phone}</Text>
                 </View> : null}
-                <View style={{flexDirection:'row',alignItems:'center',borderRadius:10,borderWidth:0.3,height:'20%',paddingHorizontal:'5%',marginTop:'5%'}}>
-                    <Text style={{fontSize:20,fontWeight:'bold',color:'white'}}>Member</Text>
+                <View style={{flexDirection:'row',alignItems:'center',borderRadius:10,borderWidth:0.3,height:'25%',paddingHorizontal:'5%',marginTop:'5%'}}>
+                    <Text style={{fontSize:20,fontWeight:'bold',color:'white'}}>FunMap</Text>
                     <TouchableOpacity style={{borderWidth:0.5,height:'60%',marginHorizontal:'1.5%'}}/>
                     {props.user.member_type == 'Premium' || props.user.member_type == 'Temp' ? <Text style={{fontSize:18}}>Premium</Text> 
+                    : new Date().setDate(new Date().getDate()+14) >= new Date() ? <Text style={{fontSize:18}}>Premium</Text>  
                     : <View><Text>Basic</Text><Text style={{right:0}}>Upgrade</Text></View>}
-                </View>
-                <View style={{width:'100%',height:'15%',marginTop:'3%',justifyContent:'center',alignItems:'center',flexDirection:'row'}}>
-                    <Text style={{fontWeight:'bold',color:'white'}}>Auto-Login</Text>
-                    <Switch trackColor={{ true: "#0F2027", false: "#00BFFF" }}
-                        thumbColor={!autoLogin ? "#00BFFF" : "#00BFFF"} onValueChange={()=>autoLoginHandler()} value={autoLogin} style={{marginHorizontal:'3%'}}/>
                 </View>
             </View>
             <View style={{width:'100%',position:'absolute',bottom:0,justifyContent:'center',alignItems:'center'}}>
