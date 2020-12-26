@@ -17,6 +17,7 @@ let closeButtonsTimeout
 export default Drawerr = (props) => {
 
   const [backColor,setBackColor] = useState(['#00B4DB','#1CB5E0','#000046'])
+  const [action,setAction] = useState('')
   const [alignment] = useState(new Animated.Value(0))
   const [sheetHeight] = useState(new Animated.Value(height/7.4))
   const [headingMargin] = useState(new Animated.Value(40))
@@ -306,9 +307,6 @@ export default Drawerr = (props) => {
   }
 
   useSelector((state)=>{
-    if(backColor != state.settings.backgroundColor){
-      setBackColor(state.settings.backgroundColor)
-    }
     if(state.sheet == 'Search'){
       Animated.parallel([
         Animated.timing(alignment, {
@@ -347,8 +345,6 @@ export default Drawerr = (props) => {
           useNativeDriver:false
         }),
       ]).start()
-    }else if(state.sheet == '' && menuOpen != true){
-      //hide content on this sheet not the entire sheet
     }
   })
   return(
@@ -401,7 +397,7 @@ export default Drawerr = (props) => {
           </Animated.View>
         </Animated.View>
         <Animated.View style={{height:searchResultsHeight,width:Dimensions.get('screen').width,opacity:searchResultsOpacity}}>
-          <PlaceSearchResults />
+          <PlaceSearchResults position={props.regionPosition} />
         </Animated.View>
       </LinearGradient>
      </Animated.View>

@@ -158,7 +158,11 @@ export default Search = (props) => {
             .then(res => {return res.json()})
             .then(result => {
                 result.results.map(place => {
+                    photoC = []
+                    place.photos.map(photo=>{photoC.push(photo.photo_reference)}) 
                     locationPack.push({
+                        name: place.name,
+                        icon: place.icon,
                         status: place.business_status,
                         address: place.formatted_address,
                         location: place.geometry.location,
@@ -166,7 +170,8 @@ export default Search = (props) => {
                         placeID: place.place_id,
                         priceLevel: place.price_level ? place.price_level : null,
                         rating : place.rating,
-                        types : place.types
+                        types: place.types,
+                        photos: photoC
                     })
                 })
                 dispatch(submitsearch(locationPack))

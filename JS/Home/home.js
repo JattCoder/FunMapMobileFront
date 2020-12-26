@@ -72,9 +72,6 @@ const Home = (props) => {
     }
 
     useSelector((state)=>{
-        if(state.marker.name != ''){
-          //alert('marker is selected')
-        }
         if(state.mapfamily != currentFamily){
           setCurrentFamily(state.mapfamily)
         }
@@ -96,7 +93,8 @@ const Home = (props) => {
                 setsearch(state.placesearch)
             }
             if(state.marker.name != '' && mrkrInfo == false){
-                map.animateToRegion({latitude:state.marker.lat,longitude:state.marker.lng,latitudeDelta:0.019,longitudeDelta:0.019},500)
+              console.warn(state.marker)
+                map.animateToRegion({latitude:state.marker.location.lat,longitude:state.marker.location.lng,latitudeDelta:0.019,longitudeDelta:0.019},500)
                 setmrkrInfo(true)
             }else if(state.marker.name == '' && mrkrInfo == true){
                 setmrkrInfo(false)
