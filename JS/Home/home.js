@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import Styles from './styles'
 import { selmarker } from '../../actions/marker/selmarker'
 import { View, TouchableOpacity, Dimensions, Animated, Image } from 'react-native'
-import MapView,{Marker, PROVIDER_GOOGLE } from 'react-native-maps'
+import MapView,{Marker, Polyline, PROVIDER_GOOGLE } from 'react-native-maps'
 import Mrker from '../Markers/marker'
 import Location from '../FindMe/location'
 import Navigate from '../Components/navigation/navigate'
@@ -26,6 +26,7 @@ const Home = (props) => {
     const [search,setsearch] = useState([])
     const [mrkrInfo,setmrkrInfo] = useState(false)
     const [slimit,setspeed] = useState(0)
+    const [zoom,setZoom] = useState(0)
     const [currentFamily,setCurrentFamily] = useState([])
     const [regionPosition, setRegPosition] = useState({
         latitude: 0,
@@ -51,13 +52,15 @@ const Home = (props) => {
         heading: 0,
         speed: 0,
     })
+    const [path,setPath] = useState([])
+    const [navActive,setNavActive] = useState(false)
 
     useEffect(() => {
         setuser(props.route.params.user)
     },[props.route.params.user])
 
     whereAmI = () => {
-      if(userPosition.speed == 0){
+      if(regionPosition.speed == 0){
         map.animateCamera({center: {
           latitude: userPosition.latitude,
           longitude: userPosition.longitude,
@@ -67,6 +70,7 @@ const Home = (props) => {
         pitch: userPosition.speed,
         zoom: 17})
       }
+      // map.animateToRegion({latitude:state.mylocation.latitude,longitude:state.mylocation.longitude,latitudeDelta:0.019,longitudeDelta:0.019},500)
       setfollowme(true)
       setspeed(0)
     }
@@ -89,11 +93,48 @@ const Home = (props) => {
           whereAmI()
         }
         if(followme == true){
+            if(regionPosition.speed <= 0 && search.length < 0 && path.length < 0){
+              map.animateToRegion({latitude:state.mylocation.latitude,longitude:state.mylocation.longitude,latitudeDelta:0.019,longitudeDelta:0.019},500)
+            }
+            if(path != state.navigation.path){
+              setNavActive(state.navigation.active)
+              setPath(state.navigation.path)
+              map.fitToCoordinates(state.navigation.path,{animated:true,edgePadding: { top: 5, right: 60, bottom: 220, left: 60 }})
+            }else if(state.navigation.active != navActive){
+              setNavActive(state.navigation.active)
+              setspeed(0)
+              if(regionPosition.speed <= 0) 
+                map.animateCamera({
+                  center: {
+                    latitude: regionPosition.latitude,
+                    longitude: regionPosition.longitude,
+                  },
+                  altitude: 500,
+                  heading: 0,
+                  pitch: 0,
+                  zoom: 18,
+              })
+            }
             if(search != state.placesearch) {
+                if(state.placesearch.length > 0) setspeed(2000)
+                else if(state.placesearch.length == 0 && slimit == 2000) {
+                    map.animateCamera({
+                      center: {
+                        latitude: regionPosition.latitude,
+                        longitude: regionPosition.longitude,
+                      },
+                    altitude: 500,
+                    heading: regionPosition.heading,
+                    pitch: regionPosition.speed,
+                    zoom: regionPosition.zoom,
+                  })
+                  setspeed(0)
+                }
                 setsearch(state.placesearch)
+                map.fitToCoordinates(state.placesearch.map(plc=>{return{latitude:plc.location.lat,longitude:plc.location.lng}}),{animated:true,edgePadding: { top: 30, right: 10, bottom: 10, left: 30 }})
+                
             }
             if(state.marker.name != '' && mrkrInfo == false){
-              console.warn(state.marker)
                 map.animateToRegion({latitude:state.marker.location.lat,longitude:state.marker.location.lng,latitudeDelta:0.019,longitudeDelta:0.019},500)
                 setmrkrInfo(true)
             }else if(state.marker.name == '' && mrkrInfo == true){
@@ -105,7 +146,7 @@ const Home = (props) => {
 
     return (
         <View style={{ height: dimensions.height, width: dimensions.width}}>
-            {regionPosition.speed == 0 ? <Location /> : null}
+            {regionPosition.speed <= 0 ? <Location /> : null}
             <View style={Styles.Page}>
                 <MapView provider={PROVIDER_GOOGLE}
                     ref={ref => { setmap(ref) }}
@@ -117,11 +158,10 @@ const Home = (props) => {
                     onPanDrag={()=> setspeed(2000)}
                     onUserLocationChange={(userlocation)=>{
                         loc = userlocation.nativeEvent.coordinate
-                        zoom = 0
-                        if(loc.speed > 2 && loc.speed <= 7) zoom = 18.5
-                          else if(loc.speed > 7 && loc.speed <= 30) zoom = 18
-                          else if(loc.speed > 30 && loc.speed <= 65) zoom = 17
-                          else zoom = 16
+                        if(loc.speed > 0 && loc.speed <= 7) setZoom(18)
+                          else if(loc.speed > 7 && loc.speed <= 30) setZoom(18)
+                          else if(loc.speed > 30 && loc.speed <= 65) setZoom(17)
+                          else setZoom(16)
                           setRegPosition({
                             latitude: loc.latitude,
                             longitude: loc.longitude,
@@ -137,14 +177,16 @@ const Home = (props) => {
                             zip: ''
                           })
                         if(loc.speed >= slimit && followme == true){
-                          map.animateCamera({center: {
-                            latitude: loc.latitude,
-                            longitude: loc.longitude,
-                          },
-                          altitude: 500,
-                          heading: loc.heading,
-                          pitch: loc.speed,
-                          zoom: zoom})
+                          map.animateCamera(
+                            {center: {
+                              latitude: loc.latitude,
+                              longitude: loc.longitude,
+                            },
+                            altitude: 500,
+                            heading: loc.heading,
+                            pitch: loc.speed,
+                            zoom: zoom,
+                          })
                         }
                     }}
                     customMapStyle={mapStyle}
@@ -155,9 +197,10 @@ const Home = (props) => {
                       latitudeDelta: 100.009,
                       longitudeDelta: 20.0009,
                     }}>
+                        {path.length > 0 ? <Polyline coordinates={path} strokeColor={'rgba(100,100,200,1)'} strokeWidth={zoom/4} /> : null}
                         {userPosition.latitude == 0 ? <Navigate /> : null}
                         {search.map((place)=>{
-                            return <Marker key={place.placeID} onPress={()=>{dispatch(selmarker(place)),dispatch(bottomsheet('Search'))}} coordinate={{latitude: place.location.lat, longitude: place.location.lng}}/>
+                            return <Marker onPress={()=>{dispatch(selmarker(place)),dispatch(bottomsheet('Search'))}} coordinate={{latitude: place.location.lat, longitude: place.location.lng}}/>
                         })}
                 </MapView>
             </View>
@@ -165,7 +208,7 @@ const Home = (props) => {
                 <TouchableOpacity style={{width:'100%',height:'100%'}} onPress={()=>whereAmI()}/>
             </View>: null : null}
             <View style={{height:55,position:'absolute',right:'1%',top:'8%'}}>
-              <Search position={regionPosition}/>
+              <Search position={regionPosition} user={props.route.params.user}/>
             </View>
             <View style={{width:dimensions.width,bottom:0,position:'absolute'}}>
               <Drawerr user={user} regionPosition={regionPosition} followMe={()=>whereAmI()} logout={props.navigation}/>

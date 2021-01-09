@@ -58,11 +58,10 @@ export default Locationshare = (props) => {
 
     updateChange = (selection) => {
         selecType(selection)
-        updateProfile(selection)
-        for(let fam in fams){
-            let currentFam = fams[fam]
-            updateFamilies(currentFam,selection)
-        }
+        setTimeout(()=>{
+            updateProfile(selection)
+            for(let fam in fams) updateFamilies(fams[fam],selection)
+        },500)
         //dispatch(locshare(selection))
     }
 

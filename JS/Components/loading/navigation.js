@@ -26,13 +26,13 @@ export default Navigation = (props) => {
         },20000)
     }
 
-    useSelector((state)=>{
-        let navigation = state.navigation
-        if(navigation.status != '' && navigation.destination.length > 0){
-            clearInterval(interval)
-            //clear searches, marker
-        }
-    })
+    // useSelector((state)=>{
+    //     let navigation = state.navigation
+    //     if(navigation.status != '' && navigation.destination.length > 0){
+    //         clearInterval(interval)
+    //         //clear searches, marker
+    //     }
+    // })
 
     return(
         <View style={Styles.Loading}>

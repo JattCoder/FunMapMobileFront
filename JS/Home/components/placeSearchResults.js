@@ -1,13 +1,19 @@
-import React,{ useState } from 'react'
-import { View, Text, Dimensions, Image, StyleSheet, TouchableOpacity} from 'react-native'
+import React,{ useState, useEffect } from 'react'
+import { View, Text, Dimensions, Image, StyleSheet, TouchableOpacity, Animated } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
+import { navigation } from '../../../actions/navigation/navigation'
+import { clearnavigation } from '../../../actions/navigation/clearnavigation'
+import polyline from '@mapbox/polyline'
+import { clearsearch } from '../../../actions/submitsearch/clearsearch'
 
 export default PlaceSearcgResults = (props) => {
 
-    const [placeInfo,setPlaceInfo] = useState({
-        name:''
-    })
+    const [placeInfo,setPlaceInfo] = useState({ name:'' })
     const [images,setImages] = useState([])
+    const [displayNavigation,setDisplayNavigation] = useState(false)
+    const [routeInfo,setRouteInfo] = useState({distance: '', duration: '', path: []})
+    const [naviColor] = useState(new Animated.Value(0))
+    const dispatch = useDispatch()
 
     getPhotos = () => {
         imgs = []
@@ -20,18 +26,23 @@ export default PlaceSearcgResults = (props) => {
         setImages(imgs)
     }
 
-    getRoute = () => {
-        //distance -> result.routes[0].legs.distance.text
-        //duration -> result.routes[0].legs.duration.text
-        //km -> metric
-        //mi -> imperial
-        //This is get me timestamp of expected arrival time
-        //This is how result is given to us
-// duration = {
-//     text: "1 day 19 hours",
-//     value: 154898
-//   }
-  
+    displayNaviAnim = () => {
+        Animated.timing(naviColor,{
+            toValue: 1,
+            duration: 500,
+            useNativeDriver: false
+        }).start()
+    }
+
+    hideNaviAnim = () => {
+        Animated.timing(naviColor,{
+            toValue: 0,
+            duration: 500,
+            useNativeDriver: false
+        }).start()
+    }
+
+    getRoute = () => { 
 //   //This is how we are getting 
 //   extenDays = duration.text.includes('day') 
 //   ? parseInt(duration.text.split(' ')[0]) + (parseInt(duration.text.split(' ')[2])/24) 
@@ -40,20 +51,20 @@ export default PlaceSearcgResults = (props) => {
 //   nextDate = new Date().setDate(new Date().getDate()+extenDays)
   
 //   console.warn('Duration Date: '+new Date(nextDate))
-        fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=California&destination=New York&key=AIzaSyDMCLs_nBIfA8Bw9l50nSRwLOUByiDel9U`)
+        fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${props.position.latitude},${props.position.longitude}&destination=${placeInfo.location.lat},${placeInfo.location.lng}&avoid=${props.user.highways?'highways':''}|${props.user.ferries?'ferries':''}|${props.user.tolls?'tolls':''}&mode=${props.user.drivingMode}&key=AIzaSyDMCLs_nBIfA8Bw9l50nSRwLOUByiDel9U`)
         .then(res => {return res.json()})
         .then(result => {
-            if(parseInt(result.routes[0].legs.distance.text.split(' ')[0]) > 6){
-                let dist = 0
-                result.routes[0].legs.steps.map(step => {
-                    fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${step.start_location.lat},${step.start_location.lng}&destination=${step.end_location.lat},${step.end_location.lng}&key=AIzaSyDMCLs_nBIfA8Bw9l50nSRwLOUByiDel9U`)
-                    .then(sres => {return sres.json()})
-                    .then(sresult => {
-                        dist = sresult.routes[0].legs.distance.text.split(' ')[0]+dist+'mi'
-                        duration = sresult.routes[0].legs.duration.text.
-                    })
-                    .catch(serr => console.warn(serr))
+            if(result.status === 'ZERO_RESULTS') {
+                alert('No Route')
+            }else{
+                path = []
+                polyline.decode(result.routes[0].overview_polyline.points).map(step => {
+                    path.push({latitude:step[0],longitude:step[1]})
                 })
+                dispatch(navigation(false,path))
+                setRouteInfo({distance:result.routes[0].legs[0].distance.text, duration:result.routes[0].legs[0].duration.text, path})
+                setDisplayNavigation(true)
+                displayNaviAnim()
             }
         })
         .catch(err => console.warn(err))
@@ -61,11 +72,18 @@ export default PlaceSearcgResults = (props) => {
 
     useSelector((state)=>{
         if(state.marker != placeInfo){
+            hideNaviAnim()
+            state.navigation.path.length > 0 ? dispatch(clearnavigation()) : null
+            setDisplayNavigation(false)
             setPlaceInfo(state.marker)
-            if(placeInfo.name != '') getPhotos()
+            //if(placeInfo.name != '') getPhotos()
         }
     })
 
+    const naviColorInterpolate = naviColor.interpolate({
+        inputRange:[0,1],
+        outputRange:['#7F7FD5', '#32CD32']
+    })
 
     return( placeInfo.name != '' ? <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/1.5,alignItems:'center'}}>
         <View style={Styles.Icon}><Image style={{height:'50%',width:'50%',padding:'10%'}} source={{uri:placeInfo.icon}}/></View>
@@ -88,9 +106,12 @@ export default PlaceSearcgResults = (props) => {
             </TouchableOpacity>
         </View>
         <View style={{width:'100%',height:'10%',justifyContent:'center'}}>
-            <TouchableOpacity onPress={()=>getRoute()} style={{width:'40%',backgroundColor:'#7F7FD5',height:'70%',marginLeft:'5%',borderRadius:50,justifyContent:'center',alignItems:'center'}}>
-                <Text style={{color:'white',fontWeight:'bold',fontSize:15}}>Navigate</Text>
-            </TouchableOpacity>
+            <Animated.View style={{width:'40%', height:'70%',marginLeft:'5%',backgroundColor:naviColorInterpolate,borderRadius:50}}>
+                <TouchableOpacity onPress={()=> !displayNavigation ? getRoute() : dispatch(navigation(true,routeInfo.path))} style={{width:'100%',height:'100%',borderRadius:50,justifyContent:'center',alignItems:'center'}}>
+                    {!displayNavigation ? <Text style={{color:'white',fontWeight:'bold',fontSize:15}}>Navigate</Text>
+                    : <Text style={{color:'white',fontWeight:'bold',fontSize:15}}>Start - {routeInfo.distance.split(' ')[0]} {routeInfo.distance.split(' ')[1] == 'mi' ? 'Mi' : 'Km'}</Text>}
+                </TouchableOpacity>
+            </Animated.View>
         </View>
     </View> : null )
 }

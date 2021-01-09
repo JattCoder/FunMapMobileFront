@@ -1,5 +1,5 @@
 import React,{ useState, useEffect } from 'react'
-import { View, Text, StyleSheet, Image, ActivityIndicator, Dimensions, Animated } from 'react-native'
+import { View, Text, StyleSheet, Image, KeyboardAvoidingView, Dimensions, Animated } from 'react-native'
 import { TouchableOpacity, TextInput } from 'react-native-gesture-handler'
 import { useSelector, useDispatch } from 'react-redux'
 import { login } from '../../actions/login/login'
@@ -580,16 +580,18 @@ const Login = (props) => {
             </Animated.View>
             <View style={{width: Dimensions.get('screen').width,height: Dimensions.get('screen').height/1.5,position:'absolute',bottom:0}}>
                 <Animated.View style={{height:emailPassInterpolate,width:'100%',position:'absolute',bottom:0,opacity:emailPassOpacity,justifyContent:'center',alignItems:'center'}}>
-                    <TouchableOpacity style={Styles.EmailBox} activeOpacity={1}>
-                        <Text style={{color:'#7F7FD5',fontWeight:'bold'}}>Email</Text>
-                        <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:0,borderColor:'#7F7FD5'}}/>
-                        <TextInput style={[Styles.EmailInput, {height: Platform.OS == 'android' ? 40 : 20}]} autoCapitalize = 'none' onChangeText={(e)=>setemail(e)}/>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={Styles.PassBox} activeOpacity={1}>
-                        <Text style={{color:'#7F7FD5',fontWeight:'bold'}}>Pass </Text>
-                        <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:0,borderColor:'#7F7FD5'}}/>
-                        <TextInput style={[Styles.PassInput, {height: Platform.OS == 'android' ? 40 : 20}]} autoCapitalize = 'none' secureTextEntry={true} onChangeText={(e)=>setpass(e)}/>
-                    </TouchableOpacity>
+                    <KeyboardAvoidingView behavior="padding">
+                        <TouchableOpacity style={Styles.EmailBox} activeOpacity={1}>
+                            <Text style={{color:'#7F7FD5',fontWeight:'bold'}}>Email</Text>
+                            <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:0,borderColor:'#7F7FD5'}}/>
+                            <TextInput style={[Styles.EmailInput, {height: Platform.OS == 'android' ? 40 : 20}]} autoCapitalize = 'none' onChangeText={(e)=>setemail(e)}/>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={Styles.PassBox} activeOpacity={1}>
+                            <Text style={{color:'#7F7FD5',fontWeight:'bold'}}>Pass </Text>
+                            <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:0,borderColor:'#7F7FD5'}}/>
+                            <TextInput style={[Styles.PassInput, {height: Platform.OS == 'android' ? 40 : 20}]} autoCapitalize = 'none' secureTextEntry={true} onChangeText={(e)=>setpass(e)}/>
+                        </TouchableOpacity>
+                    </KeyboardAvoidingView>
                     <TouchableOpacity style={Styles.Login} activeOpacity={1} onPress={()=>LoginAttempt()}>
                         <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['#1CB5E0','#1CB5E0','#1CB5E0']} style={{width:'100%',height:'100%',borderRadius:25,justifyContent:'center',alignItems:'center'}}>
                         <View style={{width:'100%',height:'100%'}}>

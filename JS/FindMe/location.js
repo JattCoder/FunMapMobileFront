@@ -30,6 +30,7 @@ export default Location = () =>{
     }
       
     error = (err) => {
+        console.warn('Received Error')
         dispatch(mylocation({
             latitude: 0,
             longitude: 0,
@@ -50,11 +51,10 @@ export default Location = () =>{
     }
       
     options = {
-      enableHighAccuracy: false,
+      enableHighAccuracy: true,
       timeout: 5000,
       maximumAge: 5000
     };
     id = Geolocation.watchPosition(success,error,options)
-    console.log('Location ID: ',id)
     return null
 }

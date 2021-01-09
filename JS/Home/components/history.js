@@ -1,6 +1,6 @@
 import React,{ useEffect, useState } from 'react'
 import firebase from 'firebase'
-import { useSelector } from 'react-redux'
+import polyline from '@mapbox/polyline'
 const punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~]/g
 const spaceRE = /\s+/g
 
@@ -22,7 +22,7 @@ export default History = (props) => {
 
     sendResults = () => {
         firebase.database().ref('History/'+email.replace(punctuation,'').replace(spaceRE,'')+'/'+todaY.string).set({
-            positionList
+            positionList: polyline.encode(positionList)
         })
         .catch(err => console.warn(err))
     }
@@ -35,7 +35,7 @@ export default History = (props) => {
         td = mm + '-' + dd + '-' + yyyy
         if(todaY.string != td) setToday({string:td, timestamp:today})
         if(email != ''){
-            setPositionList([...positionList,{time:today.getTime(),geo:props.current,speed:props.speed}])
+            setPositionList([...positionList,[props.current.lat,props.current.lng]])
             setTimeout(()=>{sendResults()},20000)
         }
     }

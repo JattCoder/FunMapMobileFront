@@ -44,20 +44,20 @@ export default Navigate = () => {
         .catch(err => console.warn(err.message))
     }
 
-    useSelector((state)=>{
-        if(state.navigation.destination.length > 0 && state.navigation.status == ''){
-            setnavigation({
-                origin:{
-                    latitude: state.mylocation.latitude,
-                    longitude: state.mylocation.longitude
-                },
-                destination: state.marker,
-                stops: state.navigation.stops,
-                status: 'Ready'
-            })
-            //getDirections()
-        }
-    })
+    // useSelector((state)=>{
+    //     if(state.navigation.destination.length > 0 && state.navigation.status == ''){
+    //         setnavigation({
+    //             origin:{
+    //                 latitude: state.mylocation.latitude,
+    //                 longitude: state.mylocation.longitude
+    //             },
+    //             destination: state.marker,
+    //             stops: state.navigation.stops,
+    //             status: 'Ready'
+    //         })
+    //         //getDirections()
+    //     }
+    // })
 
     return(
         <View>
