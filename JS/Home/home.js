@@ -54,6 +54,7 @@ const Home = (props) => {
     })
     const [path,setPath] = useState([])
     const [navActive,setNavActive] = useState(false)
+    const [strokeWidth,setStrokeWidth] = useState(6)
 
     useEffect(() => {
         setuser(props.route.params.user)
@@ -73,6 +74,14 @@ const Home = (props) => {
       // map.animateToRegion({latitude:state.mylocation.latitude,longitude:state.mylocation.longitude,latitudeDelta:0.019,longitudeDelta:0.019},500)
       setfollowme(true)
       setspeed(0)
+    }
+
+    onPanMovement = () => {
+      map.getMapBoundaries()
+        .then(info => {
+          console.warn('Bou: ',info)
+        })
+        .catch(err => console.warn(err))
     }
 
     useSelector((state)=>{
@@ -150,6 +159,7 @@ const Home = (props) => {
             <View style={Styles.Page}>
                 <MapView provider={PROVIDER_GOOGLE}
                     ref={ref => { setmap(ref) }}
+                    paddingAdjustmentBehavior={'always'}
                     onLongPress={()=>alert('Need Urgent Help?')}
                     followsUserLocation={true}
                     showsUserLocation={showme}
@@ -158,8 +168,8 @@ const Home = (props) => {
                     onPanDrag={()=> setspeed(2000)}
                     onUserLocationChange={(userlocation)=>{
                         loc = userlocation.nativeEvent.coordinate
-                        if(loc.speed > 0 && loc.speed <= 7) setZoom(18)
-                          else if(loc.speed > 7 && loc.speed <= 30) setZoom(18)
+                        if(loc.speed > 0 && loc.speed <= 7) setZoom(18.7)
+                          else if(loc.speed > 7 && loc.speed <= 30) setZoom(20)
                           else if(loc.speed > 30 && loc.speed <= 65) setZoom(17)
                           else setZoom(16)
                           setRegPosition({
@@ -184,8 +194,8 @@ const Home = (props) => {
                             },
                             altitude: 500,
                             heading: loc.heading,
-                            pitch: loc.speed,
-                            zoom: zoom,
+                            pitch: navActive ? loc.speed+15 : loc.speed,
+                            zoom: navActive ? zoom-0.5 : zoom,
                           })
                         }
                     }}
@@ -197,7 +207,7 @@ const Home = (props) => {
                       latitudeDelta: 100.009,
                       longitudeDelta: 20.0009,
                     }}>
-                        {path.length > 0 ? <Polyline coordinates={path} strokeColor={'rgba(100,100,200,1)'} strokeWidth={zoom/4} /> : null}
+                        {path.length > 0 ? <Polyline coordinates={path} strokeColor={'rgba(100,100,200,0.6)'} strokeWidth={strokeWidth} tappable={true} onPress={(e)=>console.warn(e)}/> : null}
                         {userPosition.latitude == 0 ? <Navigate /> : null}
                         {search.map((place)=>{
                             return <Marker onPress={()=>{dispatch(selmarker(place)),dispatch(bottomsheet('Search'))}} coordinate={{latitude: place.location.lat, longitude: place.location.lng}}/>

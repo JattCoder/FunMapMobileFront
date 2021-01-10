@@ -302,8 +302,8 @@ export default Drawerr = (props) => {
   }
 
   guestureHandler = (e) => {
-    if(e.nativeEvent.contentOffset.y > 0) bringUpActionSheet()
-    else if(e.nativeEvent.contentOffset.y < 0) {hideTheActionSheet(),dispatch(bottomsheet('')),dispatch(clemarker()),setMenuOpen(false)}
+    if(e > 0) bringUpActionSheet()
+    else if(e < 0) {hideTheActionSheet(),dispatch(bottomsheet('')),dispatch(clemarker()),setMenuOpen(false)}
   }
 
   useSelector((state)=>{
@@ -350,7 +350,7 @@ export default Drawerr = (props) => {
   return(
      <Animated.View style={[Styles.Bottom,actionSheetStyle,{height:sheetHeight}]}>
        <LinearGradient colors={['rgba(211,204,227,0.1)','rgba(211,204,227,0.7)','#D3CCE3','#D3CCE3','#D3CCE3','#E9E4F0','#E9E4F0']} style={{height:'100%',width:'100%',alignItems:'center',borderTopLeftRadius:25,borderTopRightRadius:25,}}>
-        <ScrollView onScroll={(e)=>guestureHandler(e)} style={{width:80,height:10,borderTopWidth:3,marginTop:10,borderColor:'white',zIndex:100}} />
+        <ScrollView onScroll={(e)=>guestureHandler(e.nativeEvent.contentOffset.y)} style={{width:80,height:10,borderTopWidth:3,marginTop:10,borderColor:'white',zIndex:100}} />
         <Animated.View style={{width:Dimensions.get('screen').width,height:'20%',position:'absolute',flexDirection:'row',marginTop:headingMargin,marginHorizontal:'5%',alignItems:'center'}}>
           <TouchableOpacity onPress={()=>console.warn('followme')} style={{flexDirection:'row',justifyContent:'center',alignItems:'center',marginHorizontal:'5%',zIndex:150}}>
             <TouchableOpacity style={[Styles.ImageBox,{height:45,width:45}]}>
@@ -397,7 +397,7 @@ export default Drawerr = (props) => {
           </Animated.View>
         </Animated.View>
         <Animated.View style={{height:searchResultsHeight,width:Dimensions.get('screen').width,opacity:searchResultsOpacity}}>
-          <PlaceSearchResults position={props.regionPosition} user={props.user} />
+          <PlaceSearchResults position={props.regionPosition} user={props.user} hide={(val)=>guestureHandler(val)} />
         </Animated.View>
       </LinearGradient>
      </Animated.View>

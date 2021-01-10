@@ -58,16 +58,43 @@ export default PlaceSearcgResults = (props) => {
                 alert('No Route')
             }else{
                 path = []
+                pth = ''
                 polyline.decode(result.routes[0].overview_polyline.points).map(step => {
                     path.push({latitude:step[0],longitude:step[1]})
+                    pth += `${step[0]},${step[1]}|`
                 })
-                dispatch(navigation(false,path))
-                setRouteInfo({distance:result.routes[0].legs[0].distance.text, duration:result.routes[0].legs[0].duration.text, path})
-                setDisplayNavigation(true)
-                displayNaviAnim()
+                pth = pth.replace(/.$/,'')
+                fetch(`https://roads.googleapis.com/v1/snapToRoads?path=${pth}&interpolate=true&key=AIzaSyDMCLs_nBIfA8Bw9l50nSRwLOUByiDel9U`)
+                .then(res => {return res.json()})
+                .then(info => {
+                    finalpath = []
+                    info.snappedPoints.map(loc => {
+                        finalpath.push([loc.location.latitude,loc.location.longitude])
+                    })
+                    dispatch(navigation(false,path))
+                    setRouteInfo({distance:result.routes[0].legs[0].distance.text, duration:result.routes[0].legs[0].duration.text, path})
+                    setDisplayNavigation(true)
+                    displayNaviAnim()
+                })
+                .catch(err => console.warn('Road Snapping Error: ',err))
             }
         })
-        .catch(err => console.warn(err))
+        .catch(err => console.warn('Directions Error: ',err))
+    }
+
+    routeCheck = () => {
+        //Create another file, where we will be cheking if user if passing by geo spots of polyline
+
+        //if near or on the geo spot, then grab next geo spot and 
+        //check if getting further from first one and getting close to next one
+
+        //getting further from first one and not getting closer to second one, then warn user and find another route from
+        //currect location
+
+        //NEED TO KEEP IN MIND, GIVE SOME TIME TO DEVICE TO GET BACK ON TRACK, SOMETIMES DEVICES ARE LAGGY
+
+        //NEED TO TUNE UP A BIT, SO IT'S ACCURATE AS POSSIBLE
+        console.warn(props.position.latitude)
     }
 
     useSelector((state)=>{
@@ -78,12 +105,18 @@ export default PlaceSearcgResults = (props) => {
             setPlaceInfo(state.marker)
             //if(placeInfo.name != '') getPhotos()
         }
+        if(state.navigation.active) routeCheck()
     })
 
     const naviColorInterpolate = naviColor.interpolate({
         inputRange:[0,1],
         outputRange:['#7F7FD5', '#32CD32']
     })
+
+    letsGo = () => {
+        dispatch(navigation(true,routeInfo.path))
+        props.hide()
+    }
 
     return( placeInfo.name != '' ? <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/1.5,alignItems:'center'}}>
         <View style={Styles.Icon}><Image style={{height:'50%',width:'50%',padding:'10%'}} source={{uri:placeInfo.icon}}/></View>
