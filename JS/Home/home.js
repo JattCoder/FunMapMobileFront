@@ -108,7 +108,7 @@ const Home = (props) => {
             if(path != state.navigation.path){
               setNavActive(state.navigation.active)
               setPath(state.navigation.path)
-              map.fitToCoordinates(state.navigation.path,{animated:true,edgePadding: { top: 5, right: 60, bottom: 220, left: 60 }})
+              map.fitToCoordinates(state.navigation.path,{animated:true,edgePadding: { top: dimensions.height/4, right: 60, bottom: dimensions.height/2, left:60 }})
             }else if(state.navigation.active != navActive){
               setNavActive(state.navigation.active)
               setspeed(0)
@@ -207,7 +207,7 @@ const Home = (props) => {
                       latitudeDelta: 100.009,
                       longitudeDelta: 20.0009,
                     }}>
-                        {path.length > 0 ? <Polyline coordinates={path} strokeColor={'rgba(100,100,200,0.6)'} strokeWidth={strokeWidth} tappable={true} onPress={(e)=>console.warn(e)}/> : null}
+                        {path.length > 0 ? <Polyline coordinates={path} strokeColor={'#2C5364'} geodesic={true} strokeWidth={7} tappable={true} onPress={(e)=>console.warn(e)}/> : null}
                         {userPosition.latitude == 0 ? <Navigate /> : null}
                         {search.map((place)=>{
                             return <Marker onPress={()=>{dispatch(selmarker(place)),dispatch(bottomsheet('Search'))}} coordinate={{latitude: place.location.lat, longitude: place.location.lng}}/>

@@ -4,15 +4,19 @@ import { useSelector, useDispatch } from 'react-redux'
 import { navigation } from '../../../actions/navigation/navigation'
 import { clearnavigation } from '../../../actions/navigation/clearnavigation'
 import polyline from '@mapbox/polyline'
+import FollowPath from './followPath'
 import { clearsearch } from '../../../actions/submitsearch/clearsearch'
+import { mylocation } from '../../../actions/mylocation/mylocation'
 
 export default PlaceSearcgResults = (props) => {
 
     const [placeInfo,setPlaceInfo] = useState({ name:'' })
     const [images,setImages] = useState([])
+    const [currentLocation,setCurrentLocation] = useState({latitude:0,longitude:0})
     const [displayNavigation,setDisplayNavigation] = useState(false)
     const [routeInfo,setRouteInfo] = useState({distance: '', duration: '', path: []})
     const [naviColor] = useState(new Animated.Value(0))
+    const [active,setActive] = useState(false)
     const dispatch = useDispatch()
 
     getPhotos = () => {
@@ -51,7 +55,8 @@ export default PlaceSearcgResults = (props) => {
 //   nextDate = new Date().setDate(new Date().getDate()+extenDays)
   
 //   console.warn('Duration Date: '+new Date(nextDate))
-        fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${props.position.latitude},${props.position.longitude}&destination=${placeInfo.location.lat},${placeInfo.location.lng}&avoid=${props.user.highways?'highways':''}|${props.user.ferries?'ferries':''}|${props.user.tolls?'tolls':''}&mode=${props.user.drivingMode}&key=AIzaSyDMCLs_nBIfA8Bw9l50nSRwLOUByiDel9U`)
+        fetch(`https://router.hereapi.com/v8/routes?transportMode=${props.user.drivingMode}&origin=${props.position.latitude},${props.position.longitude}&destination=${placeInfo.location.lat},${placeInfo.location.lng}&return=polylinepolyline,turnbyturnactions&apiKey=tOzyGAv3qnNge0QzSmXnwD54zKsR4xCZY3M5yMC22OM`)
+        //fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${props.position.latitude},${props.position.longitude}&destination=${placeInfo.location.lat},${placeInfo.location.lng}&avoid=${props.user.highways?'highways':''}|${props.user.ferries?'ferries':''}|${props.user.tolls?'tolls':''}&mode=${props.user.drivingMode}&key=AIzaSyDMCLs_nBIfA8Bw9l50nSRwLOUByiDel9U`)
         .then(res => {return res.json()})
         .then(result => {
             if(result.status === 'ZERO_RESULTS') {
@@ -59,45 +64,33 @@ export default PlaceSearcgResults = (props) => {
             }else{
                 path = []
                 pth = ''
-                polyline.decode(result.routes[0].overview_polyline.points).map(step => {
+                polyline.decode(result.routes[0].sections[0].polyline).map(step => {
                     path.push({latitude:step[0],longitude:step[1]})
-                    pth += `${step[0]},${step[1]}|`
+                    //pth += `${step[0]},${step[1]}|`
                 })
-                pth = pth.replace(/.$/,'')
-                fetch(`https://roads.googleapis.com/v1/snapToRoads?path=${pth}&interpolate=true&key=AIzaSyDMCLs_nBIfA8Bw9l50nSRwLOUByiDel9U`)
-                .then(res => {return res.json()})
-                .then(info => {
-                    finalpath = []
-                    info.snappedPoints.map(loc => {
-                        finalpath.push([loc.location.latitude,loc.location.longitude])
-                    })
-                    dispatch(navigation(false,path))
-                    setRouteInfo({distance:result.routes[0].legs[0].distance.text, duration:result.routes[0].legs[0].duration.text, path})
-                    setDisplayNavigation(true)
-                    displayNaviAnim()
-                })
-                .catch(err => console.warn('Road Snapping Error: ',err))
+                console.warn(path)
+                //pth = pth.replace(/.$/,'')
+                dispatch(navigation(false,path))
+                // fetch(`https://roads.googleapis.com/v1/snapToRoads?path=${pth}&interpolate=true&key=AIzaSyDMCLs_nBIfA8Bw9l50nSRwLOUByiDel9U`)
+                // .then(res => {return res.json()})
+                // .then(info => {
+                //     finalpath = []
+                //     info.snappedPoints.map(loc => {
+                //         finalpath.push([loc.location.latitude,loc.location.longitude])
+                //     })
+                //     dispatch(navigation(false,path))
+                //     setRouteInfo({distance:result.routes[0].legs[0].distance.text, duration:result.routes[0].legs[0].duration.text, path})
+                //     setDisplayNavigation(true)
+                //     displayNaviAnim()
+                // })
+                // .catch(err => console.warn('Road Snapping Error: ',err))
             }
         })
         .catch(err => console.warn('Directions Error: ',err))
     }
 
-    routeCheck = () => {
-        //Create another file, where we will be cheking if user if passing by geo spots of polyline
-
-        //if near or on the geo spot, then grab next geo spot and 
-        //check if getting further from first one and getting close to next one
-
-        //getting further from first one and not getting closer to second one, then warn user and find another route from
-        //currect location
-
-        //NEED TO KEEP IN MIND, GIVE SOME TIME TO DEVICE TO GET BACK ON TRACK, SOMETIMES DEVICES ARE LAGGY
-
-        //NEED TO TUNE UP A BIT, SO IT'S ACCURATE AS POSSIBLE
-        console.warn(props.position.latitude)
-    }
-
     useSelector((state)=>{
+        if(state.mylocation.latitude != currentLocation.latitude || state.mylocation.longitude != currentLocation.longitude) setCurrentLocation(state.mylocation)
         if(state.marker != placeInfo){
             hideNaviAnim()
             state.navigation.path.length > 0 ? dispatch(clearnavigation()) : null
@@ -105,7 +98,8 @@ export default PlaceSearcgResults = (props) => {
             setPlaceInfo(state.marker)
             //if(placeInfo.name != '') getPhotos()
         }
-        if(state.navigation.active) routeCheck()
+        if(state.navigation.active && !active) setActive(state.navigation.active)
+        else if(!state.navigation.active && active) setActive(state.navigation.active)
     })
 
     const naviColorInterpolate = naviColor.interpolate({
@@ -142,10 +136,11 @@ export default PlaceSearcgResults = (props) => {
             <Animated.View style={{width:'40%', height:'70%',marginLeft:'5%',backgroundColor:naviColorInterpolate,borderRadius:50}}>
                 <TouchableOpacity onPress={()=> !displayNavigation ? getRoute() : dispatch(navigation(true,routeInfo.path))} style={{width:'100%',height:'100%',borderRadius:50,justifyContent:'center',alignItems:'center'}}>
                     {!displayNavigation ? <Text style={{color:'white',fontWeight:'bold',fontSize:15}}>Navigate</Text>
-                    : <Text style={{color:'white',fontWeight:'bold',fontSize:15}}>Start - {routeInfo.distance.split(' ')[0]} {routeInfo.distance.split(' ')[1] == 'mi' ? 'Mi' : 'Km'}</Text>}
+                    : <Text style={{color:'white',fontWeight:'bold',fontSize:15}}>Start - {routeInfo.distance}</Text>}
                 </TouchableOpacity>
             </Animated.View>
         </View>
+        {active ? <FollowPath path={routeInfo.path} /> : null}
     </View> : null )
 }
 

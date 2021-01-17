@@ -21,6 +21,7 @@
     "@react-navigation/native": "^5.7.1",
     "@react-navigation/stack": "^5.7.1",
     "firebase": "^7.23.0",
+    "google-maps-polyutil": "^1.0.3",
     "react": "16.13.1",
     "react-native": "^0.63.2",
     "react-native-date-picker": "^3.2.5",

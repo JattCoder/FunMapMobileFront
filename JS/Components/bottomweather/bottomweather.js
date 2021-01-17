@@ -37,6 +37,22 @@ export default Bottomweather = (props) => {
     },[props.position.latitude,props.position.longitude])
 
     updateLocation = (location,res) => {
+        dispatch(mylocation({
+            latitude: props.position.latitude,
+            longitude: props.position.longitude,
+            speed: props.position.speed,
+            heading: props.position.heading,
+            altitude: props.position.altitude,
+            altitudeAccuracy: props.position.altitudeAccuracy,
+            accuracy: props.position.accuracy,
+            complete: location,
+            street: res.streetName,
+            city: res.locality,
+            state: res.adminArea,
+            zip: res.postalCode,
+            permitted:'Allowed',
+            message: ''
+        }))
         //Unblock this code to update user location
         //Object.keys(fams).length > 0 && email != '' ? updateGroups(location) : null
     }
