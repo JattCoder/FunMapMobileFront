@@ -5,6 +5,9 @@ import { navigation } from '../../../actions/navigation/navigation'
 import { clearnavigation } from '../../../actions/navigation/clearnavigation'
 import polyline from '@mapbox/polyline'
 import FollowPath from './followPath'
+import { submitsearch } from '../../../actions/submitsearch/submitsearch'
+import { bottomsheet } from '../../../actions/animation/bottomsheet'
+import polyutil from 'google-maps-polyutil'
 import { clearsearch } from '../../../actions/submitsearch/clearsearch'
 import { mylocation } from '../../../actions/mylocation/mylocation'
 
@@ -14,7 +17,7 @@ export default PlaceSearcgResults = (props) => {
     const [images,setImages] = useState([])
     const [currentLocation,setCurrentLocation] = useState({latitude:0,longitude:0})
     const [displayNavigation,setDisplayNavigation] = useState(false)
-    const [routeInfo,setRouteInfo] = useState({distance: '', duration: '', path: []})
+    const [routeInfo,setRouteInfo] = useState({pth: [], info: {}})
     const [naviColor] = useState(new Animated.Value(0))
     const [active,setActive] = useState(false)
     const dispatch = useDispatch()
@@ -46,7 +49,7 @@ export default PlaceSearcgResults = (props) => {
         }).start()
     }
 
-    getRoute = () => { 
+    getRoute = () => {
 //   //This is how we are getting 
 //   extenDays = duration.text.includes('day') 
 //   ? parseInt(duration.text.split(' ')[0]) + (parseInt(duration.text.split(' ')[2])/24) 
@@ -55,35 +58,37 @@ export default PlaceSearcgResults = (props) => {
 //   nextDate = new Date().setDate(new Date().getDate()+extenDays)
   
 //   console.warn('Duration Date: '+new Date(nextDate))
-        fetch(`https://router.hereapi.com/v8/routes?transportMode=${props.user.drivingMode}&origin=${props.position.latitude},${props.position.longitude}&destination=${placeInfo.location.lat},${placeInfo.location.lng}&return=polylinepolyline,turnbyturnactions&apiKey=tOzyGAv3qnNge0QzSmXnwD54zKsR4xCZY3M5yMC22OM`)
-        //fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${props.position.latitude},${props.position.longitude}&destination=${placeInfo.location.lat},${placeInfo.location.lng}&avoid=${props.user.highways?'highways':''}|${props.user.ferries?'ferries':''}|${props.user.tolls?'tolls':''}&mode=${props.user.drivingMode}&key=AIzaSyDMCLs_nBIfA8Bw9l50nSRwLOUByiDel9U`)
+        fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${props.position.latitude},${props.position.longitude}&destination=${placeInfo.location.lat},${placeInfo.location.lng}&avoid=${props.user.highways?'highways':''}|${props.user.ferries?'ferries':''}|${props.user.tolls?'tolls':''}&mode=${props.user.drivingMode}&key=AIzaSyDMCLs_nBIfA8Bw9l50nSRwLOUByiDel9U`)
         .then(res => {return res.json()})
         .then(result => {
             if(result.status === 'ZERO_RESULTS') {
                 alert('No Route')
             }else{
                 path = []
-                pth = ''
-                polyline.decode(result.routes[0].sections[0].polyline).map(step => {
-                    path.push({latitude:step[0],longitude:step[1]})
-                    //pth += `${step[0]},${step[1]}|`
+                completeInfo = {
+                    duration: result.routes[0].legs[0].duration.text,
+                    distance: result.routes[0].legs[0].distance.text,
+                    steps: []
+                }
+                result.routes[0].legs[0].steps.map(step => {
+                    polyline.decode(step.polyline.points).map(step => {
+                        path.push({latitude:step[0],longitude:step[1]})
+                    })
+                    completeInfo.steps.push({
+                        distance: step.distance.text,
+                        duration: step.duration.text,
+                        instruction: step.html_instructions,
+                        polyline: step.polyline.points
+                    })
                 })
-                console.warn(path)
-                //pth = pth.replace(/.$/,'')
+                setRouteInfo({
+                    pth: path,
+                    info: completeInfo
+                })
                 dispatch(navigation(false,path))
-                // fetch(`https://roads.googleapis.com/v1/snapToRoads?path=${pth}&interpolate=true&key=AIzaSyDMCLs_nBIfA8Bw9l50nSRwLOUByiDel9U`)
-                // .then(res => {return res.json()})
-                // .then(info => {
-                //     finalpath = []
-                //     info.snappedPoints.map(loc => {
-                //         finalpath.push([loc.location.latitude,loc.location.longitude])
-                //     })
-                //     dispatch(navigation(false,path))
-                //     setRouteInfo({distance:result.routes[0].legs[0].distance.text, duration:result.routes[0].legs[0].duration.text, path})
-                //     setDisplayNavigation(true)
-                //     displayNaviAnim()
-                // })
-                // .catch(err => console.warn('Road Snapping Error: ',err))
+                setDisplayNavigation(true)
+                setActive(true)
+                displayNaviAnim()
             }
         })
         .catch(err => console.warn('Directions Error: ',err))
@@ -93,7 +98,7 @@ export default PlaceSearcgResults = (props) => {
         if(state.mylocation.latitude != currentLocation.latitude || state.mylocation.longitude != currentLocation.longitude) setCurrentLocation(state.mylocation)
         if(state.marker != placeInfo){
             hideNaviAnim()
-            state.navigation.path.length > 0 ? dispatch(clearnavigation()) : null
+            state.navigation.path.length > 0 && !state.navigation.active ? dispatch(clearnavigation()) : null
             setDisplayNavigation(false)
             setPlaceInfo(state.marker)
             //if(placeInfo.name != '') getPhotos()
@@ -106,11 +111,6 @@ export default PlaceSearcgResults = (props) => {
         inputRange:[0,1],
         outputRange:['#7F7FD5', '#32CD32']
     })
-
-    letsGo = () => {
-        dispatch(navigation(true,routeInfo.path))
-        props.hide()
-    }
 
     return( placeInfo.name != '' ? <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/1.5,alignItems:'center'}}>
         <View style={Styles.Icon}><Image style={{height:'50%',width:'50%',padding:'10%'}} source={{uri:placeInfo.icon}}/></View>
@@ -134,13 +134,13 @@ export default PlaceSearcgResults = (props) => {
         </View>
         <View style={{width:'100%',height:'10%',justifyContent:'center'}}>
             <Animated.View style={{width:'40%', height:'70%',marginLeft:'5%',backgroundColor:naviColorInterpolate,borderRadius:50}}>
-                <TouchableOpacity onPress={()=> !displayNavigation ? getRoute() : dispatch(navigation(true,routeInfo.path))} style={{width:'100%',height:'100%',borderRadius:50,justifyContent:'center',alignItems:'center'}}>
+                <TouchableOpacity onPress={()=> !displayNavigation ? getRoute() : dispatch(navigation(true,routeInfo.pth))} style={{width:'100%',height:'100%',borderRadius:50,justifyContent:'center',alignItems:'center'}}>
                     {!displayNavigation ? <Text style={{color:'white',fontWeight:'bold',fontSize:15}}>Navigate</Text>
-                    : <Text style={{color:'white',fontWeight:'bold',fontSize:15}}>Start - {routeInfo.distance}</Text>}
+                    : <Text style={{color:'white',fontWeight:'bold',fontSize:15}}>Start - {routeInfo.info.distance}</Text>}
                 </TouchableOpacity>
             </Animated.View>
         </View>
-        {active ? <FollowPath path={routeInfo.path} /> : null}
+        {/* {active ? <FollowPath path={routeInfo.path} /> : null} */}
     </View> : null )
 }
 

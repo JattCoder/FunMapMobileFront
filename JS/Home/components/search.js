@@ -18,6 +18,7 @@ export default Search = (props) => {
     const [shortcutsOpacity] = useState(new Animated.Value(0))
     const [action,setAction] = useState('')
     const [saction,setSaction] = useState('')
+    const [navigating,setNavigating] = useState(false)
     const [location,setLocation] = useState({
         lat:0,
         lng:0
@@ -129,9 +130,11 @@ export default Search = (props) => {
             })
         ]).start(()=>{
             setSaction('')
-            dispatch(bottomsheet(''))
             dispatch(clearsearch())
-            dispatch(clearnavigation())
+            if(!navigating){
+                dispatch(clearnavigation())
+                dispatch(bottomsheet(''))
+            }
         })
     }
 
@@ -182,6 +185,16 @@ export default Search = (props) => {
             console.warn('alert')
         }
     }
+
+    useSelector(state => {
+        if(state.navigation.active != navigating){
+            setNavigating(state.navigation.active)
+            closeShortCuts()
+            setTimeout(()=>{
+                closePlaceSearch()
+            },250)
+        }
+    })
 
     useEffect(()=>{
         setLocation({

@@ -9,7 +9,8 @@ import PlaceSearchResults from './components/placeSearchResults'
 import LinearGradient from 'react-native-linear-gradient'
 import Settings from './components/settings'
 import { bottomsheet } from '../../actions/animation/bottomsheet'
-import { clemarker } from '../../actions/marker/clemarker';
+import { clemarker } from '../../actions/marker/clemarker'
+import Navigating from './components/navigating'
 import { StyleSheet, Animated, View, ScrollView, TouchableOpacity, Image, Dimensions, Text } from 'react-native'
 const { width, height } = Dimensions.get('screen')
 let closeButtonsTimeout
@@ -41,6 +42,9 @@ export default Drawerr = (props) => {
   const [settingsOpacity] = useState(new Animated.Value(0))
   const [settingsDisplay,setSettingsDisplay] = useState('none')
   const [menuOpen,setMenuOpen] = useState(false)
+  const [navigating,setNavigating] = useState(false)
+  const [navigateOpacity] = useState(new Animated.Value(0))
+  const [navigateHeight] = useState(new Animated.Value(1))
   const dispatch = useDispatch()
 
   const bringUpActionSheet = () => {
@@ -292,9 +296,68 @@ export default Drawerr = (props) => {
     ]).start(()=>setSettingsDisplay('none'))
   }
 
+  navigatingActiveDirection = () => {
+    Animated.parallel([
+      Animated.timing(alignment,{
+        toValue:0,
+        duration:500,
+        useNativeDriver:false
+      }).start(),
+      Animated.timing(sheetHeight,{
+        toValue:height/4.4,
+        duration:500,
+        useNativeDriver:false
+      }),
+      Animated.timing(headingMargin,{
+        toValue:30,
+        duration:500,
+        useNativeDriver:false
+      }),
+      Animated.timing(bottomViewOpacity,{
+        toValue:0,
+        duration:500,
+        useNativeDriver:false
+      }),
+      Animated.timing(bottomViewHeight,{
+        toValue:0,
+        duration:550,
+        useNativeDriver:false
+      }),
+      Animated.timing(searchResultsOpacity,{
+        toValue:0,
+        duration:500,
+        useNativeDriver:false
+      }),
+      Animated.timing(searchResultsHeight,{
+        toValue:0,
+        duration:500,
+        useNativeDriver:false
+      }),
+      Animated.timing(navigateOpacity,{
+        toValue:1,
+        duration:500,
+        useNativeDriver:false
+      }),
+      Animated.timing(navigateHeight,{
+        toValue:1,
+        duration:500,
+        useNativeDriver:false
+      })
+    ]).start()
+  }
+
+  navigatingAddStop = () => {
+    console.warn('Lets add stop')
+  }
+
   const actionSheetIntropolate = alignment.interpolate({
     inputRange: [0,1],
     outputRange: [-height/12.7+60, 0]
+  })
+
+  const navigateHeightInterpolate = navigateHeight.interpolate({
+    inputRange: [0,1],
+    outputRange: ['0%','56%']
   })
 
   const actionSheetStyle = {
@@ -302,12 +365,20 @@ export default Drawerr = (props) => {
   }
 
   guestureHandler = (e) => {
-    if(e > 0) bringUpActionSheet()
-    else if(e < 0) {hideTheActionSheet(),dispatch(bottomsheet('')),dispatch(clemarker()),setMenuOpen(false)}
+    if(e > 0) navigating ? navigatingAddStop() : bringUpActionSheet()
+    else if(e < 0) navigating ? navigatingActiveDirection() : hideTheActionSheet(),dispatch(bottomsheet('')),dispatch(clemarker()),setMenuOpen(false)
+  }
+
+  navigateClose = () => {
+    hideTheActionSheet(),dispatch(bottomsheet('')),setMenuOpen(false)
   }
 
   useSelector((state)=>{
-    if(state.sheet == 'Search'){
+    if(state.navigation.active){
+      navigating != state.navigation.active ? setNavigating(state.navigation.active) : null
+      navigatingActiveDirection()
+    }
+    else if(state.sheet == 'Search'){
       Animated.parallel([
         Animated.timing(alignment, {
           toValue:1,
@@ -345,15 +416,16 @@ export default Drawerr = (props) => {
           useNativeDriver:false
         }),
       ]).start()
-    }
+    }else if(state.sheet == '') hideTheActionSheet()
   })
+
   return(
      <Animated.View style={[Styles.Bottom,actionSheetStyle,{height:sheetHeight}]}>
        <LinearGradient colors={['rgba(211,204,227,0.1)','rgba(211,204,227,0.7)','#D3CCE3','#D3CCE3','#D3CCE3','#E9E4F0','#E9E4F0']} style={{height:'100%',width:'100%',alignItems:'center',borderTopLeftRadius:25,borderTopRightRadius:25,}}>
         <ScrollView onScroll={(e)=>guestureHandler(e.nativeEvent.contentOffset.y)} style={{width:80,height:10,borderTopWidth:3,marginTop:10,borderColor:'white',zIndex:100}} />
         <Animated.View style={{width:Dimensions.get('screen').width,height:'20%',position:'absolute',flexDirection:'row',marginTop:headingMargin,marginHorizontal:'5%',alignItems:'center'}}>
-          <TouchableOpacity onPress={()=>console.warn('followme')} style={{flexDirection:'row',justifyContent:'center',alignItems:'center',marginHorizontal:'5%',zIndex:150}}>
-            <TouchableOpacity style={[Styles.ImageBox,{height:45,width:45}]}>
+          <TouchableOpacity onPress={()=>props.followMe()} style={{flexDirection:'row',justifyContent:'center',alignItems:'center',marginHorizontal:'5%',zIndex:150}}>
+            <TouchableOpacity onPress={()=>props.followMe()} style={[Styles.ImageBox,{height:45,width:45}]}>
               {props.user.photo != '' ? <Image source={{ uri: props.user.image }} /> : <Uimage name={props.user.name} />}
             </TouchableOpacity>
             <View> 
@@ -396,9 +468,14 @@ export default Drawerr = (props) => {
               </Animated.View>
           </Animated.View>
         </Animated.View>
-        <Animated.View style={{height:searchResultsHeight,width:Dimensions.get('screen').width,opacity:searchResultsOpacity}}>
-          <PlaceSearchResults position={props.regionPosition} user={props.user} hide={(val)=>guestureHandler(val)} />
+        {!navigating ? <Animated.View style={{height:searchResultsHeight,width:Dimensions.get('screen').width,opacity:searchResultsOpacity}}>
+          <PlaceSearchResults position={props.regionPosition} user={props.user} hide={()=>navigateClose()} />
         </Animated.View>
+        : <Animated.View style={{height:navigateHeightInterpolate,width:Dimensions.get('screen').width,opacity:navigateOpacity}}>
+          <View style={{height:'100%',width:'100%',position:'absolute',bottom:0}}>
+            <Navigating />
+          </View>
+        </Animated.View>}
       </LinearGradient>
      </Animated.View>
   )

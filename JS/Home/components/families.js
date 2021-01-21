@@ -42,7 +42,6 @@ export default Families = (props) => {
             setFams(state.family)
             if(props.user.famSelection){
                 if(Object.keys(state.family[props.user.famSelection]).length > 0) {
-                    console.warn(state.family[props.user.famSelection])
                     setFam(state.family[props.user.famSelection])
                     count = 0
                     for(let selection in state.family){

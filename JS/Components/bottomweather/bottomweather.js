@@ -132,10 +132,10 @@ export default Bottomweather = (props) => {
                 </View>
                 <View style={{right:0,top:0,alignItems:'center'}}>
                     {wther.icon == '' ? date < 18 ? <View style={{justifyContent:'center',alignItems:'center'}}>
-                        <Image style={{height:35,width:35}} source={require('../../weather/01d.png')}/>
+                        <Image style={{height:35,width:35}} source={require('./weatherIcons/01d.png')}/>
                         <Text style={{color:'#7F7FD5'}}>{wther.temp}</Text>
                     </View> : <View style={{justifyContent:'center',alignItems:'center'}}>
-                        <Image style={{height:35,width:35}} source={require('../../weather/01d.png')}/>
+                        <Image style={{height:35,width:35}} source={require('./weatherIcons/01d.png')}/>
                         <Text style={{color:'#7F7FD5'}}>{wther.temp}</Text>
                     </View> : null}
                     {wther.icon != '' ? <View style={{justifyContent:'center',alignItems:'center'}}>

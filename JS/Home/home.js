@@ -2,16 +2,13 @@ import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import Styles from './styles'
 import { selmarker } from '../../actions/marker/selmarker'
-import { View, TouchableOpacity, Dimensions, Animated, Image } from 'react-native'
+import { View, TouchableOpacity, Dimensions } from 'react-native'
 import MapView,{Marker, Polyline, PROVIDER_GOOGLE } from 'react-native-maps'
-import Mrker from '../Markers/marker'
 import Location from '../FindMe/location'
-import Navigate from '../Components/navigation/navigate'
+//import Navigate from '../Components/navigation/navigate'
 import Drawerr from './drawer'
 import Search from './components/search'
 import { bottomsheet } from '../../actions/animation/bottomsheet'
-import { clearsearch } from '../../actions/submitsearch/clearsearch'
-import LinearGradient from 'react-native-linear-gradient'
 
 const dimensions = Dimensions.get('screen')
 
@@ -109,49 +106,40 @@ const Home = (props) => {
               setNavActive(state.navigation.active)
               setPath(state.navigation.path)
               map.fitToCoordinates(state.navigation.path,{animated:true,edgePadding: { top: dimensions.height/4, right: 60, bottom: dimensions.height/2, left:60 }})
-            }else if(state.navigation.active != navActive){
-              setNavActive(state.navigation.active)
-              setspeed(0)
-              if(regionPosition.speed <= 0) 
-                map.animateCamera({
-                  center: {
-                    latitude: regionPosition.latitude,
-                    longitude: regionPosition.longitude,
-                  },
-                  altitude: 500,
-                  heading: 0,
-                  pitch: 0,
-                  zoom: 18,
-              })
             }
+            // else if(state.navigation.active != navActive){
+            //   setNavActive(state.navigation.active)
+            //   setspeed(0)
+            //   if(regionPosition.speed <= 0) 
+            //     map.animateCamera({
+            //       center: {
+            //         latitude: regionPosition.latitude,
+            //         longitude: regionPosition.longitude,
+            //       },
+            //       altitude: 500,
+            //       heading: 0,
+            //       pitch: 0,
+            //       zoom: 17,
+            //   })
+            // }
             if(search != state.placesearch) {
                 if(state.placesearch.length > 0) setspeed(2000)
                 else if(state.placesearch.length == 0 && slimit == 2000) {
-                    map.animateCamera({
-                      center: {
-                        latitude: regionPosition.latitude,
-                        longitude: regionPosition.longitude,
-                      },
-                    altitude: 500,
-                    heading: regionPosition.heading,
-                    pitch: regionPosition.speed,
-                    zoom: regionPosition.zoom,
-                  })
+                  map.animateToRegion({latitude:state.mylocation.latitude,longitude:state.mylocation.longitude,latitudeDelta:0.019,longitudeDelta:0.019},1000)
+                    
                   setspeed(0)
                 }
                 setsearch(state.placesearch)
                 map.fitToCoordinates(state.placesearch.map(plc=>{return{latitude:plc.location.lat,longitude:plc.location.lng}}),{animated:true,edgePadding: { top: 30, right: 10, bottom: 10, left: 30 }})
                 
             }
-            if(state.marker.name != '' && mrkrInfo == false){
-                map.animateToRegion({latitude:state.marker.location.lat,longitude:state.marker.location.lng,latitudeDelta:0.019,longitudeDelta:0.019},500)
-                setmrkrInfo(true)
-            }else if(state.marker.name == '' && mrkrInfo == true){
-                setmrkrInfo(false)
-                map.animateToRegion({latitude:regionPosition.latitude,longitude:regionPosition.longitude,latitudeDelta:0.039,longitudeDelta:0.039},500)
-            }
         }
     })
+
+    markerSelected = (place) => {
+      map.animateToRegion({latitude:place.location.lat,longitude:place.location.lng,latitudeDelta:0.019,longitudeDelta:0.019},500)
+      dispatch(selmarker(place)),dispatch(bottomsheet('Search'))
+    }
 
     return (
         <View style={{ height: dimensions.height, width: dimensions.width}}>
@@ -166,11 +154,12 @@ const Home = (props) => {
                     showsBuildings={true}
                     showsPointsOfInterest={false}
                     onPanDrag={()=> setspeed(2000)}
+                    maxZoomLevel={17}
                     onUserLocationChange={(userlocation)=>{
                         loc = userlocation.nativeEvent.coordinate
-                        if(loc.speed > 0 && loc.speed <= 7) setZoom(18.7)
-                          else if(loc.speed > 7 && loc.speed <= 30) setZoom(20)
-                          else if(loc.speed > 30 && loc.speed <= 65) setZoom(17)
+                        if(loc.speed > 0 && loc.speed <= 7) setZoom(17)
+                          else if(loc.speed > 7 && loc.speed <= 30) setZoom(16.5)
+                          else if(loc.speed > 30 && loc.speed <= 65) setZoom(15)
                           else setZoom(16)
                           setRegPosition({
                             latitude: loc.latitude,
@@ -194,7 +183,7 @@ const Home = (props) => {
                             },
                             altitude: 500,
                             heading: loc.heading,
-                            pitch: navActive ? loc.speed+15 : loc.speed,
+                            pitch: navActive ? loc.speed+10 : loc.speed,
                             zoom: navActive ? zoom-0.5 : zoom,
                           })
                         }
@@ -208,18 +197,18 @@ const Home = (props) => {
                       longitudeDelta: 20.0009,
                     }}>
                         {path.length > 0 ? <Polyline coordinates={path} strokeColor={'#2C5364'} geodesic={true} strokeWidth={7} tappable={true} onPress={(e)=>console.warn(e)}/> : null}
-                        {userPosition.latitude == 0 ? <Navigate /> : null}
+                        {/* {userPosition.latitude == 0 ? <Navigate /> : null} */}
                         {search.map((place)=>{
-                            return <Marker onPress={()=>{dispatch(selmarker(place)),dispatch(bottomsheet('Search'))}} coordinate={{latitude: place.location.lat, longitude: place.location.lng}}/>
+                            return <Marker onPress={()=>markerSelected(place)} coordinate={{latitude: place.location.lat, longitude: place.location.lng}}/>
                         })}
                 </MapView>
             </View>
             {showme ? !followme ? <View style={{display:'',position:'absolute',bottom:180,right:30,borderWidth:0.5,borderRadius:25,backgroundColor:'white',width:50,height:50,shadowColor: "#000",shadowOffset: { width: 0,height: 9 }, shadowOpacity: 0.48, shadowRadius: 11.95, elevation: 18}}>
                 <TouchableOpacity style={{width:'100%',height:'100%'}} onPress={()=>whereAmI()}/>
             </View>: null : null}
-            <View style={{height:55,position:'absolute',right:'1%',top:'8%'}}>
+            {regionPosition.speed <= 5 ? <View style={{height:55,position:'absolute',right:'1%',top:'8%'}}>
               <Search position={regionPosition} user={props.route.params.user}/>
-            </View>
+            </View> : null}
             <View style={{width:dimensions.width,bottom:0,position:'absolute'}}>
               <Drawerr user={user} regionPosition={regionPosition} followMe={()=>whereAmI()} logout={props.navigation}/>
             </View>

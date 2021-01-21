@@ -25,20 +25,20 @@ export default UserCard = (props) => {
                     </View>
                     <View style={{position:'absolute',right:0,width:'10%'}}>
                         { props.user.Charging ? <View style={Style.battery}>
-                            <Image style={Style.icon} source={require('../../Battery/battery-charging.png')}/>
+                            <Image style={Style.icon} source={require('../../Components/bottomweather/batteryIcons/battery-charging.png')}/>
                             <Text style={Style.level}>{`${props.user.BatteryLevel}%`}</Text>
                         </View> 
                         : <View style={Style.battery}>
                             { props.user.BatteryLevel < 15 ? <View>
-                                <Image style={Style.icon} source={require('../../Battery/battery-zero.png')}/>
+                                <Image style={Style.icon} source={require('../../Components/bottomweather/batteryIcons/battery-zero.png')}/>
                                 <Text style={Style.level}>{`${props.user.BatteryLevel}%`}</Text>
                             </View>
                             : props.user.BatteryLevel < 51 ? <View style={Style.battery}>
-                                <Image style={Style.icon}  source={require('../../Battery/battery-25.png')}/>
+                                <Image style={Style.icon}  source={require('../../Components/bottomweather/batteryIcons/battery-25.png')}/>
                                 <Text style={Style.level}>{`${props.user.BatteryLevel}%`}</Text>
                             </View> 
                             : <View style={Style.battery}>
-                                <Image style={Style.icon}  source={require('../../Battery/battery-100.png')}/>
+                                <Image style={Style.icon}  source={require('../../Components/bottomweather/batteryIcons/battery-100.png')}/>
                                 <Text style={Style.level}>{`${props.user.BatteryLevel}%`}</Text> 
                             </View>}
                         </View>}
