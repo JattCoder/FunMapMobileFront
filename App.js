@@ -27,7 +27,7 @@ const App = () => {
           apiKey: "AIzaSyCubEvuePYKjY1LbFOA0Dief0endEF0SY8",
         });
       }
-    })
+  })
 
   return(
     <Provider store={store}>

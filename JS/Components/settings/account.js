@@ -3,7 +3,7 @@ import LinearGradient from 'react-native-linear-gradient'
 import Shimmer from 'react-native-shimmer';
 import Passwordchange from './passwordchange'
 import Editaccount from './editaccount'
-import { View, Text, TouchableOpacity, Image, StyleSheet, Animated, Switch, AsyncStorage } from 'react-native'
+import { View, Text, TouchableOpacity, Image, StyleSheet, Animated, Switch } from 'react-native'
 
 export default Account = (props) => {
 
@@ -133,27 +133,27 @@ export default Account = (props) => {
     },[props.user])
 
     autoLoginHandler = () => {
-        setAutoLogin(!autoLogin)
-        if(autoLogin){
-            try{
-                fetch(`http://localhost:3000/account/${props.user.id}/reqpass`)
-                .then(res => {return res.json()})
-                .then(data => {
-                    if(data.result == false){
-                        alert(data.message)
-                    }else{
-                        AsyncStorage.setItem('Email',props.user.email)
-                        AsyncStorage.setItem('Pass',data.message)
-                    }
-                })
-                .catch(err => alert(err.message))
-            }catch(err){
-                alert(err)
-            }
-        }else{
-            AsyncStorage.removeItem('Email')
-            AsyncStorage.removeItem('Pass')
-        }
+        // setAutoLogin(!autoLogin)
+        // if(autoLogin){
+        //     try{
+        //         fetch(`http://localhost:3000/account/${props.user.id}/reqpass`)
+        //         .then(res => {return res.json()})
+        //         .then(data => {
+        //             if(data.result == false){
+        //                 alert(data.message)
+        //             }else{
+        //                 AsyncStorage.setItem('Email',props.user.email)
+        //                 AsyncStorage.setItem('Pass',data.message)
+        //             }
+        //         })
+        //         .catch(err => alert(err.message))
+        //     }catch(err){
+        //         alert(err)
+        //     }
+        // }else{
+        //     AsyncStorage.removeItem('Email')
+        //     AsyncStorage.removeItem('Pass')
+        // }
     }
 
     openPasswordChange = () => {

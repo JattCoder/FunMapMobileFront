@@ -8,7 +8,9 @@ import Location from '../FindMe/location'
 //import Navigate from '../Components/navigation/navigate'
 import Drawerr from './drawer'
 import Search from './components/search'
+import polyline from '@mapbox/polyline'
 import { bottomsheet } from '../../actions/animation/bottomsheet'
+import SearchMarker from './components/searchMarker'
 
 const dimensions = Dimensions.get('screen')
 
@@ -102,10 +104,11 @@ const Home = (props) => {
             if(regionPosition.speed <= 0 && search.length < 0 && path.length < 0){
               map.animateToRegion({latitude:state.mylocation.latitude,longitude:state.mylocation.longitude,latitudeDelta:0.019,longitudeDelta:0.019},500)
             }
+            //console.warn(state.navigation.path.pth.length)
             if(path != state.navigation.path){
               setNavActive(state.navigation.active)
               setPath(state.navigation.path)
-              map.fitToCoordinates(state.navigation.path,{animated:true,edgePadding: { top: dimensions.height/4, right: 60, bottom: dimensions.height/2, left:60 }})
+              map.fitToCoordinates(state.navigation.active ? polyline.decode(state.navigation.path) : state.navigation.path,{animated:true,edgePadding: { top: dimensions.height/4, right: 60, bottom: dimensions.height/2, left:60 }})
             }
             // else if(state.navigation.active != navActive){
             //   setNavActive(state.navigation.active)
@@ -199,7 +202,9 @@ const Home = (props) => {
                         {path.length > 0 ? <Polyline coordinates={path} strokeColor={'#2C5364'} geodesic={true} strokeWidth={7} tappable={true} onPress={(e)=>console.warn(e)}/> : null}
                         {/* {userPosition.latitude == 0 ? <Navigate /> : null} */}
                         {search.map((place)=>{
-                            return <Marker onPress={()=>markerSelected(place)} coordinate={{latitude: place.location.lat, longitude: place.location.lng}}/>
+                            return <Marker onPress={()=>markerSelected(place)} coordinate={{latitude: place.location.lat, longitude: place.location.lng}}>
+                                <SearchMarker plc={place}/>
+                            </Marker>
                         })}
                 </MapView>
             </View>

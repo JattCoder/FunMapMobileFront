@@ -153,27 +153,25 @@ const Login = (props) => {
             })
         })
 
-        console.warn(firebase.auth.FacebookAuthProvider())
-
-        // auth()
-        // .signInWithEmailAndPassword(email,pass)
-        // .then((usr)=>{
-        //     firebase.database().ref(`Users/`+email.replace(punctuation,'').replace(spaceRE,''))
-        //     .on('value', snapshot => {
-        //         props.navigation.navigate('Home')
-        //         // if(snapshot.val().mac == mac) dispatch(login(snapshot,))
-        //         // else alert('First Log-Out from other device')
-        //     })
-        // })
-        // .catch((err)=>{
-        //     if(err.code === 'auth/wrong-password'){
-        //         console.warn('Incorrect Password')
-        //     }else if(err.code === 'auth/user-not-found'){
-        //         console.warn('Account Not Found')
-        //     }else if(err.code === 'auth/invalid-email'){
-        //         console.warn('Invalid Email')
-        //     }
-        // })
+        auth()
+        .signInWithEmailAndPassword(email,pass)
+        .then((usr)=>{
+            firebase.database().ref(`Users/`+email.replace(punctuation,'').replace(spaceRE,''))
+            .on('value', snapshot => {
+                props.navigation.navigate('Home')
+                // if(snapshot.val().mac == mac) dispatch(login(snapshot,))
+                // else alert('First Log-Out from other device')
+            })
+        })
+        .catch((err)=>{
+            if(err.code === 'auth/wrong-password'){
+                console.warn('Incorrect Password')
+            }else if(err.code === 'auth/user-not-found'){
+                console.warn('Account Not Found')
+            }else if(err.code === 'auth/invalid-email'){
+                console.warn('Invalid Email')
+            }
+        })
     }
 
     Intro = () => {
@@ -716,7 +714,7 @@ const Styles = StyleSheet.create({
         color:'#f5f5f5',
     },
     EmailBox:{
-        marginTop:'60%',
+        marginTop:'50%',
         borderRadius:10,
         borderColor:'#7F7FD5',
         borderWidth:0.8,
@@ -735,7 +733,7 @@ const Styles = StyleSheet.create({
         elevation: 24,
     },
     PassBox:{
-        marginTop:20,
+        marginTop:'-13%',
         borderRadius:10,
         borderColor:'#7F7FD5',
         borderWidth:0.8,

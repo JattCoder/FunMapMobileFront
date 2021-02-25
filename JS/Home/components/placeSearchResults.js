@@ -4,12 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { navigation } from '../../../actions/navigation/navigation'
 import { clearnavigation } from '../../../actions/navigation/clearnavigation'
 import polyline from '@mapbox/polyline'
-import FollowPath from './followPath'
-import { submitsearch } from '../../../actions/submitsearch/submitsearch'
-import { bottomsheet } from '../../../actions/animation/bottomsheet'
-import polyutil from 'google-maps-polyutil'
-import { clearsearch } from '../../../actions/submitsearch/clearsearch'
-import { mylocation } from '../../../actions/mylocation/mylocation'
+import Navigating from '../components/navigating'
 
 export default PlaceSearcgResults = (props) => {
 
@@ -17,7 +12,7 @@ export default PlaceSearcgResults = (props) => {
     const [images,setImages] = useState([])
     const [currentLocation,setCurrentLocation] = useState({latitude:0,longitude:0})
     const [displayNavigation,setDisplayNavigation] = useState(false)
-    const [routeInfo,setRouteInfo] = useState({pth: [], info: {}})
+    const [routeInfo,setRouteInfo] = useState({pth: [], info: {}, step: ''})
     const [naviColor] = useState(new Animated.Value(0))
     const [active,setActive] = useState(false)
     const dispatch = useDispatch()
@@ -49,15 +44,8 @@ export default PlaceSearcgResults = (props) => {
         }).start()
     }
 
-    getRoute = () => {
-//   //This is how we are getting 
-//   extenDays = duration.text.includes('day') 
-//   ? parseInt(duration.text.split(' ')[0]) + (parseInt(duration.text.split(' ')[2])/24) 
-//   : parseInt(duration.text.split(' ')[0])/24
-  
-//   nextDate = new Date().setDate(new Date().getDate()+extenDays)
-  
-//   console.warn('Duration Date: '+new Date(nextDate))
+    getRoute = (finalize) => {
+        console.warn(props.position)
         fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${props.position.latitude},${props.position.longitude}&destination=${placeInfo.location.lat},${placeInfo.location.lng}&avoid=${props.user.highways?'highways':''}|${props.user.ferries?'ferries':''}|${props.user.tolls?'tolls':''}&mode=${props.user.drivingMode}&key=AIzaSyDMCLs_nBIfA8Bw9l50nSRwLOUByiDel9U`)
         .then(res => {return res.json()})
         .then(result => {
@@ -67,7 +55,9 @@ export default PlaceSearcgResults = (props) => {
                 path = []
                 completeInfo = {
                     duration: result.routes[0].legs[0].duration.text,
+                    durationVal: result.routes[0].legs[0].duration.value,
                     distance: result.routes[0].legs[0].distance.text,
+                    destination: {latitude:result.routes[0].legs[0].end_location.lat,longitude:result.routes[0].legs[0].end_location.lng},
                     steps: []
                 }
                 result.routes[0].legs[0].steps.map(step => {
@@ -77,6 +67,7 @@ export default PlaceSearcgResults = (props) => {
                     completeInfo.steps.push({
                         distance: step.distance.text,
                         duration: step.duration.text,
+                        durationVal: step.duration.value,
                         instruction: step.html_instructions,
                         polyline: step.polyline.points
                     })
@@ -85,7 +76,7 @@ export default PlaceSearcgResults = (props) => {
                     pth: path,
                     info: completeInfo
                 })
-                dispatch(navigation(false,path))
+                dispatch(navigation(finalize,path))
                 setDisplayNavigation(true)
                 setActive(true)
                 displayNaviAnim()
@@ -112,7 +103,7 @@ export default PlaceSearcgResults = (props) => {
         outputRange:['#7F7FD5', '#32CD32']
     })
 
-    return( placeInfo.name != '' ? <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/1.5,alignItems:'center'}}>
+    return( placeInfo.name != '' && !active ? <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/1.5,alignItems:'center'}}>
         <View style={Styles.Icon}><Image style={{height:'50%',width:'50%',padding:'10%'}} source={{uri:placeInfo.icon}}/></View>
         <Text style={{fontWeight:'bold',color:'white',fontSize:20,margin:'3%'}}>{placeInfo.name}</Text>
         <Text style={{alignContent:'center',fontSize:11}}>{placeInfo.address}</Text>
@@ -134,14 +125,13 @@ export default PlaceSearcgResults = (props) => {
         </View>
         <View style={{width:'100%',height:'10%',justifyContent:'center'}}>
             <Animated.View style={{width:'40%', height:'70%',marginLeft:'5%',backgroundColor:naviColorInterpolate,borderRadius:50}}>
-                <TouchableOpacity onPress={()=> !displayNavigation ? getRoute() : dispatch(navigation(true,routeInfo.pth))} style={{width:'100%',height:'100%',borderRadius:50,justifyContent:'center',alignItems:'center'}}>
+                <TouchableOpacity onPress={()=> !displayNavigation ? getRoute(false) : dispatch(navigation(true,routeInfo.pth))} style={{width:'100%',height:'100%',borderRadius:50,justifyContent:'center',alignItems:'center'}}>
                     {!displayNavigation ? <Text style={{color:'white',fontWeight:'bold',fontSize:15}}>Navigate</Text>
                     : <Text style={{color:'white',fontWeight:'bold',fontSize:15}}>Start - {routeInfo.info.distance}</Text>}
                 </TouchableOpacity>
             </Animated.View>
         </View>
-        {/* {active ? <FollowPath path={routeInfo.path} /> : null} */}
-    </View> : null )
+    </View> : displayNavigation ? <Navigating position={props.position} rInfo={routeInfo} reRoute={()=>getRoute(true)}/> : null )
 }
 
 const Styles = StyleSheet.create({

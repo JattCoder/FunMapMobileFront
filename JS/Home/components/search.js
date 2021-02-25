@@ -6,7 +6,7 @@ import { submitsearch } from '../../../actions/submitsearch/submitsearch'
 import { clearsearch } from '../../../actions/submitsearch/clearsearch'
 import { clearnavigation } from '../../../actions/navigation/clearnavigation'
 import LinearGradient from 'react-native-linear-gradient'
-import { Animated, Image, TextInput, Dimensions, TouchableOpacity, StyleSheet, Text, ScrollView } from 'react-native'
+import { Animated, Image, TextInput, Dimensions, TouchableOpacity, StyleSheet, View, ScrollView } from 'react-native'
 
 export default Search = (props) => {
 
@@ -19,6 +19,19 @@ export default Search = (props) => {
     const [action,setAction] = useState('')
     const [saction,setSaction] = useState('')
     const [navigating,setNavigating] = useState(false)
+    const [openQuickSearchOpacity] = useState(new Animated.Value(1))
+    const [closeQuickSearchOpacity] = useState(new Animated.Value(0))
+    const [openQuickSearchHeight] = useState(new Animated.Value(1))
+    const [closeQuickSearchHeight] = useState(new Animated.Value(0))
+    const [homeColor] = useState(new Animated.Value(0))
+    const [workColor] = useState(new Animated.Value(0))
+    const [gasColor] = useState(new Animated.Value(0))
+    const [coffeeColor] = useState(new Animated.Value(0))
+    const [foodColor] = useState(new Animated.Value(0))
+    const [shoppingColor] = useState(new Animated.Value(0))
+    const [hotelColor] = useState(new Animated.Value(0))
+    const [carRentalColor] = useState(new Animated.Value(0))
+    const [carServiceColor] = useState(new Animated.Value(0))
     const [location,setLocation] = useState({
         lat:0,
         lng:0
@@ -59,6 +72,26 @@ export default Search = (props) => {
                 duration:500,
                 useNativeDriver:false
             }),
+            Animated.timing(openQuickSearchHeight,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(openQuickSearchOpacity,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(closeQuickSearchHeight,{
+                toValue:1,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(closeQuickSearchOpacity,{
+                toValue:1,
+                duration:250,
+                useNativeDriver:false
+            })
         ]).start(()=>{
             setSaction('Menu')
         })
@@ -86,6 +119,26 @@ export default Search = (props) => {
                 duration:500,
                 useNativeDriver:false
             }),
+            Animated.timing(openQuickSearchHeight,{
+                toValue:1,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(openQuickSearchOpacity,{
+                toValue:1,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(closeQuickSearchHeight,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(closeQuickSearchOpacity,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            })
         ]).start(()=>{
             setSaction('Open')
         })
@@ -155,6 +208,10 @@ export default Search = (props) => {
         }
     }
 
+    selectOption = (option,input,type) => {
+
+    }
+
     searchPlaces = (input = '',type = '') => {
         locationPack = []
         if(location.lat != 0 && location.lng != 0){
@@ -196,6 +253,61 @@ export default Search = (props) => {
         }
     })
 
+    const openSearchHeightInterpolate = openQuickSearchHeight.interpolate({
+        inputRange:[0,1],
+        outputRange:[0,47]
+    })
+
+    const closeSearchHeightInterpolate = closeQuickSearchHeight.interpolate({
+        inputRange:[0,1],
+        outputRange:[0,47]
+    })
+
+    const homeColorInterpolate = homeColor.interpolate({
+        inputRange:[0,1],
+        outputRange:['#f3ebe1','#4169e1']
+    })
+
+    const workColorInterpolate = workColor.interpolate({
+        inputRange:[0,1],
+        outputRange:['#f3ebe1','#4169e1']
+    })
+
+    const gasColorInterpolate = gasColor.interpolate({
+        inputRange:[0,1],
+        outputRange:['#f3ebe1','#4169e1']
+    })
+
+    const coffeeColorInterpolate = coffeeColor.interpolate({
+        inputRange:[0,1],
+        outputRange:['#f3ebe1','#4169e1']
+    })
+
+    const foodColorInterpolate = foodColor.interpolate({
+        inputRange:[0,1],
+        outputRange:['#f3ebe1','#4169e1']
+    })
+
+    const shopColorInterpolate = shoppingColor.interpolate({
+        inputRange:[0,1],
+        outputRange:['#f3ebe1','#4169e1']
+    })
+
+    const hotelColorInterpolate = hotelColor.interpolate({
+        inputRange:[0,1],
+        outputRange:['#f3ebe1','#4169e1']
+    })
+
+    const carRentalColorInterpolate = carRentalColor.interpolate({
+        inputRange:[0,1],
+        outputRange:['#f3ebe1','#4169e1']
+    })
+
+    const carRepairColorInterpolate = carServiceColor.interpolate({
+        inputRange:[0,1],
+        outputRange:['#f3ebe1','#4169e1']
+    })
+
     useEffect(()=>{
         setLocation({
             lat:props.position.latitude,
@@ -204,16 +316,19 @@ export default Search = (props) => {
     },[props.position])
 
     return(
-        <Animated.View style={{width:Dimensions.get('screen').width/1.12,height:55,position:'absolute',right:slide,borderRadius:10,alignItems:'center',flexDirection:'row'}}>
-            <TouchableOpacity activeOpacity={1} onPress={()=>openPlaceSearch()} style={{backgroundColor:'#9932cc',borderRadius:10,height:'100%',width:'18%',zIndex:20}}>
-                <LinearGradient colors={['#7F7FD5','#7F7FD5']} style={Styles.button}>
-                    <Image style={{height:30,width:30,margin:15}} source={require('./search.png')}/>
-                </LinearGradient>
+        <Animated.View style={{width:Dimensions.get('screen').width/1.12,height:55,position:'absolute',right:slide,alignItems:'center',flexDirection:'row'}}>
+            <TouchableOpacity activeOpacity={1} onPress={()=>openPlaceSearch()} style={{backgroundColor:'black',borderRadius:50,height:50,width:50,zIndex:20,justifyContent:'center',alignItems:'center'}}>
+                <Animated.View style={{backgroundColor:'white',borderRadius:50,height:openSearchHeightInterpolate,width:47,justifyContent:'center',alignItems:'center',opacity:openQuickSearchOpacity}}>
+                    <Image style={{height:30,width:30,margin:15}} source={require('../../settingsIcons/search.png')}/>
+                </Animated.View>
+                <Animated.View style={{backgroundColor:'white',borderRadius:50,height:closeSearchHeightInterpolate,width:47,justifyContent:'center',alignItems:'center',opacity:closeQuickSearchOpacity}}>
+                    <Image style={{height:25,width:25,margin:15,transform:[{rotate:'270deg'}]}} source={require('../../settingsIcons/arrow.png')}/>
+                </Animated.View>
             </TouchableOpacity>
-            <Animated.View style={{opacity:bar,height:'100%',width:'80%',borderRadius:10,marginLeft:-15,justifyContent:'center',paddingLeft:25,paddingRight:10}}>
-                <LinearGradient colors={['#7F7CD5','#7F7CD5']} style={{height:'100%',width:'100%',borderRadius:10}}>
+            <Animated.View style={{opacity:bar,height:'100%',width:'80%',marginLeft:-15,justifyContent:'center',paddingLeft:25,paddingRight:10}}>
+                <LinearGradient colors={['rgba(255, 255, 255, 1)','rgba(255, 255, 255, 1)']} style={{height:'100%',width:'100%',borderRadius:50,borderWidth:1.5,borderColor:'black'}}>
                     <Animated.View style={[Styles.input,{width:typeWidth,opacity:typeSearchOpacity}]}>
-                        <TextInput onChangeText={(e)=>onTextChange(e)} autoCapitalize='none' placeholder={'Search'} style={{fontSize:20,color:'white',position:'absolute',left:10}}/>
+                        <TextInput onChangeText={(e)=>onTextChange(e)} autoCapitalize='none' placeholder={'Search'} style={{fontSize:20,color:'white',position:'absolute',left:10,width:'100%'}}/>
                         {action == '' ? <TouchableOpacity onPress={()=>openShortCuts()}  style={{position:'absolute',right:10}}>
                             <Image style={{height:30,width:30}} source={require('../../settingsIcons/menu.png')}/>
                         </TouchableOpacity>
@@ -221,34 +336,52 @@ export default Search = (props) => {
                     </Animated.View>
                     <Animated.View style={{opacity:shortcutsOpacity, width:shortcutWidth,height:'100%',position:'absolute'}}>
                         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{height:'100%',width:'100%'}} contentContainerStyle={{alignItems:'center'}}>
-                            <TouchableOpacity onPress={()=>onTextChange(props.user.home)} style={{justifyContent:'center',alignItems:'center',height:'100%',width:35}}>
-                                <Image style={{height:20,width:20}} source={require('../../settingsIcons/home.png')}/>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={()=>onTextChange(props.user.work)} style={{justifyContent:'center',alignItems:'center',height:'100%',width:35}}>
-                                <Image style={{height:20,width:20}} source={require('../../settingsIcons/office.png')}/>
-                            </TouchableOpacity>
-                            <TouchableOpacity activeOpacity={1} style={{width:0,height:'60%',borderWidth:0.5,borderColor:'white',marginHorizontal:5}} />
-                            <TouchableOpacity onPress={()=>onTextChange('gas_station','gas_station')} style={{justifyContent:'center',alignItems:'center',height:'100%',width:35}}>
-                                <Image style={{height:20,width:20}} source={require('../../settingsIcons/gas-station.png')}/>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={()=>onTextChange('cafe','cafe')} style={{justifyContent:'center',alignItems:'center',height:'100%',width:35}}>
-                                <Image style={{height:20,width:20}} source={require('../../settingsIcons/coffee.png')}/>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={()=>onTextChange('restaurant','restaurant')} style={{justifyContent:'center',alignItems:'center',height:'100%',width:35}}>
-                                <Image style={{height:20,width:20}} source={require('../../settingsIcons/food.png')}/>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={()=>onTextChange('supermarket','supermarket')} style={{justifyContent:'center',alignItems:'center',height:'100%',width:35}}>
-                                <Image style={{height:20,width:20}} source={require('../../settingsIcons/shopping-cart.png')}/>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={()=>onTextChange('Hotel')} style={{justifyContent:'center',alignItems:'center',height:'100%',width:35}}>
-                                <Image style={{height:20,width:20}} source={require('../../settingsIcons/hotel.png')}/>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={()=>onTextChange('car_rental','car_rental')} style={{justifyContent:'center',alignItems:'center',height:'100%',width:35}}>
-                                <Image style={{height:20,width:20}} source={require('../../settingsIcons/rental.png')}/>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={()=>onTextChange('car_repair','car_repair')} style={{justifyContent:'center',alignItems:'center',height:'100%',width:35}}>
-                                <Image style={{height:20,width:20}} source={require('../../settingsIcons/car-service.png')}/>
-                            </TouchableOpacity>
+                            <Animated.View style={{backgroundColor:homeColorInterpolate,height:40,width:40,justifyContent:'center',alignItems:'center',borderRadius:50,marginHorizontal:5}}>
+                                <TouchableOpacity onPress={()=>onTextChange(props.user.home)} style={{justifyContent:'center',alignItems:'center',height:'100%',width:35}}>
+                                    <Image style={{height:20,width:20}} source={require('../../settingsIcons/home.png')}/>
+                                </TouchableOpacity>
+                            </Animated.View>
+                            <Animated.View style={{backgroundColor:workColorInterpolate,height:40,width:40,justifyContent:'center',alignItems:'center',borderRadius:50,marginHorizontal:1}}>
+                                <TouchableOpacity onPress={()=>onTextChange(props.user.work)} style={{justifyContent:'center',alignItems:'center',height:'100%',width:35}}>
+                                    <Image style={{height:20,width:20}} source={require('../../settingsIcons/office.png')}/>
+                                </TouchableOpacity>
+                            </Animated.View>
+                            <TouchableOpacity activeOpacity={1} style={{width:0,height:'60%',borderWidth:0.5,borderColor:'black',marginHorizontal:5}} />
+                            <Animated.View style={{backgroundColor:gasColorInterpolate,height:40,width:40,justifyContent:'center',alignItems:'center',borderRadius:50}}>
+                                <TouchableOpacity onPress={()=>onTextChange('gas_station','gas_station')} style={{justifyContent:'center',alignItems:'center',height:'100%',width:35}}>
+                                    <Image style={{height:20,width:20}} source={require('../../settingsIcons/gas-station.png')}/>
+                                </TouchableOpacity>
+                            </Animated.View>
+                            <Animated.View style={{backgroundColor:coffeeColorInterpolate,height:40,width:40,justifyContent:'center',alignItems:'center',borderRadius:50,marginHorizontal:1}}>
+                                <TouchableOpacity onPress={()=>onTextChange('cafe','cafe')} style={{justifyContent:'center',alignItems:'center',height:'100%',width:35}}>
+                                    <Image style={{height:20,width:20}} source={require('../../settingsIcons/coffee.png')}/>
+                                </TouchableOpacity>
+                            </Animated.View>
+                            <Animated.View style={{backgroundColor:foodColorInterpolate,height:40,width:40,justifyContent:'center',alignItems:'center',borderRadius:50,marginHorizontal:1}}>
+                                <TouchableOpacity onPress={()=>onTextChange('restaurant','restaurant')} style={{justifyContent:'center',alignItems:'center',height:'100%',width:35}}>
+                                    <Image style={{height:20,width:20}} source={require('../../settingsIcons/food.png')}/>
+                                </TouchableOpacity>
+                            </Animated.View>
+                            <Animated.View style={{backgroundColor:shopColorInterpolate,height:40,width:40,justifyContent:'center',alignItems:'center',borderRadius:50,marginHorizontal:1}}>
+                                <TouchableOpacity onPress={()=>onTextChange('supermarket','supermarket')} style={{justifyContent:'center',alignItems:'center',height:'100%',width:35}}>
+                                    <Image style={{height:20,width:20}} source={require('../../settingsIcons/shopping-cart.png')}/>
+                                </TouchableOpacity> 
+                            </Animated.View>
+                            <Animated.View style={{backgroundColor:hotelColorInterpolate,height:40,width:40,justifyContent:'center',alignItems:'center',borderRadius:50,marginHorizontal:1}}>
+                                <TouchableOpacity onPress={()=>onTextChange('Hotel')} style={{justifyContent:'center',alignItems:'center',height:'100%',width:35}}>
+                                    <Image style={{height:20,width:20}} source={require('../../settingsIcons/hotel.png')}/>
+                                </TouchableOpacity>
+                            </Animated.View>
+                            <Animated.View style={{backgroundColor:carRentalColorInterpolate,height:40,width:40,justifyContent:'center',alignItems:'center',borderRadius:50,marginHorizontal:1}}>
+                                <TouchableOpacity onPress={()=>onTextChange('car_rental','car_rental')} style={{justifyContent:'center',alignItems:'center',height:'100%',width:35}}>
+                                    <Image style={{height:20,width:20}} source={require('../../settingsIcons/rental.png')}/>
+                                </TouchableOpacity>
+                            </Animated.View>
+                            <Animated.View style={{backgroundColor:carRepairColorInterpolate,height:40,width:40,justifyContent:'center',alignItems:'center',borderRadius:50,marginHorizontal:5}}>
+                                <TouchableOpacity onPress={()=>onTextChange('car_repair','car_repair')} style={{justifyContent:'center',alignItems:'center',height:'100%',width:35}}>
+                                    <Image style={{height:20,width:20}} source={require('../../settingsIcons/car-service.png')}/>
+                                </TouchableOpacity>
+                            </Animated.View>
                         </ScrollView>
                     </Animated.View>
                 </LinearGradient>
@@ -259,8 +392,8 @@ export default Search = (props) => {
 
 const Styles = StyleSheet.create({
     button:{
-        backgroundColor:'#9932cc',
-        borderRadius:10,
+        backgroundColor:'#808080',
+        borderRadius:50,
         height:'100%',
         width:'100%',
         justifyContent:'center',

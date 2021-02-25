@@ -45,6 +45,7 @@ export default Drawerr = (props) => {
   const [navigating,setNavigating] = useState(false)
   const [navigateOpacity] = useState(new Animated.Value(0))
   const [navigateHeight] = useState(new Animated.Value(1))
+  const [addStop,setAddStop] = useState(false)
   const dispatch = useDispatch()
 
   const bringUpActionSheet = () => {
@@ -347,7 +348,7 @@ export default Drawerr = (props) => {
   }
 
   navigatingAddStop = () => {
-    console.warn('Lets add stop')
+    setAddStop(true)
   }
 
   const actionSheetIntropolate = alignment.interpolate({
@@ -374,7 +375,9 @@ export default Drawerr = (props) => {
   }
 
   useSelector((state)=>{
-    if(state.navigation.active){
+    if(addStop) {
+      console.warn('Add Stop or Look at Steps')
+    }else if(state.navigation.active){
       navigating != state.navigation.active ? setNavigating(state.navigation.active) : null
       navigatingActiveDirection()
     }
@@ -421,7 +424,7 @@ export default Drawerr = (props) => {
 
   return(
      <Animated.View style={[Styles.Bottom,actionSheetStyle,{height:sheetHeight}]}>
-       <LinearGradient colors={['rgba(211,204,227,0.1)','rgba(211,204,227,0.7)','#D3CCE3','#D3CCE3','#D3CCE3','#E9E4F0','#E9E4F0']} style={{height:'100%',width:'100%',alignItems:'center',borderTopLeftRadius:25,borderTopRightRadius:25,}}>
+       <LinearGradient colors={['rgba(255,255,255,0.7)','white','white']} style={{height:'100%',width:'100%',alignItems:'center',borderTopLeftRadius:25,borderTopRightRadius:25,}}>
         <ScrollView onScroll={(e)=>guestureHandler(e.nativeEvent.contentOffset.y)} style={{width:80,height:10,borderTopWidth:3,marginTop:10,borderColor:'white',zIndex:100}} />
         <Animated.View style={{width:Dimensions.get('screen').width,height:'20%',position:'absolute',flexDirection:'row',marginTop:headingMargin,marginHorizontal:'5%',alignItems:'center'}}>
           <TouchableOpacity onPress={()=>props.followMe()} style={{flexDirection:'row',justifyContent:'center',alignItems:'center',marginHorizontal:'5%',zIndex:150}}>
@@ -468,14 +471,9 @@ export default Drawerr = (props) => {
               </Animated.View>
           </Animated.View>
         </Animated.View>
-        {!navigating ? <Animated.View style={{height:searchResultsHeight,width:Dimensions.get('screen').width,opacity:searchResultsOpacity}}>
+        <Animated.View style={{height:searchResultsHeight,width:Dimensions.get('screen').width,opacity:searchResultsOpacity}}>
           <PlaceSearchResults position={props.regionPosition} user={props.user} hide={()=>navigateClose()} />
         </Animated.View>
-        : <Animated.View style={{height:navigateHeightInterpolate,width:Dimensions.get('screen').width,opacity:navigateOpacity}}>
-          <View style={{height:'100%',width:'100%',position:'absolute',bottom:0}}>
-            <Navigating />
-          </View>
-        </Animated.View>}
       </LinearGradient>
      </Animated.View>
   )
@@ -488,7 +486,18 @@ const Styles = StyleSheet.create({
       borderTopLeftRadius:25,
       borderTopRightRadius:25,
       right:0,
-      left:0
+      left:0,
+      borderWidth:0.5,
+      borderColor:'#f3ebe1',
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 12,
+      },
+      shadowOpacity: 0.58,
+      shadowRadius: 16.00,
+
+      elevation: 24
   },
   ImageBox: {
       borderRadius: 50,

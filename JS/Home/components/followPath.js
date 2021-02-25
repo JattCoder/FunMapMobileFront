@@ -72,8 +72,8 @@ export default FollowPath = (props) => {
     })
 
     useEffect(()=>{
-        setPath(props.path)
-        getNextSpotStreetName()
+        // setPath(props.path)
+        // getNextSpotStreetName()
     })
 
 
