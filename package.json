@@ -21,6 +21,7 @@
     "@react-navigation/native": "^5.7.1",
     "@react-navigation/stack": "^5.7.1",
     "firebase": "^7.23.0",
+    "geolib": "^3.3.1",
     "google-maps-polyutil": "^1.0.3",
     "node-geometry-library": "^1.2.3",
     "point-in-polygon": "^1.0.1",

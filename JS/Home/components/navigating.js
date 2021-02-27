@@ -6,18 +6,16 @@ import { navigation } from '../../../actions/navigation/navigation'
 import polyline from '@mapbox/polyline'
 import {SphericalUtil, PolyUtil} from "node-geometry-library"
 import inside from 'point-in-polygon'
+import * as geolib from 'geolib';
 
 export default Navigating = (props) => {
 
     const dispatch = useDispatch()
-    const [position,setPosition] = useState({
-        latitude:0,
-        longitude:0
-    })
     const [routeInfo,setRouteInfo] = useState({
+        position:{latitude:0,longitude:0},
         drivingMode: 'driving',
         distance: 0,
-        destination: {lat:0,lng:0},
+        destination: {latitude:0,longitude:0},
         avoidHighWays: false,
         avoidTolls: false,
         avoidFerries: false,
@@ -25,7 +23,6 @@ export default Navigating = (props) => {
         path: [],
         steps: []
     })
-    const [count,setCount] = useState(0)
 
     reRoute = () => {
         fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${position.latitude},${position.longitude}&destination=${routeInfo.destination.lat},${routeInfo.destination.lng}&avoid=${routeInfo.avoidHighWays?'highways':''}|${routeInfo.avoidFerries?'ferries':''}|${routeInfo.avoidTolls?'tolls':''}&mode=${routeInfo.drivingMode}&key=AIzaSyDMCLs_nBIfA8Bw9l50nSRwLOUByiDel9U`)
@@ -56,23 +53,38 @@ export default Navigating = (props) => {
                 })
                 dispatch(navigation(true,{pth:path,info:completeInfo,step:completeInfo.steps[0].polyline}))
             }
-            setCount(count+1)
         })
         .catch(err => console.warn('Directions Error: ',err))
     }
 
     useEffect(()=>{
-        setPosition({
-            latitude:props.position.latitude,
-            longitude:props.position.longitude
+        setRouteInfo({
+            position:{
+                latitude:props.position.latitude,
+                longitude:props.position.longitude
+            },
+            drivingMode:routeInfo.drivingMode,
+            distance:props.rInfo.info.distance,
+            destination:props.rInfo.pth[props.rInfo.pth.length - 1],
+            avoidFerries: routeInfo.avoidFerries,
+            avoidHighWays: routeInfo.avoidHighWays,
+            avoidTolls: routeInfo.avoidTolls,
+            duration: props.rInfo.info.duration,
+            path: props.rInfo.pth,
+            steps: props.rInfo.info.steps
         })
     },[props.position])
 
-    if(position.latitude && position.longitude != 0){
-        console.warn(props.rInfo.pth)
-        inside([position.latitude,position.longitude],props.rInfo.pth.map(stp => {
-            return [stp.latitude,stp.longitude]
-        })) ? console.warn('Good To Go') : null
+    if(routeInfo.position.latitude != 0 && routeInfo.position.longitude != 0){
+        geolib.isPointInLine(
+            routeInfo.position,
+            routeInfo.path[0],
+            routeInfo.path[1]) ? console.warn('were good to go') : console.warn(geolib.getDistanceFromLine(routeInfo.position,routeInfo.path[0],routeInfo.path[1]))
+
+        // inside([position.latitude,position.longitude],props.rInfo.pth.map(stp => {
+        //     return [stp.latitude,stp.longitude]
+        // })) ? console.warn('Good To Go') : console.warn(props.rInfo)
+
         // PolyUtil.isLocationOnEdgeOrPath({lat:position.latitude,lng:position.longitude},props.rInfo.pth.map(stp=>{
         //     return [stp.latitude,stp.longitude]
         // },5e-1)) ? console.warn('Good To Go') : console.warn('Re-Route')
