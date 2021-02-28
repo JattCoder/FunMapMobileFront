@@ -102,7 +102,7 @@ export default PlaceSearcgResults = (props) => {
         inputRange:[0,1],
         outputRange:['#7F7FD5', '#32CD32']
     })
-
+    
     return( placeInfo.name != '' && !active ? <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/1.5,alignItems:'center'}}>
         <View style={Styles.Icon}><Image style={{height:'50%',width:'50%',padding:'10%'}} source={{uri:placeInfo.icon}}/></View>
         <Text style={{fontWeight:'bold',color:'white',fontSize:20,margin:'3%'}}>{placeInfo.name}</Text>
@@ -131,7 +131,7 @@ export default PlaceSearcgResults = (props) => {
                 </TouchableOpacity>
             </Animated.View>
         </View>
-    </View> : displayNavigation ? <Navigating position={props.position} rInfo={routeInfo} reRoute={()=>getRoute(true)}/> : null )
+    </View> : displayNavigation ? <View style={Styles.navigatingStyle}><Navigating position={props.position} rInfo={routeInfo} reRoute={()=>getRoute(true)}/></View> : null )
 }
 
 const Styles = StyleSheet.create({
@@ -172,5 +172,11 @@ const Styles = StyleSheet.create({
         shadowOpacity: 0.58,
         shadowRadius: 16.00,
         elevation: 50,
+    },
+    navigatingStyle:{
+        width:Dimensions.get('screen').width,
+        height:'60%',
+        justifyContent:'center',
+        alignItems:'center',
     }
 })

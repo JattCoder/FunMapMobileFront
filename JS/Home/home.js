@@ -128,13 +128,11 @@ const Home = (props) => {
             if(search != state.placesearch) {
                 if(state.placesearch.length > 0) setspeed(2000)
                 else if(state.placesearch.length == 0 && slimit == 2000) {
-                  map.animateToRegion({latitude:state.mylocation.latitude,longitude:state.mylocation.longitude,latitudeDelta:0.019,longitudeDelta:0.019},1000)
-                    
+                  map.animateToRegion({latitude:state.mylocation.latitude,longitude:state.mylocation.longitude,latitudeDelta:0.019,longitudeDelta:0.019},1000)  
                   setspeed(0)
                 }
                 setsearch(state.placesearch)
-                map.fitToCoordinates(state.placesearch.map(plc=>{return{latitude:plc.location.lat,longitude:plc.location.lng}}),{animated:true,edgePadding: { top: 30, right: 10, bottom: 10, left: 30 }})
-                
+                map.fitToCoordinates(state.placesearch.map(plc=>{return{latitude:plc.location.lat,longitude:plc.location.lng}}),{animated:true,edgePadding: { top: 30, right: 10, bottom: 10, left: 30 }})      
             }
         }
     })
@@ -157,7 +155,6 @@ const Home = (props) => {
                     showsBuildings={true}
                     showsPointsOfInterest={false}
                     onPanDrag={()=> setspeed(2000)}
-                    maxZoomLevel={17}
                     onUserLocationChange={(userlocation)=>{
                         loc = userlocation.nativeEvent.coordinate
                         if(loc.speed > 0 && loc.speed <= 7) setZoom(17)

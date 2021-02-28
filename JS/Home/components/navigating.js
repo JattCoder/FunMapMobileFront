@@ -1,12 +1,10 @@
 import React,{ useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { View, Text } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native'
 import FollowPath from './followPath'
 import { navigation } from '../../../actions/navigation/navigation'
 import polyline from '@mapbox/polyline'
-import {SphericalUtil, PolyUtil} from "node-geometry-library"
-import inside from 'point-in-polygon'
-import * as geolib from 'geolib';
+import * as geolib from 'geolib'
 
 export default Navigating = (props) => {
 
@@ -25,7 +23,7 @@ export default Navigating = (props) => {
     })
 
     reRoute = () => {
-        fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${position.latitude},${position.longitude}&destination=${routeInfo.destination.lat},${routeInfo.destination.lng}&avoid=${routeInfo.avoidHighWays?'highways':''}|${routeInfo.avoidFerries?'ferries':''}|${routeInfo.avoidTolls?'tolls':''}&mode=${routeInfo.drivingMode}&key=AIzaSyDMCLs_nBIfA8Bw9l50nSRwLOUByiDel9U`)
+        fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${routeInfo.position.latitude},${routeInfo.position.longitude}&destination=${routeInfo.destination.latitude},${routeInfo.destination.longitude}&avoid=${routeInfo.avoidHighWays?'highways':''}|${routeInfo.avoidFerries?'ferries':''}|${routeInfo.avoidTolls?'tolls':''}&mode=${routeInfo.drivingMode}&key=AIzaSyDMCLs_nBIfA8Bw9l50nSRwLOUByiDel9U`)
         .then(res => {return res.json()})
         .then(result => {
             if(result.status === 'ZERO_RESULTS') {
@@ -33,17 +31,12 @@ export default Navigating = (props) => {
             }
             else{
                 path = []
-                completeInfo = {
-                    duration: result.routes[0].legs[0].duration.text,
-                    durationVal: result.routes[0].legs[0].duration.value,
-                    distance: result.routes[0].legs[0].distance.text,
-                    steps: []
-                }
+                steps = []
                 result.routes[0].legs[0].steps.map(step => {
                     polyline.decode(step.polyline.points).map(step => {
-                        path.push({latitude:parseFloat(step[0]),longitude:parseFloat(step[1])})
+                        path.push({latitude:step[0],longitude:step[1]})
                     })
-                    completeInfo.steps.push({
+                    steps.push({
                         distance: step.distance.text,
                         duration: step.duration.text,
                         durationVal: step.duration.value,
@@ -51,7 +44,19 @@ export default Navigating = (props) => {
                         polyline: step.polyline.points
                     })
                 })
-                dispatch(navigation(true,{pth:path,info:completeInfo,step:completeInfo.steps[0].polyline}))
+                setRouteInfo({
+                    position:{latitude:routeInfo.position.latitude,longitude:routeInfo.position.longitude},
+                    drivingMode: routeInfo.drivingMode,
+                    distance: result.routes[0].legs[0].distance.text,
+                    destination: {latitude:path[path.length-1].latitude,longitude:path[path.length-1].longitude},
+                    avoidHighWays: routeInfo.avoidHighWays,
+                    avoidTolls: routeInfo.avoidTolls,
+                    avoidFerries: routeInfo.avoidFerries,
+                    duration: routeInfo.duration,
+                    path,
+                    steps
+                })
+                dispatch(navigation(true,path))
             }
         })
         .catch(err => console.warn('Directions Error: ',err))
@@ -75,25 +80,32 @@ export default Navigating = (props) => {
         })
     },[props.position])
 
-    if(routeInfo.position.latitude != 0 && routeInfo.position.longitude != 0){
+    returnNavigatingMessage = () => {
+        return <View style={Styles.frame}>
+            <FollowPath info={routeInfo}/>
+        </View>
+    }
+
+    returnReRouteMessage = () => {
+        return <View>
+            <TouchableOpacity onPress={reRoute()}><Text>Re-Routing</Text></TouchableOpacity>
+        </View>
+    }
+
+    return routeInfo.position.latitude != 0 && routeInfo.position.longitude != 0 ? 
         geolib.isPointInLine(
             routeInfo.position,
             routeInfo.path[0],
-            routeInfo.path[1]) ? console.warn('were good to go') : console.warn(geolib.getDistanceFromLine(routeInfo.position,routeInfo.path[0],routeInfo.path[1]))
-
-        // inside([position.latitude,position.longitude],props.rInfo.pth.map(stp => {
-        //     return [stp.latitude,stp.longitude]
-        // })) ? console.warn('Good To Go') : console.warn(props.rInfo)
-
-        // PolyUtil.isLocationOnEdgeOrPath({lat:position.latitude,lng:position.longitude},props.rInfo.pth.map(stp=>{
-        //     return [stp.latitude,stp.longitude]
-        // },5e-1)) ? console.warn('Good To Go') : console.warn('Re-Route')
-    }
-
-    return(
-       position.latitude != 0 && position.longitude != 0 ? <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'white'}}>
-            <Text>Hello0000</Text>
-            {/* <FollowPath path={routeInfo.path} /> */}
-        </View> : null
-    )
+            routeInfo.path[1]) || geolib.getDistanceFromLine(routeInfo.position,routeInfo.path[0],routeInfo.path[1]) <= 4 ? returnNavigatingMessage() : returnReRouteMessage()
+    : null
 }
+
+const Styles = StyleSheet.create({
+    frame:{
+        width:'100%',
+        height:'50%',
+        backgroundColor:'red',
+        position:'absolute',
+        bottom:0
+    }
+})

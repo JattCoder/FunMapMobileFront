@@ -32,6 +32,8 @@ export default Search = (props) => {
     const [hotelColor] = useState(new Animated.Value(0))
     const [carRentalColor] = useState(new Animated.Value(0))
     const [carServiceColor] = useState(new Animated.Value(0))
+    const [drivingMode] = useState(new Animated.Value(0))
+    const [drivingModeOpacity] = useState(new Animated.Value(0))
     const [location,setLocation] = useState({
         lat:0,
         lng:0
@@ -187,8 +189,39 @@ export default Search = (props) => {
             if(!navigating){
                 dispatch(clearnavigation())
                 dispatch(bottomsheet(''))
-            }
+            }else changeTodrivingMode()
         })
+    }
+
+    changeTodrivingMode = () => {
+        Animated.parallel([
+            Animated.timing(openQuickSearchHeight,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(openQuickSearchOpacity,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(drivingMode,{
+                toValue:1,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(drivingModeOpacity,{
+                toValue:1,
+                duration:250,
+                useNativeDriver:false
+            })
+        ]).start(()=>{
+            setSaction('Voice')
+        })
+    }
+
+    openVoiceSearch = () => {
+        alert('will open voice search at this point')
     }
 
     onTextChange = (e,type='') => {
@@ -206,10 +239,6 @@ export default Search = (props) => {
                 searchPlaces(e,type)
             },400)
         }
-    }
-
-    selectOption = (option,input,type) => {
-
     }
 
     searchPlaces = (input = '',type = '') => {
@@ -239,7 +268,7 @@ export default Search = (props) => {
             })
             .catch(err => console.warn(err))
         }else{
-            console.warn('alert')
+            console.warn('Failed to Search Results')
         }
     }
 
@@ -259,6 +288,11 @@ export default Search = (props) => {
     })
 
     const closeSearchHeightInterpolate = closeQuickSearchHeight.interpolate({
+        inputRange:[0,1],
+        outputRange:[0,47]
+    })
+
+    const drivingModeInterpolate = drivingMode.interpolate({
         inputRange:[0,1],
         outputRange:[0,47]
     })
@@ -317,18 +351,21 @@ export default Search = (props) => {
 
     return(
         <Animated.View style={{width:Dimensions.get('screen').width/1.12,height:55,position:'absolute',right:slide,alignItems:'center',flexDirection:'row'}}>
-            <TouchableOpacity activeOpacity={1} onPress={()=>openPlaceSearch()} style={{backgroundColor:'black',borderRadius:50,height:50,width:50,zIndex:20,justifyContent:'center',alignItems:'center'}}>
+            <TouchableOpacity activeOpacity={1} onPress={()=>navigating ? openVoiceSearch() : openPlaceSearch()} style={{backgroundColor:'black',borderRadius:50,height:50,width:50,zIndex:20,justifyContent:'center',alignItems:'center'}}>
                 <Animated.View style={{backgroundColor:'white',borderRadius:50,height:openSearchHeightInterpolate,width:47,justifyContent:'center',alignItems:'center',opacity:openQuickSearchOpacity}}>
                     <Image style={{height:30,width:30,margin:15}} source={require('../../settingsIcons/search.png')}/>
                 </Animated.View>
                 <Animated.View style={{backgroundColor:'white',borderRadius:50,height:closeSearchHeightInterpolate,width:47,justifyContent:'center',alignItems:'center',opacity:closeQuickSearchOpacity}}>
                     <Image style={{height:25,width:25,margin:15,transform:[{rotate:'270deg'}]}} source={require('../../settingsIcons/arrow.png')}/>
                 </Animated.View>
+                <Animated.View style={{backgroundColor:'white',borderRadius:50,height:drivingModeInterpolate,width:47,justifyContent:'center',alignItems:'center',opacity:drivingModeOpacity}}>
+                    <Image style={{height:25,width:25,margin:15,}} source={require('../../settingsIcons/mic.png')}/>
+                </Animated.View>
             </TouchableOpacity>
             <Animated.View style={{opacity:bar,height:'100%',width:'80%',marginLeft:-15,justifyContent:'center',paddingLeft:25,paddingRight:10}}>
                 <LinearGradient colors={['rgba(255, 255, 255, 1)','rgba(255, 255, 255, 1)']} style={{height:'100%',width:'100%',borderRadius:50,borderWidth:1.5,borderColor:'black'}}>
                     <Animated.View style={[Styles.input,{width:typeWidth,opacity:typeSearchOpacity}]}>
-                        <TextInput onChangeText={(e)=>onTextChange(e)} autoCapitalize='none' placeholder={'Search'} style={{fontSize:20,color:'white',position:'absolute',left:10,width:'100%'}}/>
+                        <TextInput onChangeText={(e)=>onTextChange(e)} autoCapitalize='none' placeholder={'Search'} style={{fontSize:20,color:'black',position:'absolute',left:10,width:'100%',paddingVertical:0,paddingHorizontal:10}}/>
                         {action == '' ? <TouchableOpacity onPress={()=>openShortCuts()}  style={{position:'absolute',right:10}}>
                             <Image style={{height:30,width:30}} source={require('../../settingsIcons/menu.png')}/>
                         </TouchableOpacity>

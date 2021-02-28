@@ -324,16 +324,16 @@ export default Drawerr = (props) => {
         duration:550,
         useNativeDriver:false
       }),
-      Animated.timing(searchResultsOpacity,{
-        toValue:0,
-        duration:500,
-        useNativeDriver:false
-      }),
-      Animated.timing(searchResultsHeight,{
-        toValue:0,
-        duration:500,
-        useNativeDriver:false
-      }),
+      // Animated.timing(searchResultsOpacity,{
+      //   toValue:0,
+      //   duration:500,
+      //   useNativeDriver:false
+      // }),
+      // Animated.timing(searchResultsHeight,{
+      //   toValue:0,
+      //   duration:500,
+      //   useNativeDriver:false
+      // }),
       Animated.timing(navigateOpacity,{
         toValue:1,
         duration:500,
@@ -425,7 +425,7 @@ export default Drawerr = (props) => {
   return(
      <Animated.View style={[Styles.Bottom,actionSheetStyle,{height:sheetHeight}]}>
        <LinearGradient colors={['rgba(255,255,255,0.7)','white','white']} style={{height:'100%',width:'100%',alignItems:'center',borderTopLeftRadius:25,borderTopRightRadius:25,}}>
-        <ScrollView onScroll={(e)=>guestureHandler(e.nativeEvent.contentOffset.y)} style={{width:80,height:10,borderTopWidth:3,marginTop:10,borderColor:'white',zIndex:100}} />
+        {!navigating ? <ScrollView onScroll={(e)=>guestureHandler(e.nativeEvent.contentOffset.y)} style={{width:80,height:10,borderTopWidth:3,marginTop:10,borderColor:'white',zIndex:100}} /> : null}
         <Animated.View style={{width:Dimensions.get('screen').width,height:'20%',position:'absolute',flexDirection:'row',marginTop:headingMargin,marginHorizontal:'5%',alignItems:'center'}}>
           <TouchableOpacity onPress={()=>props.followMe()} style={{flexDirection:'row',justifyContent:'center',alignItems:'center',marginHorizontal:'5%',zIndex:150}}>
             <TouchableOpacity onPress={()=>props.followMe()} style={[Styles.ImageBox,{height:45,width:45}]}>

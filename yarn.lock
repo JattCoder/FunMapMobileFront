@@ -6295,6 +6295,11 @@
   "resolved" "https://registry.npmjs.org/parse-node-version/-/parse-node-version-1.0.1.tgz"
   "version" "1.0.1"
 
+"parse5@^1.4.1":
+  "integrity" "sha1-m387DeMr543CQBsXVzzK8Pb1nZQ="
+  "resolved" "https://registry.npmjs.org/parse5/-/parse5-1.5.1.tgz"
+  "version" "1.5.1"
+
 "parse5@5.1.0":
   "integrity" "sha512-fxNG2sQjHvlVAYmzBZS9YlDp6PTSSDwa98vkD4QgVDDCAo84z5X1t5XyJQ62ImdLXx5NdIIfihey6xpum9/gRQ=="
   "resolved" "https://registry.npmjs.org/parse5/-/parse5-5.1.0.tgz"
@@ -6612,6 +6617,13 @@
     "hoist-non-react-statics" "^2.3.1"
     "invariant" "^2.2.4"
     "prop-types" "^15.7.2"
+
+"react-native-html-to-text@^0.0.5":
+  "integrity" "sha1-l0dyB9V72JlUxt9rSYuZFUo9UXo="
+  "resolved" "https://registry.npmjs.org/react-native-html-to-text/-/react-native-html-to-text-0.0.5.tgz"
+  "version" "0.0.5"
+  dependencies:
+    "parse5" "^1.4.1"
 
 "react-native-iphone-x-helper@^1.2.1":
   "integrity" "sha512-/VbpIEp8tSNNHIvstuA3Swx610whci1Zpc9mqNkqn14DkMbw+ORviln2u0XyHG1kPvvwTNGZY6QpeFwxYaSdbQ=="
