@@ -60,7 +60,7 @@ const Home = (props) => {
     },[props.route.params.user])
 
     whereAmI = () => {
-      if(regionPosition.speed == 0){
+      if(regionPosition.speed == 0 && Object.keys(map).length > 0){
         map.animateCamera({center: {
           latitude: userPosition.latitude,
           longitude: userPosition.longitude,
@@ -100,7 +100,7 @@ const Home = (props) => {
           setshowme(true)
           whereAmI()
         }
-        if(followme == true){
+        if(followme == true && Object.keys(map).length > 0){
             if(regionPosition.speed <= 0 && search.length < 0 && path.length < 0){
               map.animateToRegion({latitude:state.mylocation.latitude,longitude:state.mylocation.longitude,latitudeDelta:0.019,longitudeDelta:0.019},500)
             }
@@ -127,7 +127,7 @@ const Home = (props) => {
             // }
             if(search != state.placesearch) {
                 if(state.placesearch.length > 0) setspeed(2000)
-                else if(state.placesearch.length == 0 && slimit == 2000) {
+                else if(state.placesearch.length == 0) {
                   map.animateToRegion({latitude:state.mylocation.latitude,longitude:state.mylocation.longitude,latitudeDelta:0.019,longitudeDelta:0.019},1000)  
                   setspeed(0)
                 }

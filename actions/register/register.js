@@ -10,7 +10,7 @@ export const register = (name,email,phone,photo,password,rec,mac) => {
         .createUserWithEmailAndPassword(email, password)
         .then(() => {
             firebase.database().ref(`Users/`)
-            .on('value', snapshot => {
+            .once('value', snapshot => {
                 let count = 0
                 for(let key in snapshot.val()) count += 1
                 firebase.database().ref(`Users/${email.replace(punctuation, '').replace(spaceRE, ' ')}`).set({

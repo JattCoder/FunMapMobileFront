@@ -25,7 +25,7 @@ const Login = (props) => {
     const[intro] = useState(new Animated.Value(0))
     const[intrOpacity] = useState(new Animated.Value(0))
     const[emailPassHeight] = useState(new Animated.Value(0))
-    const[emailPassOpacity] = useState(new Animated.Value(1))
+    const[emailPassOpacity] = useState(new Animated.Value(0))
     const[socialHeight] = useState(new Animated.Value(0))
     const[socialOpacity] = useState(new Animated.Value(0))
     const[HoldGoogle] = useState(new Animated.Value(60))
@@ -81,6 +81,11 @@ const Login = (props) => {
                             useNativeDriver: false
                         }),
                         Animated.timing(emailPassHeight,{
+                            toValue: 1,
+                            duration: 500,
+                            useNativeDriver: false
+                        }),
+                        Animated.timing(emailPassOpacity,{
                             toValue: 1,
                             duration: 500,
                             useNativeDriver: false
@@ -608,8 +613,8 @@ const Login = (props) => {
                         </LinearGradient>
                     </TouchableOpacity>
                     <View style={{flexDirection:'row',height:'15%',alignItems:'center'}}>
-                        <Text style={{color:'#7F7FD5',marginRight:'5%'}} onPress={()=>register()}>Register</Text>
-                        <TouchableOpacity style={{height:20,borderWidth:0.5,borderColor:'#7F7FD5'}}/>
+                        <TouchableOpacity onPress={()=>register()}><Text style={{color:'#7F7FD5',marginRight:'5%'}}>Register</Text></TouchableOpacity>
+                        <TouchableOpacity activeOpacity={1} style={{height:20,borderWidth:0.5,borderColor:'#7F7FD5'}}/>
                         <Text style={{color:'#7F7FD5',marginLeft:'5%'}}>Recover</Text>
                     </View>
                     <TouchableOpacity style={{width:'100%',height:'20%'}} onPress={()=>showSocial()}>

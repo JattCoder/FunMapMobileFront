@@ -255,7 +255,7 @@ export default Settings = (props) => {
                     <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/15.2,justifyContent:'center',alignItems:'center',marginTop:'5%',marginBottom:'7%'}}>
                         <View style={[Styles.Logout,{justifyContent:'center',alignItems:'center'}]}>
                             <TouchableOpacity style={{height:'100%',width:'100%',justifyContent:'center',alignItems:'center'}} onPress={()=>auth().signOut().then(()=>props.logout.navigate('Login'))}>
-                                <Text style={{fontweight:'bold',fontSize:16,color:'black'}}>Logout</Text>
+                                <Text style={{fontweight:'bold',fontSize:16,color:'white'}}>Logout</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
