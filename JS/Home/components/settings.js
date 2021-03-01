@@ -1,12 +1,10 @@
 import React,{ useState, useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { updateDrivingMode, updateFerries, updateHighways, updateKm } from './changeSettings' 
-import { View, StyleSheet, Dimensions, ScrollView, Switch, Text, Image, Animated } from 'react-native'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import { useDispatch } from 'react-redux'
+import { View, StyleSheet, Dimensions, ScrollView, Switch, Text, Image, Animated, TouchableOpacity } from 'react-native'
 import BackgroundColor from './backgroundColor'
-import LinearGradient from 'react-native-linear-gradient'
 import Account from '../../Components/settings/account'
 import firebase from 'firebase'
+import auth from '@react-native-firebase/auth'
 const punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~]/g
 const spaceRE = /\s+/g
 
@@ -22,7 +20,6 @@ export default Settings = (props) => {
     const ferriesSwitch = () => setAvoidFerries(previousState => !previousState)
     const [temperature,setTemperature] = useState(false)
     const temperatureSwitch = () => setTemperature(previousState => !previousState)
-    const dispatch = useDispatch()
     const [settingsHeight] = useState(new Animated.Value(Dimensions.get('screen').height/1.85))
     const [settingsOpacity] = useState(new Animated.Value(1))
     const [accountHeight] = useState(new Animated.Value(0))
@@ -257,7 +254,9 @@ export default Settings = (props) => {
                     </View>
                     <View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/15.2,justifyContent:'center',alignItems:'center',marginTop:'5%',marginBottom:'7%'}}>
                         <View style={[Styles.Logout,{justifyContent:'center',alignItems:'center'}]}>
-                            <Text style={{fontweight:'bold',fontSize:16,color:'black'}}>Logout</Text>
+                            <TouchableOpacity style={{height:'100%',width:'100%',justifyContent:'center',alignItems:'center'}} onPress={()=>auth().signOut().then(()=>props.logout.navigate('Login'))}>
+                                <Text style={{fontweight:'bold',fontSize:16,color:'black'}}>Logout</Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
                 </ScrollView>

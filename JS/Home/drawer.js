@@ -324,16 +324,6 @@ export default Drawerr = (props) => {
         duration:550,
         useNativeDriver:false
       }),
-      // Animated.timing(searchResultsOpacity,{
-      //   toValue:0,
-      //   duration:500,
-      //   useNativeDriver:false
-      // }),
-      // Animated.timing(searchResultsHeight,{
-      //   toValue:0,
-      //   duration:500,
-      //   useNativeDriver:false
-      // }),
       Animated.timing(navigateOpacity,{
         toValue:1,
         duration:500,
@@ -443,7 +433,7 @@ export default Drawerr = (props) => {
               <Families user={props.user}/>
             </Animated.View>
             <Animated.View style={{width:settingsWidth,height:settingsHeight,opacity:settingsOpacity,justifyContent:'center',alignItems:'center',display:settingsDisplay}}>
-              <Settings close={()=>closeSettings()} user={props.user}/>
+              <Settings close={()=>closeSettings()} user={props.user} logout={props.logout}/>
             </Animated.View>
             <Animated.View style={{height:newGroupFormHeight,width:'100%',opacity:newGroupFormOpacity,justifyContent:'center',alignItems:'center'}}>
               <TouchableOpacity onPress={()=>closeForm()} style={{width:-Dimensions.get('screen').width,height:'8%',borderRadius:10,position:'absolute',top:20,right:25,zIndex:100,display:newGroupFormDisplay}}>
