@@ -68,7 +68,8 @@ const Login = (props) => {
             useNativeDriver: false
         }).start(()=>{
             auth().onAuthStateChanged(user => {
-                if(user){
+                console.warn(user.email)
+                if(!user){
                     firebase.database().ref(`Users/${user.email.replace(punctuation,'').replace(spaceRE,'')}`)
                     .on('value',snapshot => {
                         props.navigation.navigate('Home',{user: snapshot.val()})
@@ -738,7 +739,7 @@ const Styles = StyleSheet.create({
         elevation: 24,
     },
     PassBox:{
-        marginTop:'-13%',
+        marginTop:'-17%',
         borderRadius:10,
         borderColor:'#7F7FD5',
         borderWidth:0.8,

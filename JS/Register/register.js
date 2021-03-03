@@ -16,40 +16,53 @@ const Register = (props) => {
     const[rpass,setrpass] = useState('')
     const[code,setcode] = useState('')
     const[registerLoad,setregisterLoad] = useState(false)
+    const[res,setRes] = useState({
+        result: false,
+        message: {}
+    })
     const dispatch = useDispatch()
 
     RegisterAttempt = () => {
-        if(name == '' || email == '' || pass == '' || rpass == '' || code == ''){
+        if(name == '' || email == '' || pass == '' || rpass == ''){
             if(name == '') alert('Name field is empty')
             else if(email == '') alert('Email field is empty')
             else if(pass == '') alert('Password field is empty')
             else if(rpass == '') alert('Re-Pass field is empty')
-            else if(code == '') alert('Code field is empty')
         }
         else if(pass != rpass) alert('Password does not Match')
         else if(pass.length <= 5) alert('Password too short')
         else{
             setregisterLoad(true)
             DeviceInfo.getMacAddress().then(mac => {
-                dispatch(register(name,email,phone,photo,pass,code,mac))
+                dispatch(register(name,email,phone,photo,pass,mac))
             });
         }
     }
 
     useSelector((state)=>{
-        if(state.register.result == false && state.register.message != ''){
-            alert(state.register.message)
-            if(state.register.message == 'Account already Exists'){
-                setTimeout(()=>{
-                    props.navigation.navigate('Login')
-                },3000)
+        if(res != state.login) {
+            setRes(state.login)
+            if(Object.keys(state.login.message).length > 0 && state.login.result == false){
+                if(registerLoad == true) setregisterLoad(false)
+                console.warn(state.login.message.error)
+            }else if(state.login.result == true){
+                console.warn('Successfully Created Account')
+                props.navigation.navigate('Login')
             }
-            dispatch(resregister())
-            if(registerLoad == true) setregisterLoad(false)
-        }else if(state.register.result == true){
-            user = state.register.message
-            props.navigation.navigate('ConfirmEmail', {user: user})
         }
+        // if(res != state.login)
+        // if(state.login.result == false && Object.keys(state.login.message).length != 0){
+        //     console.warn(state.login.message)
+        //     // if(state.login.message == 'Account already Exists'){
+        //     //     setTimeout(()=>{
+        //     //         props.navigation.navigate('Login')
+        //     //     },3000)
+        //     // }
+        //     if(registerLoad == true) setregisterLoad(false)
+        // }else if(state.login.result == true){
+        //     user = state.login.message
+        //     props.navigation.navigate('ConfirmEmail', {user: user})
+        // }
     })
 
     return(
@@ -79,13 +92,6 @@ const Register = (props) => {
                 <Text style={{color:'#f5f5f5',fontWeight:'bold'}}>Pass   </Text>
                 <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:-4,borderColor:'#f5f5f5'}}/>
                 <TextInput style={Styles.NextInput} autoCapitalize = 'none' secureTextEntry={true} onChangeText={(e)=>setrpass(e)}/>
-            </TouchableOpacity>
-            <Text style={{color:'#f5f5f5',marginTop:20}}>Recovery Code: Use this code to recover your Account</Text>
-            <Text style={{color:'#f5f5f5',fontStyle:'italic'}}>(Keep it Safe)</Text>
-            <TouchableOpacity style={Styles.CodeBox}>
-                <Text style={{color:'#f5f5f5',fontWeight:'bold'}}>Code  </Text>
-                <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:-4,borderColor:'#f5f5f5'}}/>
-                <TextInput style={Styles.CodeInput} autoCapitalize = 'none' secureTextEntry={true} onChangeText={(e)=>setcode(e)}/>
             </TouchableOpacity>
             <TouchableOpacity style={Styles.Register} onPress={()=>RegisterAttempt()}>
             <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['#1CB5E0','#1CB5E0','#1CB5E0']} style={{width:'100%',height:'100%',borderRadius:25,justifyContent:'center',alignItems:'center'}}>

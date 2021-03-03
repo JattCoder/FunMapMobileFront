@@ -1,8 +1,7 @@
 export const REGISTER_RES = 'REGISTER_RES'
 
 const initialState = {
-    code: '',
-    message: '',
+    message: {},
     result: false
 }
 
