@@ -56,8 +56,8 @@ const Home = (props) => {
     const [strokeWidth,setStrokeWidth] = useState(6)
 
     useEffect(() => {
-        setuser(props.route.params.user)
-    },[props.route.params.user])
+        setuser(props.user)
+    },[])
 
     whereAmI = () => {
       if(regionPosition.speed == 0 && Object.keys(map).length > 0){
@@ -209,7 +209,7 @@ const Home = (props) => {
                 <TouchableOpacity style={{width:'100%',height:'100%'}} onPress={()=>whereAmI()}/>
             </View>: null : null}
             {regionPosition.speed <= 5 ? <View style={{height:55,position:'absolute',right:'1%',top:'8%'}}>
-              <Search position={regionPosition} user={props.route.params.user}/>
+              <Search position={regionPosition} user={props.user}/>
             </View> : null}
             <View style={{width:dimensions.width,bottom:0,position:'absolute'}}>
               <Drawerr user={user} regionPosition={regionPosition} followMe={()=>whereAmI()} logout={props.navigation}/>

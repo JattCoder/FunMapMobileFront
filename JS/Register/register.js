@@ -41,62 +41,53 @@ const Register = (props) => {
 
     useSelector((state)=>{
         if(res != state.login) {
+            console.warn('Creating Account: ',state.login.result)
             setRes(state.login)
-            if(Object.keys(state.login.message).length > 0 && state.login.result == false){
-                if(registerLoad == true) setregisterLoad(false)
-                console.warn(state.login.message.error)
-            }else if(state.login.result == true){
+            if(state.login.result){
                 console.warn('Successfully Created Account')
                 props.navigation.navigate('Login')
+            }else if(Object.keys(state.login.message).length > 0 && state.login.result == false){
+                if(registerLoad == true) setregisterLoad(false)
+                console.warn(state.login.message.error)
             }
         }
-        // if(res != state.login)
-        // if(state.login.result == false && Object.keys(state.login.message).length != 0){
-        //     console.warn(state.login.message)
-        //     // if(state.login.message == 'Account already Exists'){
-        //     //     setTimeout(()=>{
-        //     //         props.navigation.navigate('Login')
-        //     //     },3000)
-        //     // }
-        //     if(registerLoad == true) setregisterLoad(false)
-        // }else if(state.login.result == true){
-        //     user = state.login.message
-        //     props.navigation.navigate('ConfirmEmail', {user: user})
-        // }
     })
 
     return(
-        <LinearGradient colors={['#00B4DB','#1CB5E0','#000046']} style={Styles.Page}>
+        <LinearGradient colors={['white','white','white']} style={Styles.Page}>
             <Text style={Styles.Heading}>Register</Text>
             <TouchableOpacity style={Styles.FirstBox}>
-                <Text style={{color:'#f5f5f5',fontWeight:'bold'}}>Name </Text>
+                <Text style={{color:'black',fontWeight:'bold'}}>Name </Text>
                 <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:-4,borderColor:'#f5f5f5'}}/>
                 <TextInput style={Styles.FirstInput} autoCapitalize = 'none' onChangeText={(e)=>setname(e)}/>
             </TouchableOpacity>
             <TouchableOpacity style={Styles.NextBox}>
-                <Text style={{color:'#f5f5f5',fontWeight:'bold'}}>Email  </Text>
+                <Text style={{color:'black',fontWeight:'bold'}}>Email  </Text>
                 <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:-4,borderColor:'#f5f5f5'}}/>
                 <TextInput style={Styles.NextInput} autoCapitalize = 'none' onChangeText={(e)=>setemail(e)}/>
             </TouchableOpacity>
             <TouchableOpacity style={Styles.NextBox}>
-                <Text style={{color:'#f5f5f5',fontWeight:'bold'}}>Phone</Text>
+                <Text style={{color:'black',fontWeight:'bold'}}>Phone</Text>
                 <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:-4,borderColor:'#f5f5f5'}}/>
                 <TextInput style={Styles.NextInput} autoCapitalize = 'none' onChangeText={(e)=>setphone(e)}/>
             </TouchableOpacity>
             <TouchableOpacity style={Styles.NextBox}>
-                <Text style={{color:'#f5f5f5',fontWeight:'bold'}}>Pass   </Text>
+                <Text style={{color:'black',fontWeight:'bold'}}>Pass   </Text>
                 <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:-4,borderColor:'#f5f5f5'}}/>
                 <TextInput style={Styles.NextInput} autoCapitalize = 'none' secureTextEntry={true} onChangeText={(e)=>setpass(e)}/>
             </TouchableOpacity>
             <TouchableOpacity style={Styles.NextBox}>
-                <Text style={{color:'#f5f5f5',fontWeight:'bold'}}>Pass   </Text>
+                <Text style={{color:'black',fontWeight:'bold'}}>Pass   </Text>
                 <TouchableOpacity style={{height:25,borderWidth:0.6,marginLeft:7,marginTop:-4,borderColor:'#f5f5f5'}}/>
                 <TextInput style={Styles.NextInput} autoCapitalize = 'none' secureTextEntry={true} onChangeText={(e)=>setrpass(e)}/>
             </TouchableOpacity>
             <TouchableOpacity style={Styles.Register} onPress={()=>RegisterAttempt()}>
-            <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['#1CB5E0','#1CB5E0','#1CB5E0']} style={{width:'100%',height:'100%',borderRadius:25,justifyContent:'center',alignItems:'center'}}>
-                {registerLoad == false ? <Text style={Styles.RegisterText}>Register</Text> : <ActivityIndicator size='small' color='#5810d8'/>}
-            </LinearGradient>
+                <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['#1CB5E0','#1CB5E0','#1CB5E0']} style={{width:'100%',height:'100%',borderRadius:25,justifyContent:'center',alignItems:'center'}}>
+                    {registerLoad == false ? <Text style={Styles.RegisterText}>Register</Text> : <ActivityIndicator size='small' color='#5810d8'/>}
+                </LinearGradient>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={()=>props.close()} style={{marginTop:'7%'}}>
+                <Text>Cancel</Text>
             </TouchableOpacity>
         </LinearGradient>
     )
@@ -114,13 +105,13 @@ const Styles = StyleSheet.create({
     },
     Heading:{
         fontSize:25,
-        color:'white',
+        color:'black',
         marginTop:70,
     },
     FirstBox:{
         marginTop:70,
         borderRadius:10,
-        borderColor:'#f5f5f5',
+        borderColor:'grey',
         borderWidth:0.8,
         width:280,
         height:45,
@@ -146,7 +137,7 @@ const Styles = StyleSheet.create({
     NextBox:{
         marginTop:20,
         borderRadius:10,
-        borderColor:'#f5f5f5',
+        borderColor:'grey',
         borderWidth:0.8,
         width:280,
         height:45,

@@ -9,8 +9,6 @@ export const register = (name,email,phone,photo,password,mac) => {
         await auth()
         .createUserWithEmailAndPassword(email, password)
         .then((ur) => {
-            //trying to get created uid by firebase so i dont have to run extra calls to firebase
-            console.warn(ur)
             firebase.database().ref(`Users/`)
             .once('value', snapshot => {
                 let count = 0
@@ -31,7 +29,7 @@ export const register = (name,email,phone,photo,password,mac) => {
                     phone,
                     photo,
                     mac,
-                    id:count+1,
+                    id:ur.user.uid,
                     since:new Date().getTime()
                 }).then((data)=>{
                     console.warn('saved')
