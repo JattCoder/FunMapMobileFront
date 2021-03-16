@@ -59,28 +59,18 @@ const Login = (props) => {
     const[user,setUser] = useState({})
     const dispatch = useDispatch()
 
-    useEffect(()=>{
-        if (!firebase.apps.length) {
-            firebase.initializeApp({
-                authDomain: "maps-8a2af.firebaseapp.com",
-                databaseURL: "https://maps-8a2af.firebaseio.com",
-                projectId: "maps-8a2af",
-                appId: "1:626824452588:web:6db65e228561fca36108c9",
-                apiKey: "AIzaSyCubEvuePYKjY1LbFOA0Dief0endEF0SY8",
-            });
-        }
+    appIntro = () => {
         Animated.timing(intrOpacity,{
             toValue: 1,
             duration: 500,
             useNativeDriver: false
         }).start(()=>{
-            auth().onAuthStateChanged(user => {
-                console.warn(user.email)
-                if(user){
-                    firebase.database().ref(`Users/${user.email.replace(punctuation,'').replace(spaceRE,'')}`)
-                    .on('value',snapshot => {
+            auth().onAuthStateChanged(usr => {
+                if(usr){
+                    firebase.database().ref(`Users/${usr.email.replace(punctuation,'').replace(spaceRE,'')}`)
+                    .once('value',snapshot => {
                         setUser(snapshot.val())
-                        openHome()
+                        letsGoHome()
                     })
                 }else{
                     Animated.parallel([
@@ -103,7 +93,17 @@ const Login = (props) => {
                 }
             })
         })
+    }
+
+    useEffect(()=>{
+        appIntro()
     },[])
+
+    letsGoHome = () => {
+        if(Object.keys(user).length > 0) {
+            openHome()
+        }
+    }
 
     LoginAttempt = () => {
         if(email == '' || pass == ''){
@@ -173,7 +173,6 @@ const Login = (props) => {
             firebase.database().ref(`Users/`+email.replace(punctuation,'').replace(spaceRE,''))
             .on('value', snapshot => {
                 setUser(snapshot.val())
-                openHome()
                 // if(snapshot.val().mac == mac) dispatch(login(snapshot,))
                 // else alert('First Log-Out from other device')
             })

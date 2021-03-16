@@ -1,6 +1,4 @@
 import React,{ useState, useEffect } from 'react'
-import { locshare } from '../../../actions/settings/locShare'
-import { useDispatch, useSelector } from 'react-redux'
 import firebase from 'firebase'
 import { View, Text, Dimensions, TouchableOpacity, StyleSheet } from 'react-native'
 const punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~]/g
@@ -11,22 +9,11 @@ export default Locationshare = (props) => {
     const [publiColor,setPubliColor] = useState('rgba(142, 144, 145, 0.4)')
     const [familyColor,setFamilyColor] = useState('rgba(142, 144, 145, 0.4)')
     const [ghostColor,setGhoftColor] = useState('#7F7FD5')
-    const [fams,setFams] = useState([])
-    const [email,setEmail] = useState('')
-    const [settings,setSettings] = useState({})
-    const dispatch = useDispatch()
 
     useEffect(()=>{
-        if(Object.keys(fams).length > 0){
-            users = fams[Object.keys(fams)[0]].Users
-            for(let urs in users){
-                if(users[urs].Email == props.email)
-                    if(props.share == false && users[urs].LocationShare == false) selecType('Ghost')
-                    else if(props.share == false && users[urs].LocationShare == true) selecType('Family')
-                    else if(props.share == true) selecType('Public')
-            }
-        }
-    })
+        console.warn('Email: ',props.share)
+        //updateChange(props.share)
+    },[props.email,props.share])
 
     selecType = (selection) => {
         if(selection == 'Public'){
@@ -44,32 +31,21 @@ export default Locationshare = (props) => {
         }
     }
 
-    updateFamilies = (currentFam,selection) => {
-        firebase.database().ref('FamilyGroups/'+currentFam.ID+'/Members/'+props.email.replace(punctuation,'').replace(spaceRE,'')).update({
-            locationShare: selection == 'Ghost' ? false : true
-        })
-    }
-
     updateProfile = (selection) => {
         firebase.database().ref('Users/'+props.email.replace(punctuation,'').replace(spaceRE,'')+'/').update({
             locationShare: selection == 'Public' ? true : false
         })
     }
 
-    updateChange = (selection) => {
-        selecType(selection)
-        setTimeout(()=>{
+    updateChange = (selection = '') => {
+        if(selection == ''){
+            selecType('Ghost')
+            updateProfile('Ghost')
+        }else{
+            selecType(selection)
             updateProfile(selection)
-            for(let fam in fams) updateFamilies(fams[fam],selection)
-        },500)
-        //dispatch(locshare(selection))
-    }
-
-    useSelector((state)=>{
-        if(fams != state.family){
-            setFams(state.family)
         }
-    })
+    }
 
     return(
         <View style={{width:Dimensions.get('window').width,height:'5%',justifyContent:'center', alignItems:'center',borderRadius:10}}>

@@ -1,134 +1,66 @@
 import React,{ useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { mylocation } from '../../../actions/mylocation/mylocation'
-import Geocoder from 'react-native-geocoder-reborn'
-import firebase from 'firebase'
+import { useSelector } from 'react-redux'
 import Checkbattery from './checkbattery'
 import { View, Text, Image } from 'react-native'
 import Weathericon from './weathericon'
 import History from '../../Home/components/history'
-const punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~]/g
-const spaceRE = /\s+/g
+import Geocoder from 'react-native-geocoder-reborn'
 
 export default Bottomweather = (props) => {
 
-    const[currentCity,setcurrentCity] = useState('')
-    const[wther,setweather] = useState({
-        temp:0,
-        icon:''
-    })
+    const[wther,setweather] = useState({ temp:0, icon:''})
+    const[position,setPosition] = useState({latitude:0,longitude:0})
+    const[currentCity,setCurrentCity] = useState('')
     const[temp,setTemp] = useState('F°')
-    const[fams,setFams] = useState([])
     const[email,setEmail] = useState('')
-    const dispatch = useDispatch()
-    let city = ''
     let date = new Date().getHours()
 
-    useSelector((state)=>{
-        if(fams != state.family && currentCity != ''){
-            setFams(state.family)
-            setEmail(props.email)
-        }
-        if(temp != state.settings.temperature) setTemp(state.settings.temperature)
-    })
-
-    useEffect(()=>{
-        geocode()
-    },[props.position.latitude,props.position.longitude])
-
-    updateLocation = (location,res) => {
-        dispatch(mylocation({
-            latitude: props.position.latitude,
-            longitude: props.position.longitude,
-            speed: props.position.speed,
-            heading: props.position.heading,
-            altitude: props.position.altitude,
-            altitudeAccuracy: props.position.altitudeAccuracy,
-            accuracy: props.position.accuracy,
-            complete: location,
-            street: res.streetName,
-            city: res.locality,
-            state: res.adminArea,
-            zip: res.postalCode,
-            permitted:'Allowed',
-            message: ''
-        }))
-        //Unblock this code to update user location
-        //Object.keys(fams).length > 0 && email != '' ? updateGroups(location) : null
-    }
-
-    updateGroups = (location) => {
-        for(let fam in fams){
-            firebase.database().ref('FamilyGroups/'+fams[fam].ID+'/Members/'+email.replace(punctuation,'').replace(spaceRE,'')).update({
-                address: location,
-                latitude: props.position.latitude,
-                longitude: props.position.longitude,
-                speed: props.position.speed,
-                heading: props.position.heading
-            })
-        }
-    }
-
-    geocode = () => {
-        let Geo = {
-            lat: props.position.latitude,
-            lng: props.position.longitude
-        }
-        Geocoder.geocodePosition(Geo).then(res => {
-            if(props.position.latitude != 0 && props.position.longitude != 0){
-                position = props.position
-                location = ''
-                if(res[0].streetName != null) location += res[0].streetName + ', '
-                if(res[0].locality != null) location += res[0].locality + ', '
-                if(res[0].adminArea != null) location += res[0].adminArea + ' '
-                if(res[0].postalCode != null) location += res[0].postalCode
-                updateLocation(location,res[0])
-                if(currentCity != location){
-                    setcurrentCity(location)
-                    if(res[0].locality != city){
-                        city = res[0].locality
-                        fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=726db19d90971027a329515b851bfddc`)
-                        .then(res => {return res.json()})
-                        .then(data => {
-                            if(temp == 'F°'){
-                                setweather({
-                                    temp: Math.round((parseInt(data.main.temp)-273.15)*9/5+32)+' '+temp,
-                                    icon: data.weather[0].icon
-                                })
-                            }else if(temp == 'C°'){
-                                setweather({
-                                    temp: Math.round(parseInt(data.main.temp)-273.15)+' '+temp,
-                                    icon: data.weather[0].icon
-                                })
-                            }
+    getWeather = () => {
+        console.warn(props.position)
+        Geocoder.geocodePosition(props.position).then(res => {
+            setCurrentCity({city:res[0].locality,display:`${res[0].streetName != null ? res[0].streetName+', ':null}${res[0].locality != null ? res[0].locality+', ':null},${res[0].adminArea != null ? res[0].adminArea:null}`})
+            if(pos.latitude != 0 && pos.longitude != 0){
+                fetch(`https://api.openweathermap.org/data/2.5/weather?q=${res[0].locality}&appid=726db19d90971027a329515b851bfddc`)
+                .then(res => {return res.json()})
+                .then(data => {
+                    if(temp == 'F°'){
+                        setweather({
+                            temp: Math.round((parseInt(data.main.temp)-273.15)*9/5+32)+' '+temp,
+                            icon: data.weather[0].icon
                         })
-                        .catch(err => console.log('Weather Error: ',err.message))
+                    }else if(temp == 'C°'){
+                        setweather({
+                            temp: Math.round(parseInt(data.main.temp)-273.15)+' '+temp,
+                            icon: data.weather[0].icon
+                        })
                     }
-                }
-            }else{
-                setweather({temp: 'N/A', icon: ''})
-                setcurrentCity('No Location Info')
-                {fams.length > 0 && id != -1 ? fams.map((fam)=>{
-                    firebase.database().ref(`FamilyGroups/${fam[0].id}/${id}`).update({
-                        location: `Location Disabled`,
-                        heading:0,
-                        latitude:0,
-                        longitude:0,
-                        speed:0
-                    })
-                }) : null}
+                })
+                .catch(err => console.log('Weather Error: ',err.message))
+                // setNewLocation({
+                //     complete:res[0].formattedAddress,
+                //     street:`${res[0].streetNumber} ${res[0].streetName}`,
+                //     city:res[0].locality,
+                //     state:res[0].adminArea,
+                //     zip:res[0].postalCode, 
+                // })
             }
         }).catch(err => console.log(err))
     }
 
+    useEffect(()=>{
+        setEmail(props.email)
+        setTemp(props.temp)
+        getWeather()
+    },[props.email,props.temp,props.position])
+
     return(
         <View>
-            <History email={props.email} current={{lat: props.position.latitude, lng: props.position.longitude}} speed={props.position.speed}/>
+            <History email={props.email} current={{lat: currentCity.latitude, lng: currentCity.longitude}} speed={currentCity.speed}/>
             {email != '' ? <Checkbattery email={email}/> : null}
-            {currentCity != '' ? <View style={{flexDirection:'row',width:'100%',alignItems:'center'}}>
+            {currentCity.city != '' ? <View style={{flexDirection:'row',width:'100%',alignItems:'center'}}>
                 <View style={{left:0,width:'77%'}}>
                     <Text style={{fontSize:20,color:'#7F7FD5'}}>{props.name}</Text>
-                    <Text style={{color:'#7F7FD5'}}>{currentCity}</Text>
+                    <Text style={{color:'#7F7FD5'}}>{currentCity.display}</Text>
                 </View>
                 <View style={{right:0,top:0,alignItems:'center'}}>
                     {wther.icon == '' ? date < 18 ? <View style={{justifyContent:'center',alignItems:'center'}}>

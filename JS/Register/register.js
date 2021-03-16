@@ -45,7 +45,7 @@ const Register = (props) => {
             setRes(state.login)
             if(state.login.result){
                 console.warn('Successfully Created Account')
-                props.navigation.navigate('Login')
+                props.close()
             }else if(Object.keys(state.login.message).length > 0 && state.login.result == false){
                 if(registerLoad == true) setregisterLoad(false)
                 console.warn(state.login.message.error)
@@ -132,7 +132,7 @@ const Styles = StyleSheet.create({
         width:190,
         height:20,
         marginLeft:10,
-        color:'white'
+        color:'black'
     },
     NextBox:{
         marginTop:20,
@@ -158,7 +158,7 @@ const Styles = StyleSheet.create({
         width:190,
         height:20,
         marginLeft:10,
-        color:'white'
+        color:'black'
     },
     CodeBox:{
         marginTop:5,

@@ -1,32 +1,41 @@
-import React from 'react'
+import React,{ useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { mylocation } from '../../actions/mylocation/mylocation'
 import Geolocation from '@react-native-community/geolocation'
 
 export default Location = () =>{
 
-    let id;
-    let dispatch = useDispatch()
+    const dispatch = useDispatch()
+    const [lastLocation, setNewLocation] = useState({
+        complete: '',
+        street: '',
+        city: '',
+        state: '',
+        zip: '',
+    })
 
-    success = (pos) => {
-        pos = pos.coords
+    updateLocation = (pos) => {
         dispatch(mylocation({
             latitude: pos.latitude,
             longitude: pos.longitude,
-            speed: 0,
-            heading: 0,
-            altitude: 0,
-            altitudeAccuracy: 0,
-            accuracy: 0,
-            complete: '',
-            street: '',
-            city: '',
-            state: '',
-            zip: '',
+            speed: pos.speed,
+            heading: pos.heading,
+            altitude: pos.heading,
+            altitudeAccuracy: pos.altitudeAccuracy,
+            accuracy: pos.accuracy,
+            complete: lastLocation.complete,
+            street: lastLocation.street,
+            city: lastLocation.city,
+            state: lastLocation.state,
+            zip: lastLocation.zip,
             permitted: '',
             message:'Allowed'
         }))
-        Geolocation.clearWatch(id);
+    }
+
+    success = (pos) => {
+        if(pos.coords.speed <= 1 || pos.coords.speed >= -1)
+            updateLocation(pos.coords)
     }
       
     error = (err) => {
@@ -47,7 +56,6 @@ export default Location = () =>{
             permitted: '',
             message: err.message
         }))
-        Geolocation.clearWatch(id);
     }
       
     options = {

@@ -14,7 +14,7 @@ import Navigating from './components/navigating'
 import { StyleSheet, Animated, View, ScrollView, TouchableOpacity, Image, Dimensions, Text } from 'react-native'
 const { width, height } = Dimensions.get('screen')
 let closeButtonsTimeout
-//<Bottom user={props.user} position={props.regionPosition}/>
+
 export default Drawerr = (props) => {
 
   const [backColor,setBackColor] = useState(['#00B4DB','#1CB5E0','#000046'])
@@ -422,7 +422,7 @@ export default Drawerr = (props) => {
               {props.user.photo != '' ? <Image source={{ uri: props.user.image }} /> : <Uimage name={props.user.name} />}
             </TouchableOpacity>
             <View> 
-              <Bottomweather name={props.user.name} email={props.user.email} position={props.regionPosition}/>
+              {props.user.settings ? <Bottomweather name={props.user.name} email={props.user.email} temp={props.user.settings.temperature} position={props.position}/> : null}
             </View>
           </TouchableOpacity>
         </Animated.View>

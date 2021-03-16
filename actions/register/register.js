@@ -14,23 +14,33 @@ export const register = (name,email,phone,photo,password,mac) => {
                 let count = 0
                 for(let key in snapshot.val()) count += 1
                 firebase.database().ref(`Users/${email.replace(punctuation, '').replace(spaceRE, ' ')}`).set({
-                    drivingMode:'driving',
-                    famSelection:'',
-                    ferries:false,
-                    highways:false,
-                    home:'',
-                    km:'miles',
-                    locationShare:false,
-                    member_type:'trial',
-                    temperature:'C°',
-                    tolls:false,
+                    settings:{
+                        drivingMode:'driving',
+                        famSelection:'',
+                        ferries:false,
+                        highways:false,
+                        home:'',
+                        work:'',
+                        units:'miles',
+                        locationShare:false,
+                        member_type:'trial',
+                        temperature:'C°',
+                        tolls:false
+                    },
                     name,
                     email,
                     phone,
                     photo,
                     mac,
                     id:ur.user.uid,
-                    since:new Date().getTime()
+                    since:new Date().getTime(),
+                    location:'',
+                    locationShare:'Ghost',
+                    geo:{latitude:0,longitude:0},
+                    batteryLevel:0,
+                    charging:false,
+                    heading:0,
+                    speed:0
                 }).then((data)=>{
                     console.warn('saved')
                     dispatch({type: REGISTER, message: data, result: true})
