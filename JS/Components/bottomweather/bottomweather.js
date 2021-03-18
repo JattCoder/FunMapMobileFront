@@ -48,9 +48,9 @@ export default Bottomweather = (props) => {
             .then(res => {return res.json()})
             .then(info => {
                 if(lastCity == '') lastCity = info.items[0].address.city
-                if(info.items){
-                    setCurrentCity({city:info.items[0].address.city,display:`${info.items[0].address.street != null ? info.items[0].address.street+', ':''}${info.items[0].address.city != null ? info.items[0].address.city+', ':''}${info.items[0].address.stateCode != null ? info.items[0].address.stateCode:''}`,date:currentCity.date})
-                }
+                // if(info.items){
+                //     setCurrentCity({city:info.items[0].address.city,display:`${info.items[0].address.street != null ? info.items[0].address.street+', ':''}${info.items[0].address.city != null ? info.items[0].address.city+', ':''}${info.items[0].address.stateCode != null ? info.items[0].address.stateCode:''}`,date:currentCity.date})
+                // }
                 updateWeather(lastCity)
             })
             .catch(err => {
@@ -60,9 +60,10 @@ export default Bottomweather = (props) => {
     }
 
     useSelector(state => {
-        if(position.latitude != state.mylocation.latitude || position.longitude != state.mylocation.longitude) 
+        if(position.latitude != state.mylocation.latitude || position.longitude != state.mylocation.longitude){
             setPosition({latitude:state.mylocation.latitude,longitude:state.mylocation.longitude})
             geocode()
+        }
     })
 
     useEffect(()=>{
@@ -77,7 +78,7 @@ export default Bottomweather = (props) => {
             {currentCity.city != '' ? <View style={{flexDirection:'row',width:'100%',alignItems:'center'}}>
                 <View style={{left:0,width:'77%'}}>
                     <Text style={{fontSize:20,color:'#7F7FD5'}}>{props.name}</Text>
-                    <Text style={{color:'#7F7FD5'}}>{currentCity.display}</Text>
+                    <Text style={{color:'#7F7FD5'}}>{currentCity.display.replace('null,','').replaceAll('null','')}</Text>
                 </View>
                 <View style={{right:0,top:0,alignItems:'center'}}>
                     {wther.icon == '' ? currentCity.date < 18 ? <View style={{justifyContent:'center',alignItems:'center'}}>
