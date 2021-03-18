@@ -10,48 +10,65 @@ export default Bottomweather = (props) => {
 
     const[wther,setweather] = useState({ temp:0, icon:''})
     const[position,setPosition] = useState({latitude:0,longitude:0})
-    const[currentCity,setCurrentCity] = useState('')
+    const[currentCity,setCurrentCity] = useState({city:'',display:'',date:''})
     const[temp,setTemp] = useState('F°')
     const[email,setEmail] = useState('')
-    let date = new Date().getHours()
 
-    getWeather = () => {
-        console.warn(props.position)
-        Geocoder.geocodePosition(props.position).then(res => {
-            setCurrentCity({city:res[0].locality,display:`${res[0].streetName != null ? res[0].streetName+', ':null}${res[0].locality != null ? res[0].locality+', ':null},${res[0].adminArea != null ? res[0].adminArea:null}`})
-            if(pos.latitude != 0 && pos.longitude != 0){
-                fetch(`https://api.openweathermap.org/data/2.5/weather?q=${res[0].locality}&appid=726db19d90971027a329515b851bfddc`)
-                .then(res => {return res.json()})
-                .then(data => {
-                    if(temp == 'F°'){
-                        setweather({
-                            temp: Math.round((parseInt(data.main.temp)-273.15)*9/5+32)+' '+temp,
-                            icon: data.weather[0].icon
-                        })
-                    }else if(temp == 'C°'){
-                        setweather({
-                            temp: Math.round(parseInt(data.main.temp)-273.15)+' '+temp,
-                            icon: data.weather[0].icon
-                        })
-                    }
-                })
-                .catch(err => console.log('Weather Error: ',err.message))
-                // setNewLocation({
-                //     complete:res[0].formattedAddress,
-                //     street:`${res[0].streetNumber} ${res[0].streetName}`,
-                //     city:res[0].locality,
-                //     state:res[0].adminArea,
-                //     zip:res[0].postalCode, 
-                // })
-            }
-        }).catch(err => console.log(err))
+    updateWeather = (lastCity) => {
+        if((lastCity != currentCity.city && lastCity != '') || (new Date(currentCity.date).getHours() <= new Date(currentCity.date).getHours() + 6) || currentCity.date == '' || (wther.temp == 0)){
+            fetch(`https://api.openweathermap.org/data/2.5/weather?q=${currentCity.city}&appid=726db19d90971027a329515b851bfddc`)
+            .then(res => {return res.json()})
+            .then(data => {
+                setCurrentCity({city:currentCity.city,display:currentCity.display,date:new Date()})
+                if(temp == 'F°'){
+                    setweather({
+                        temp: data.message != 'city not found' ? Math.round((parseInt(data.main.temp)-273.15)*9/5+32)+' '+temp : 'N/A',
+                        icon: data.message != 'city not found' ? data.weather[0].icon : ''
+                    })
+                }else if(temp == 'C°'){
+                    setweather({
+                        temp: data.message != 'city not found' ? Math.round(parseInt(data.main.temp)-273.15)+' '+temp : 'N/A',
+                        icon: data.message != 'city not found' ? data.weather[0].icon : ''
+                    })
+                }
+            })
+            .catch(err => console.warn('Weather Error: ',err.message))
+        }
     }
+
+    geocode = () => {
+        lastCity = currentCity.city != '' ? currentCity.city : ''
+        Geocoder.geocodePosition({lat:position.latitude,lng:position.longitude}).then(res => {
+            if(lastCity == '') lastCity = res[0].locality
+            setCurrentCity({city:res[0].locality?res[0].locality:res[0].feature,display:res[0].streetName || res[0].locality || res[0].adminArea ? `${res[0].streetName != null ? res[0].streetName+', ':null}${res[0].locality != null ? res[0].locality+', ':null}${res[0].adminArea != null?res[0].adminArea:null}`:res[0].feature,date:currentCity.date})
+            updateWeather(lastCity)
+        }).catch(err => {
+            //SECOND SOURCE
+            fetch(`https://revgeocode.search.hereapi.com/v1/revgeocode?at=${position.latitude},${position.longitude}&lang=en-US&apiKey=tOzyGAv3qnNge0QzSmXnwD54zKsR4xCZY3M5yMC22OM`)
+            .then(res => {return res.json()})
+            .then(info => {
+                if(lastCity == '') lastCity = info.items[0].address.city
+                if(info.items){
+                    setCurrentCity({city:info.items[0].address.city,display:`${info.items[0].address.street != null ? info.items[0].address.street+', ':''}${info.items[0].address.city != null ? info.items[0].address.city+', ':''}${info.items[0].address.stateCode != null ? info.items[0].address.stateCode:''}`,date:currentCity.date})
+                }
+                updateWeather(lastCity)
+            })
+            .catch(err => {
+                console.warn('Error from second source: ',err)
+            })
+        })
+    }
+
+    useSelector(state => {
+        if(position.latitude != state.mylocation.latitude || position.longitude != state.mylocation.longitude) 
+            setPosition({latitude:state.mylocation.latitude,longitude:state.mylocation.longitude})
+            geocode()
+    })
 
     useEffect(()=>{
         setEmail(props.email)
         setTemp(props.temp)
-        getWeather()
-    },[props.email,props.temp,props.position])
+    },[props.email,props.temp])
 
     return(
         <View>
@@ -63,7 +80,7 @@ export default Bottomweather = (props) => {
                     <Text style={{color:'#7F7FD5'}}>{currentCity.display}</Text>
                 </View>
                 <View style={{right:0,top:0,alignItems:'center'}}>
-                    {wther.icon == '' ? date < 18 ? <View style={{justifyContent:'center',alignItems:'center'}}>
+                    {wther.icon == '' ? currentCity.date < 18 ? <View style={{justifyContent:'center',alignItems:'center'}}>
                         <Image style={{height:35,width:35}} source={require('./weatherIcons/01d.png')}/>
                         <Text style={{color:'#7F7FD5'}}>{wther.temp}</Text>
                     </View> : <View style={{justifyContent:'center',alignItems:'center'}}>

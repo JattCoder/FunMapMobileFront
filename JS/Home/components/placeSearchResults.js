@@ -17,17 +17,6 @@ export default PlaceSearcgResults = (props) => {
     const [active,setActive] = useState(false)
     const dispatch = useDispatch()
 
-    getPhotos = () => {
-        imgs = []
-        placeInfo.photos.map(photo => {
-            fetch(`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo}&key=AIzaSyDMCLs_nBIfA8Bw9l50nSRwLOUByiDel9U`)
-            .then(res => {return res.blob()})
-            .then(img => console.warn(img._data))
-            .catch(err => console.warn(err))
-        })
-        setImages(imgs)
-    }
-
     displayNaviAnim = () => {
         Animated.timing(naviColor,{
             toValue: 1,
@@ -45,8 +34,7 @@ export default PlaceSearcgResults = (props) => {
     }
 
     getRoute = (finalize) => {
-        console.warn(props.position)
-        fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${props.position.latitude},${props.position.longitude}&destination=${placeInfo.location.lat},${placeInfo.location.lng}&avoid=${props.user.highways?'highways':''}|${props.user.ferries?'ferries':''}|${props.user.tolls?'tolls':''}&mode=${props.user.drivingMode}&key=AIzaSyDMCLs_nBIfA8Bw9l50nSRwLOUByiDel9U`)
+        fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${currentLocation.latitude},${currentLocation.longitude}&destination=${placeInfo.location.lat},${placeInfo.location.lng}&avoid=${props.user.highways?'highways':''}|${props.user.ferries?'ferries':''}|${props.user.tolls?'tolls':''}&mode=${props.user.drivingMode}&key=AIzaSyDMCLs_nBIfA8Bw9l50nSRwLOUByiDel9U`)
         .then(res => {return res.json()})
         .then(result => {
             if(result.status === 'ZERO_RESULTS') {

@@ -9,13 +9,7 @@ let initialState = {
     altitude: 0,
     altitudeAccuracy: 0,
     accuracy: 0,
-    complete: '',
-    street: '',
-    city: '',
-    state: '',
-    zip: '',
-    permitted:'',
-    message: ''
+    permitted: false,
 }
 
 const mylocation = (mylocation = initialState, action) => {

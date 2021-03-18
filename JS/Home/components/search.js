@@ -243,6 +243,7 @@ export default Search = (props) => {
 
     searchPlaces = (input = '',type = '') => {
         locationPack = []
+        console.warn(location)
         if(location.lat != 0 && location.lng != 0){
             fetch(`https://maps.googleapis.com/maps/api/place/textsearch/json?${type==''?`query=${input}`:`type=${type}`}&location=${location.lat},${location.lng}&radius=10000&key=AIzaSyDMCLs_nBIfA8Bw9l50nSRwLOUByiDel9U`)
             .then(res => {return res.json()})
