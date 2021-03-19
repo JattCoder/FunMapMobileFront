@@ -16,7 +16,6 @@ export default Bottomweather = (props) => {
 
     updateWeather = (lastCity) => {
         if((lastCity != currentCity.city && lastCity != '') || (new Date().getHours() >= new Date(currentCity.date).getHours() + 6) || currentCity.date == '' || (wther.temp == 0)){
-            console.warn('Getting Updated Weather')
             fetch(`https://api.openweathermap.org/data/2.5/weather?q=${currentCity.city}&appid=726db19d90971027a329515b851bfddc`)
             .then(res => {return res.json()})
             .then(data => {

@@ -9,8 +9,8 @@ export const family = (email) => {
         firebase.database().ref(`FamilyGroups/`).on('value',(allGroups) => {
             //GOT ALL GROUPS
             if(allGroups.val()){ allGroups.forEach( group => {
-                   if(group.child('Members/'+email.replace(punctuation,'').replace(spaceRE,''))){
-                        firebase.database().ref('FamilyGroups/'+group.key).on('value',(myGroup)=>{
+                   if(email.replace(punctuation,'').replace(spaceRE,'') in group.child('Members/')){
+                    firebase.database().ref('FamilyGroups/'+group.key).on('value',(myGroup)=>{
                             families[myGroup.child('Name').val()] = {
                                 Name: myGroup.child('Name').val(),
                                 Message: myGroup.child('Message').val(),

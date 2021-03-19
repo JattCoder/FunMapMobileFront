@@ -9,7 +9,6 @@ export const login = (email,pass,mac) => {
         auth()
         .signInWithEmailAndPassword(email,pass)
         .then((usr)=>{
-            console.warn(email.replace(punctuation,'').replace(spaceRE,''))
             firebase.database().ref(`Users/`+email.replace(punctuation,'').replace(spaceRE,''))
             .on('value', snapshot => {
                 if(snapshot.val().mac == mac) dispatch({type: LOGIN, message: snapshot, result: true})

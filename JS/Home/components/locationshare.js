@@ -11,7 +11,6 @@ export default Locationshare = (props) => {
     const [ghostColor,setGhoftColor] = useState('#7F7FD5')
 
     useEffect(()=>{
-        console.warn('Email: ',props.share)
         //updateChange(props.share)
     },[props.email,props.share])
 

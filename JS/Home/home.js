@@ -68,19 +68,6 @@ const Home = (props) => {
               },500)
               setSelectedPlace(selectedPlace)
           }
-          // else if(regionPosition.following){
-          //   //zoom => 15 -> 17
-          //   map.animateCamera(
-          //     {center: {
-          //       latitude: state.mylocation.latitude,
-          //       longitude: state.mylocation.longitude,
-          //     },
-          //     altitude: 500,
-          //     heading: state.mylocation.heading,
-          //     pitch: 0,
-          //     zoom: 17,
-          //   })
-          // }
         }
     })
     
@@ -97,7 +84,6 @@ const Home = (props) => {
                     showsBuildings={true}
                     showsPointsOfInterest={false}
                     onPanDrag={()=>setFreeSearch(true)}
-                    onMapReady={()=>console.warn('Readt')}
                     onUserLocationChange={(userlocation)=>{
                         loc = userlocation.nativeEvent.coordinate
                         setRegPosition({

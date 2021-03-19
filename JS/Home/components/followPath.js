@@ -22,7 +22,7 @@ export default FollowPath = (props) => {
         setRouteInfo(props.info)
     },[props.info])
 
-    console.warn(routeInfo.steps[0])
+    console.warn('RouteInfo: ',routeInfo.steps[0])
     return(
         routeInfo.steps.length > 0 ? <View>
             <Text><HtmlText html={routeInfo.steps[0].instruction}/></Text>

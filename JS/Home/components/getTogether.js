@@ -70,7 +70,6 @@ export default GetTogether = (props) => {
 
     sendInvitation = () => {
         if(title != '' && address != ''){
-            console.warn(date)
             firebase.database().ref('FamilyGroups/'+props.id+'/GetTogether/').push({
                 Address: address,
                 HostEmail: props.email,
