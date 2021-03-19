@@ -11,6 +11,7 @@ import polyline from '@mapbox/polyline'
 import { bottomsheet } from '../../actions/animation/bottomsheet'
 import SearchMarker from './components/searchMarker'
 import { mylocation } from '../../actions/mylocation/mylocation'
+import { set } from 'react-native-reanimated'
 
 const dimensions = Dimensions.get('screen')
 
@@ -38,7 +39,7 @@ const Home = (props) => {
     },[props.user])
     
     useSelector((state)=>{
-        if(regionPosition.latitude == 0 && regionPosition.longitude == 0){
+        if(regionPosition.latitude == 0 && regionPosition.longitude == 0 && state.mylocation.message == 'Allowed'){
           setRegPosition({
             latitude: state.mylocation.latitude,
             longitude: state.mylocation.longitude,
@@ -85,7 +86,7 @@ const Home = (props) => {
     
     return (
         <View style={{ height: dimensions.height, width: dimensions.width}}>
-            {regionPosition.latitude == 0 && regionPosition.longitude == 0 ? <Location /> : null}
+            <Location position={regionPosition}/>
             <View style={Styles.Page}>
                 <MapView provider={PROVIDER_GOOGLE}
                     ref={ref => { setmap(ref) }}

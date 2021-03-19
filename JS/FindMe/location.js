@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 import { mylocation } from '../../actions/mylocation/mylocation'
 import Geolocation from '@react-native-community/geolocation'
 
-export default Location = () =>{
+export default Location = (props) =>{
 
     const dispatch = useDispatch()
     let id = ''
