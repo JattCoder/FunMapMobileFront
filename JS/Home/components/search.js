@@ -274,8 +274,10 @@ export default Search = (props) => {
     }
 
     useSelector(state => {
-        if(state.navigation.active != navigating){
-            setNavigating(state.navigation.active)
+        if(location.lat != state.mylocation.latitude || location.lng != state.mylocation.longitude) {
+            setLocation({lat:state.mylocation.latitude,lng:state.mylocation.longitude})
+        }
+        if(state.navigation.path.length > 0){
             closeShortCuts()
             setTimeout(()=>{
                 closePlaceSearch()
@@ -343,12 +345,7 @@ export default Search = (props) => {
         outputRange:['#f3ebe1','#4169e1']
     })
 
-    useEffect(()=>{
-        setLocation({
-            lat:props.position.latitude,
-            lng:props.position.longitude
-        })
-    },[props.position])
+    useEffect(()=>{},[])
 
     return(
         <Animated.View style={{width:Dimensions.get('screen').width/1.12,height:55,position:'absolute',right:slide,alignItems:'center',flexDirection:'row'}}>

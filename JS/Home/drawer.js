@@ -422,7 +422,7 @@ export default Drawerr = (props) => {
               {props.user.photo != '' ? <Image source={{ uri: props.user.image }} /> : <Uimage name={props.user.name} />}
             </TouchableOpacity>
             <View> 
-              {props.user.settings ? <Bottomweather name={props.user.name} email={props.user.email} temp={props.user.settings.temperature}/> : null}
+              {props.user.settings ? <Bottomweather name={props.user.name} email={props.user.email} temp={props.user.settings.temperature} position={props.position}/> : null}
             </View>
           </TouchableOpacity>
         </Animated.View>

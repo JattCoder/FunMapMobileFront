@@ -6,6 +6,7 @@ import Geolocation from '@react-native-community/geolocation'
 export default Location = () =>{
 
     const dispatch = useDispatch()
+    let id = ''
     const [lastLocation, setNewLocation] = useState({
         complete: '',
         street: '',
@@ -31,6 +32,7 @@ export default Location = () =>{
             permitted: '',
             message:'Allowed'
         }))
+        Geolocation.clearWatch(id)
     }
 
     success = (pos) => {
@@ -39,7 +41,6 @@ export default Location = () =>{
     }
       
     error = (err) => {
-        console.warn('Received Error')
         dispatch(mylocation({
             latitude: 0,
             longitude: 0,

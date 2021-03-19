@@ -9,26 +9,34 @@ import Geocoder from 'react-native-geocoder-reborn'
 export default Bottomweather = (props) => {
 
     const[wther,setweather] = useState({ temp:0, icon:''})
-    const[position,setPosition] = useState({latitude:0,longitude:0})
+    //const[position,setPosition] = useState({latitude:0,longitude:0})
     const[currentCity,setCurrentCity] = useState({city:'',display:'',date:''})
     const[temp,setTemp] = useState('F°')
     const[email,setEmail] = useState('')
 
     updateWeather = (lastCity) => {
-        if((lastCity != currentCity.city && lastCity != '') || (new Date(currentCity.date).getHours() <= new Date(currentCity.date).getHours() + 6) || currentCity.date == '' || (wther.temp == 0)){
+        if((lastCity != currentCity.city && lastCity != '') || (new Date().getHours() >= new Date(currentCity.date).getHours() + 6) || currentCity.date == '' || (wther.temp == 0)){
+            console.warn('Getting Updated Weather')
             fetch(`https://api.openweathermap.org/data/2.5/weather?q=${currentCity.city}&appid=726db19d90971027a329515b851bfddc`)
             .then(res => {return res.json()})
             .then(data => {
-                setCurrentCity({city:currentCity.city,display:currentCity.display,date:new Date()})
-                if(temp == 'F°'){
+                if(Object.keys(data).length != 2){
+                    setCurrentCity({city:currentCity.city,display:currentCity.display,date:new Date()})
+                    if(temp == 'F°'){
+                        setweather({
+                            temp: Math.round((parseInt(data.main.temp)-273.15)*9/5+32)+' '+temp,
+                            icon: data.weather[0].icon
+                        })
+                    }else if(temp == 'C°'){
+                        setweather({
+                            temp: Math.round(parseInt(data.main.temp)-273.15)+' '+temp,
+                            icon: data.weather[0].icon
+                        })
+                    }
+                }else{
                     setweather({
-                        temp: data.message != 'city not found' ? Math.round((parseInt(data.main.temp)-273.15)*9/5+32)+' '+temp : 'N/A',
-                        icon: data.message != 'city not found' ? data.weather[0].icon : ''
-                    })
-                }else if(temp == 'C°'){
-                    setweather({
-                        temp: data.message != 'city not found' ? Math.round(parseInt(data.main.temp)-273.15)+' '+temp : 'N/A',
-                        icon: data.message != 'city not found' ? data.weather[0].icon : ''
+                        temp: 'N/A',
+                        icon: ''
                     })
                 }
             })
@@ -36,15 +44,15 @@ export default Bottomweather = (props) => {
         }
     }
 
-    geocode = () => {
+    geocode = (position) => {
         lastCity = currentCity.city != '' ? currentCity.city : ''
-        Geocoder.geocodePosition({lat:position.latitude,lng:position.longitude}).then(res => {
+        Geocoder.geocodePosition(position).then(res => {
             if(lastCity == '') lastCity = res[0].locality
             setCurrentCity({city:res[0].locality?res[0].locality:res[0].feature,display:res[0].streetName || res[0].locality || res[0].adminArea ? `${res[0].streetName != null ? res[0].streetName+', ':null}${res[0].locality != null ? res[0].locality+', ':null}${res[0].adminArea != null?res[0].adminArea:null}`:res[0].feature,date:currentCity.date})
-            updateWeather(lastCity)
+            updateWeather(lastCity == '' ? res[0].locality : lastCity)
         }).catch(err => {
             //SECOND SOURCE
-            fetch(`https://revgeocode.search.hereapi.com/v1/revgeocode?at=${position.latitude},${position.longitude}&lang=en-US&apiKey=tOzyGAv3qnNge0QzSmXnwD54zKsR4xCZY3M5yMC22OM`)
+            fetch(`https://revgeocode.search.hereapi.com/v1/revgeocode?at=${position.lat},${position.lng}&lang=en-US&apiKey=tOzyGAv3qnNge0QzSmXnwD54zKsR4xCZY3M5yMC22OM`)
             .then(res => {return res.json()})
             .then(info => {
                 if(lastCity == '') lastCity = info.items[0].address.city
@@ -59,17 +67,18 @@ export default Bottomweather = (props) => {
         })
     }
 
-    useSelector(state => {
-        if(position.latitude != state.mylocation.latitude || position.longitude != state.mylocation.longitude){
-            setPosition({latitude:state.mylocation.latitude,longitude:state.mylocation.longitude})
-            geocode()
-        }
-    })
+    // useSelector(state => {
+    //     if(position.latitude != state.mylocation.latitude || position.longitude != state.mylocation.longitude){
+    //         setPosition({latitude:state.mylocation.latitude,longitude:state.mylocation.longitude})
+    //         geocode()
+    //     }
+    // })
 
     useEffect(()=>{
         setEmail(props.email)
         setTemp(props.temp)
-    },[props.email,props.temp])
+        geocode({lat:props.position.latitude,lng:props.position.longitude})
+    },[props.email,props.temp,props.position])
 
     return(
         <View>

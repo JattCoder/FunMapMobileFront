@@ -19,7 +19,9 @@ const Home = (props) => {
     const [user, setuser] = useState({})
     const [map,setmap] = useState({})
     const [search,setsearch] = useState([])
-    const [zoom,setZoom] = useState(0)
+    const [navigation,setNavigation] = useState({path:[],active:false})
+    const [freeSearch,setFreeSearch] = useState(false)
+    const [selectedPlace,setSelectedPlace] = useState('')
     const [regionPosition, setRegPosition] = useState({
         latitude: 0,
         longitude: 0,
@@ -28,18 +30,15 @@ const Home = (props) => {
         altitude: 0,
         altitudeAccuracy: 0,
         accuracy: 0,
-        message: '',
-        following: true
+        message: ''
     })
-    const [path,setPath] = useState([])
-    const [navActive,setNavActive] = useState(false)
 
     useEffect(() => {
         setuser(props.user)
     },[props.user])
     
     useSelector((state)=>{
-        if(state.mylocation.latitude != regionPosition.latitude && state.mylocation.latitude != regionPosition.longitude){
+        if(regionPosition.latitude == 0 && regionPosition.longitude == 0){
           setRegPosition({
             latitude: state.mylocation.latitude,
             longitude: state.mylocation.longitude,
@@ -48,63 +47,87 @@ const Home = (props) => {
             altitudeAccuracy: state.mylocation.altitudeAccuracy,
             heading: state.mylocation.heading,
             speed: state.mylocation.speed,
-            following: regionPosition.following
           })
         }
         if(Object.keys(map).length > 0){
-          if(state.navigation.path.length > 0 && state.navigation.active && path != state.navigation.path){
-              setNavActive(state.navigation.active)
-              setPath(state.navigation.path)
-              map.fitToCoordinates(state.navigation.active ? polyline.decode(state.navigation.path) : state.navigation.path,{animated:true,edgePadding: { top: dimensions.height/4, right: 60, bottom: dimensions.height/2, left:60 }})
-          }else if(state.placesearch.length > 0 && search != state.placesearch){
+          if(navigation.path != state.navigation.path || navigation.active != state.navigation.active){
+              setTimeout(()=>{
+                map.fitToCoordinates(state.navigation.active ? polyline.decode(state.navigation.path) : state.navigation.path,{animated:true,edgePadding: { top: dimensions.height/4, right: 60, bottom: dimensions.height/2, left:60 }})
+              },500)
+              setNavigation({path:state.navigation.path,active:state.navigation.active})
+          }else if(search != state.placesearch){
+              setTimeout(()=>{
+                map.fitToCoordinates(state.placesearch.map(plc=>{return{latitude:plc.location.lat,longitude:plc.location.lng}}),{animated:true,edgePadding: { top: 30, right: 10, bottom: 10, left: 30 }})
+              },500)
               setsearch(state.placesearch)
-              map.fitToCoordinates(state.placesearch.map(plc=>{return{latitude:plc.location.lat,longitude:plc.location.lng}}),{animated:true,edgePadding: { top: 30, right: 10, bottom: 10, left: 30 }}) 
-          }else{
-            //zoom => 15 -> 17
-            map.animateCamera(
-              {center: {
-                latitude: state.mylocation.latitude,
-                longitude: state.mylocation.longitude,
-              },
-              altitude: 500,
-              heading: state.mylocation.heading,
-              pitch: 0,
-              zoom: 17,
-            })
+          }else if(state.marker.placeid != selectedPlace){
+              setTimeout(()=>{
+                map.animateToRegion({latitude:state.marker.location.lat,longitude:state.marker.location.lng,latitudeDelta:0.019,longitudeDelta:0.019},500)
+                dispatch(bottomsheet('Search'))
+              },500)
+              setSelectedPlace(selectedPlace)
           }
+          // else if(regionPosition.following){
+          //   //zoom => 15 -> 17
+          //   map.animateCamera(
+          //     {center: {
+          //       latitude: state.mylocation.latitude,
+          //       longitude: state.mylocation.longitude,
+          //     },
+          //     altitude: 500,
+          //     heading: state.mylocation.heading,
+          //     pitch: 0,
+          //     zoom: 17,
+          //   })
+          // }
         }
     })
-
-    markerSelected = (place) => {
-      map.animateToRegion({latitude:place.location.lat,longitude:place.location.lng,latitudeDelta:0.019,longitudeDelta:0.019},500)
-      dispatch(selmarker(place)),dispatch(bottomsheet('Search'))
-    }
     
     return (
         <View style={{ height: dimensions.height, width: dimensions.width}}>
-            <Location />
+            {regionPosition.latitude == 0 && regionPosition.longitude == 0 ? <Location /> : null}
             <View style={Styles.Page}>
                 <MapView provider={PROVIDER_GOOGLE}
                     ref={ref => { setmap(ref) }}
                     paddingAdjustmentBehavior={'always'}
                     onLongPress={()=>alert('Need Urgent Help?')}
-                    followsUserLocation={true}
-                    showsUserLocation={true}
+                    followsUserLocation={search.length > 0 ? false : navigation.path.length > 0 && navigation.active ? true : freeSearch ? false : true}
+                    showsUserLocation={regionPosition.latitude != 0 && regionPosition.longitude != 0 ? true : false}
                     showsBuildings={true}
                     showsPointsOfInterest={false}
-                    //onPanDrag={()=> setRegPosition(regionPosition,{following:false})}
+                    onPanDrag={()=>setFreeSearch(true)}
+                    onMapReady={()=>console.warn('Readt')}
                     onUserLocationChange={(userlocation)=>{
                         loc = userlocation.nativeEvent.coordinate
-                          dispatch(mylocation({
-                            latitude: loc.latitude,
-                            longitude: loc.longitude,
-                            speed: loc.speed,
-                            heading: loc.heading,
-                            altitude: loc.altitude,
-                            altitudeAccuracy: loc.altitudeAccuracy,
-                            accuracy: loc.accuracy,
-                            permitted: false
-                          }))
+                        setRegPosition({
+                          latitude: loc.latitude,
+                          longitude: loc.longitude,
+                          accuracy: loc.accuracy,
+                          altitude: loc.altitude,
+                          altitudeAccuracy: loc.altitudeAccuracy,
+                          heading: loc.heading,
+                          speed: loc.speed,
+                        })
+                            map.animateCamera(
+                              {center: {
+                                latitude: loc.latitude,
+                                longitude: loc.longitude,
+                              },
+                              altitude: 500,
+                              heading: loc.heading,
+                              pitch: 0,
+                              zoom: 17,
+                            })
+                          // dispatch(mylocation({
+                          //   latitude: loc.latitude,
+                          //   longitude: loc.longitude,
+                          //   speed: loc.speed,
+                          //   heading: loc.heading,
+                          //   altitude: loc.altitude,
+                          //   altitudeAccuracy: loc.altitudeAccuracy,
+                          //   accuracy: loc.accuracy,
+                          //   permitted: false
+                          // }))
                     }}
                     customMapStyle={mapStyle}
                     style={{ height: '100%', width: '100%'}}
@@ -114,9 +137,9 @@ const Home = (props) => {
                       latitudeDelta: 100.009,
                       longitudeDelta: 20.0009,
                     }}>
-                        {path.length > 0 ? <Polyline coordinates={path} strokeColor={'#2C5364'} geodesic={true} strokeWidth={7} tappable={true} onPress={(e)=>console.warn(e)}/> : null}
+                        {navigation.path.length > 0 ? <Polyline coordinates={navigation.path} strokeColor={'#2C5364'} geodesic={true} strokeWidth={7} tappable={true} onPress={(e)=>console.warn(e)}/> : null}
                         {search.map((place)=>{
-                            return <Marker onPress={()=>markerSelected(place)} coordinate={{latitude: place.location.lat, longitude: place.location.lng}}>
+                            return <Marker onPress={()=>console.warn(place)} coordinate={{latitude: place.location.lat, longitude: place.location.lng}}>
                                 <SearchMarker plc={place}/>
                             </Marker>
                         })}
