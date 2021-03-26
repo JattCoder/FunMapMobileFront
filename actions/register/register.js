@@ -4,7 +4,7 @@ import firebase from 'firebase'
 const punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~]/g
 const spaceRE = /\s+/g
 
-export const register = (name,email,phone,photo,password,mac) => {
+export const register = (name,email,phone,photo = '',password,mac) => {
     return async (dispatch) => {
         await auth()
         .createUserWithEmailAndPassword(email, password)
@@ -22,10 +22,12 @@ export const register = (name,email,phone,photo,password,mac) => {
                         home:'',
                         work:'',
                         units:'miles',
-                        locationShare:false,
                         member_type:'trial',
                         temperature:'C°',
-                        tolls:false
+                        tolls:false,
+                        locationShare:'Ghost',
+                        batteryLevel:0,
+                        charging:false
                     },
                     name,
                     email,
@@ -34,15 +36,15 @@ export const register = (name,email,phone,photo,password,mac) => {
                     mac,
                     id:ur.user.uid,
                     since:new Date().getTime(),
-                    location:'',
-                    locationShare:'Ghost',
-                    geo:{latitude:0,longitude:0},
-                    batteryLevel:0,
-                    charging:false,
-                    heading:0,
-                    speed:0
+                    location:{
+                        address:'',
+                        geo:{latitude:0,longitude:0},
+                        heading:0,
+                        speed:0,
+                    },
+                    favs:[],
+                    families:[]
                 }).then((data)=>{
-                    console.warn('saved')
                     dispatch({type: REGISTER, message: data, result: true})
                     //dispatch the data to global store with success message
                 }).catch((error)=>{

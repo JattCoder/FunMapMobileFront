@@ -34,7 +34,7 @@ export default History = (props) => {
         let yyyy = today.getFullYear();
         td = mm + '-' + dd + '-' + yyyy
         if(todaY.string != td) setToday({string:td, timestamp:today})
-        if(email != ''){
+        if(email != '' && props.current.lat != 0 && props.current.lng != 0){
             setPositionList([...positionList,[props.current.lat,props.current.lng]])
             setTimeout(()=>{sendResults()},20000)
         }

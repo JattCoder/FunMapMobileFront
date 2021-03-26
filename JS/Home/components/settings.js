@@ -33,26 +33,27 @@ export default Settings = (props) => {
     // "highways": false, "id": 1, "permitted": "Ghost", "temperature": "F°", "tolls": false, "user_id": 1}
 
     saveAndExit = () => {
-        firebase.database().ref('Users/'+props.user.email.replace(punctuation,'').replace(spaceRE,'')).update({
+        firebase.database().ref('Users/'+props.user.email.replace(punctuation,'').replace(spaceRE,'')+'/settings').update({
             drivingMode: drivingMode == false ? 'driving' : 'walking',
             highways: avoidHighways,
             tolls: avoidTolls,
             ferries: avoidFerries,
             temperature: temperature == false ? 'C°' : 'F°',
-        }).catch(err => console.warn(err))
-        Animated.parallel([
-            Animated.timing(saveExitSize,{
-                toValue: 0,
-                duration:10,
-                useNativeDriver:false
-            }),
-            Animated.timing(saveExitOpacity,{
-                toValue:0,
-                duration:10,
-                useNativeDriver:false
-            })
-        ]).start()
-        props.close()
+        }).then(res => {
+            Animated.parallel([
+                Animated.timing(saveExitSize,{
+                    toValue: 0,
+                    duration:10,
+                    useNativeDriver:false
+                }),
+                Animated.timing(saveExitOpacity,{
+                    toValue:0,
+                    duration:10,
+                    useNativeDriver:false
+                })
+            ]).start(()=>props.close())
+        })
+        .catch(err => console.warn(err))
     }
 
     openBackgroundColor = () => {
@@ -148,7 +149,7 @@ export default Settings = (props) => {
                     setTemperature(previousState => !previousState)
                 }
         })
-    },[props.user])
+    },[props.user.email])
 
     closeScroll = (e) => {
         if(e.nativeEvent.contentOffset.y < -10){

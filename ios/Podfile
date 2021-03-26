@@ -13,7 +13,6 @@ target 'MobileFront' do
   pod 'Google-Maps-iOS-Utils'
   pod 'GoogleSignIn', '~> 5.0.2'
   pod 'Firebase/Analytics'
-    
 
   target 'MobileFrontTests' do
     inherit! :complete

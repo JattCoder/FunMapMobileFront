@@ -447,9 +447,9 @@ export default FamCard = (props) => {
                 </Animated.View>
                 <Animated.View style={{height:usersHeightInterpolate,width:'100%',margin:20,opacity:usersOpacity}}>
                     <ScrollView>
-                        {props.Users.map((member)=>{
-                            return <UserCard user={member} locShare={props.locShare}/>
-                        })}
+                        {props.Users ? props.Users.map((member)=>{
+                            return <UserCard user={member}/>
+                        }) : null}
                     </ScrollView>
                 </Animated.View>
             </Animated.View>

@@ -30,32 +30,19 @@ export default Families = (props) => {
     }
 
     useEffect(()=>{
-        if(props.user.email) {
-            dispatch(family(props.user.email))
-            // if(fams[props.user.famSelection]) setFam(fams[props.user.famSelection])
-            //dispatch(invitations(props.user.email))
+        if(props.user.families) {
+            dispatch(family(props.user.families))
         }
-    },[props.user])
+    },[props.user.families])
 
     useSelector((state)=>{
         if(fams != state.family){
+            props.user.famSelection != '' ?
+            state.family.map(family => {
+                    if(family.id == props.user.famSelection) console.warn('true')
+                })
+            : setFam(state.family[0])
             setFams(state.family)
-            if(props.user.famSelection){
-                if(Object.keys(state.family[props.user.famSelection]).length > 0) {
-                    setFam(state.family[props.user.famSelection])
-                    count = 0
-                    for(let selection in state.family){
-                        if(selection == props.user.famSelection){
-                            break
-                        }
-                        count += 1
-                        setGroupNumber(count)
-                    }
-                }else{
-                    setFam(state.family[Object.keys(state.family)[0]])
-                    setGroupNumber(0)
-                }
-            }
         }
         //console.warn(props.user.famSelection)
         // if(invis != state.invitations){
@@ -66,11 +53,11 @@ export default Families = (props) => {
     nextFamily = () => {
         if((groupNumber + 1) < Object.keys(fams).length){
             setFam(fams[Object.keys(fams)[groupNumber+1]])
-            dispatch(famselection(props.user.email,fams[Object.keys(fams)[groupNumber+1]].Name))
+            dispatch(famselection(props.user.id,fams[Object.keys(fams)[groupNumber+1]].name))
             setGroupNumber(groupNumber+1)
         }else {
             setFam(fams[Object.keys(fams)[0]])
-            dispatch(famselection(props.user.email,fams[Object.keys(fams)[0]].Name))
+            dispatch(famselection(props.user.id,fams[Object.keys(fams)[0]].Name))
             setGroupNumber(0)
         }
     }
@@ -78,11 +65,11 @@ export default Families = (props) => {
     prevFamily = () => {
         if((groupNumber - 1) >= 0){
             setFam(fams[Object.keys(fams)[groupNumber-1]])
-            dispatch(famselection(props.user.email,fams[Object.keys(fams)[groupNumber-1]].Name))
+            dispatch(famselection(props.user.id,fams[Object.keys(fams)[groupNumber-1]].name))
             setGroupNumber(groupNumber - 1)
         }else {
             setFam(fams[Object.keys(fams)[Object.keys(fams).length - 1]])
-            dispatch(famselection(props.user.email,fams[Object.keys(fams)[Object.keys(fams).length - 1]].Name))
+            dispatch(famselection(props.user.id,fams[Object.keys(fams)[Object.keys(fams).length - 1]].Name))
             setGroupNumber(Object.keys(fams).length - 1)
         }
     }
@@ -223,7 +210,7 @@ export default Families = (props) => {
                 </View>
             </View>
             <Animated.View style={{position:'absolute',width:Dimensions.get('window').width,height:Dimensions.get('screen').height/2.3,opacity:familyCardOpacity,zIndex:familyPopUp,transform: [{ rotateY: rotateCardInterpolate}]}}>
-                {Object.keys(fams).length > 0 ? <FamCard UserName={props.user.name} UserEmail={props.user.email} ID={fam.ID} Name={fam.Name} Message={fam.Message} Users={fam.Users} gettogether={fam.GetTogether} locShare={props.user.locationShare} next={()=>nextFamily()} prev={()=>prevFamily()} size={Object.keys(fams).length}/>
+                {Object.keys(fams).length > 0 ? <FamCard UserName={props.user.name} UserEmail={props.user.email} ID={fam.id} Name={fam.name} Message={fam.message} Users={fam.members} gettogether={fam.GetTogether} locShare={props.user.locationShare} next={()=>nextFamily()} prev={()=>prevFamily()} size={Object.keys(fams).length}/>
                 : <NoFamInvi message={'Family'}/>}
             </Animated.View>
             <Animated.View style={{position:'absolute',width:Dimensions.get('window').width,height:Dimensions.get('screen').height/2.3,opacity:invitationCardOpacity,zIndex:InviPopUp,transform: [{ rotateY: rotateInvitaionsInterpolate}]}}>

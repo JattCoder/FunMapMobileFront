@@ -1,45 +1,57 @@
 import React,{ useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { member } from '../../../actions/famMembers/members'
 import { View, TouchableOpacity, Text, Image, Dimensions, StyleSheet } from 'react-native'
 
 export default UserCard = (props) => {
 
-    const [permitted,setPermitted] = useState('Ghost')
+    const [members,setMembers] = useState([])
+    const [user,setUser] = useState({
+        name: 'Harmandeep Mand',
+        location: 'Home',
+        locationShare: true,
+        battery: '100',
+        charging: false,
+        member: 'Member',
+        photo: ''
+    })
+    const dispatch = useDispatch()
 
     useEffect(()=>{
-        //console.warn(props.user.LocationShare)
+        if(props.user) memberInfo()
+    },[props.user])
+
+    useSelector(state => {
+        if(members != state.members) setMembers(state.members),memberInfo()
     })
-
-    // {"Address": null, "Email": "harmandeepmand.hm@gmail.com", "Heading": null, "Latitude": null, "LocationShare": false, "Longitute": null, "Member": "Member", "Name": "Harmandeep Mand", "Phone": "4403171521", "Photo": "", "Speed": null} 
-
+    //console.warn(props.user)
         return(
             <TouchableOpacity onPress={()=>alert('Pressed '+props.user.Name)} style={{width:Dimensions.get('window').width/1.10}}>
                 <View style={{flexDirection:'row',marginHorizontal:'7%',marginVertical:'2%',alignItems:'center'}}>
                     <View style={{width:50,height:50}}>
-                        {props.user.Photo != '' ? <Image source={{ uri: props.user.Photo }} /> : <Uimage name={props.user.Name} />}
+                        <Uimage name={user.name} />
                     </View>
                     <View style={{marginHorizontal:'2%'}}>
-                        <Text style={{fontSize:20,color:'#7F7FD5'}}>{props.user.Name}</Text>
-                        {!props.user.LocationShare ? <Text style={{color:'#7F7FD5',width:Dimensions.get('screen').width/1.9}}>Ghost Mode</Text>
-                        : <Text style={{color:'#7F7FD5',width:Dimensions.get('screen').width/1.9}}>{props.user.Address}</Text>}
+                        <Text style={{fontSize:20,color:'#7F7FD5'}}>{user.name}</Text>
+                        <Text style={{color:'#7F7FD5',width:Dimensions.get('screen').width/1.9}}>{user.location}</Text>
                     </View>
                     <View style={{position:'absolute',right:0,width:'10%'}}>
-                        { props.user.Charging ? <View style={Style.battery}>
+                        { user.charging ? <View style={Style.battery}>
                             <Image style={Style.icon} source={require('../../Components/bottomweather/batteryIcons/battery-charging.png')}/>
-                            <Text style={Style.level}>{`${props.user.BatteryLevel}%`}</Text>
+                            <Text style={Style.level}>{`${user.battery}%`}</Text>
                         </View> 
                         : <View style={Style.battery}>
-                            { props.user.BatteryLevel < 15 ? <View>
+                            { user.battery < 15 ? <View>
                                 <Image style={Style.icon} source={require('../../Components/bottomweather/batteryIcons/battery-zero.png')}/>
-                                <Text style={Style.level}>{`${props.user.BatteryLevel}%`}</Text>
+                                <Text style={Style.level}>{`${user.battery}%`}</Text>
                             </View>
-                            : props.user.BatteryLevel < 51 ? <View style={Style.battery}>
+                            : user.battery < 51 ? <View style={Style.battery}>
                                 <Image style={Style.icon}  source={require('../../Components/bottomweather/batteryIcons/battery-25.png')}/>
-                                <Text style={Style.level}>{`${props.user.BatteryLevel}%`}</Text>
+                                <Text style={Style.level}>{`${user.battery}%`}</Text>
                             </View> 
                             : <View style={Style.battery}>
                                 <Image style={Style.icon}  source={require('../../Components/bottomweather/batteryIcons/battery-100.png')}/>
-                                <Text style={Style.level}>{`${props.user.BatteryLevel}%`}</Text> 
+                                <Text style={Style.level}>{`${user.battery}%`}</Text> 
                             </View>}
                         </View>}
                     </View>

@@ -1,9 +1,7 @@
 import React,{ useState, useEffect } from 'react'
 import { View, Text, StyleSheet, Image, KeyboardAvoidingView, Dimensions, Animated } from 'react-native'
 import { TouchableOpacity, TextInput } from 'react-native-gesture-handler'
-import { useSelector, useDispatch } from 'react-redux'
-import { reslogin } from '../../actions/login/reslogin'
-//import { settings } from '../../actions/settings/settings'
+import { useDispatch } from 'react-redux'
 import Dialog from "react-native-dialog"
 import firebase from 'firebase'
 import LinearGradient from 'react-native-linear-gradient'
@@ -11,7 +9,8 @@ import DeviceInfo from 'react-native-device-info'
 import auth from '@react-native-firebase/auth'
 import Shimmer from 'react-native-shimmer'
 import Register from '../Register/register'
-import Home from '../Home/home'
+import Welcome from '../Welcome/welcome'
+import ModelView from 'react-native-gl-model-view'
 
 const punctuation = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~]/g
 const spaceRE = /\s+/g
@@ -67,7 +66,7 @@ const Login = (props) => {
         }).start(()=>{
             auth().onAuthStateChanged(usr => {
                 if(usr){
-                    firebase.database().ref(`Users/${usr.email.replace(punctuation,'').replace(spaceRE,'')}`)
+                    firebase.database().ref(`Users/${usr.uid.replace(punctuation,'').replace(spaceRE,'')}`)
                     .once('value',snapshot => {
                         setUser(snapshot.val())
                         letsGoHome()
@@ -512,6 +511,7 @@ const Login = (props) => {
                 </Dialog.Container>}
                 <Animated.View style={{position:'absolute', top:0, marginTop:introInterpolate,opacity:intrOpacity}}>
                     <Text style={Styles.Heading}>Fun Map</Text>
+                    <ModelView model={{uri:'./funmap.obj'}} scale={0.01} translateZ={-2} rotateZ={270}/>
                 </Animated.View>
                 <View style={{width: Dimensions.get('screen').width,height: Dimensions.get('screen').height/1.5,position:'absolute',bottom:0}}>
                     <Animated.View style={{height:emailPassInterpolate,width:'100%',position:'absolute',bottom:0,opacity:emailPassOpacity,justifyContent:'center',alignItems:'center'}}>
@@ -585,7 +585,7 @@ const Login = (props) => {
             </LinearGradient>
         </Animated.View>
         <Animated.View style={{height:HomePageHeight,opacity:HomePageOpacity,width:Dimensions.get('screen').width}}>
-            <Home user={user} logout={()=>closeHome()}/>
+            <Welcome user={user} logout={()=>closeHome()}/>
         </Animated.View>
         <Animated.View style={{height:RegisterPageHeight,opacity:RegisterPageOpacity,width:Dimensions.get('screen').width}}>
             <Register close={()=>closeRegister()}/>

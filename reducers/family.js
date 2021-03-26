@@ -7,7 +7,7 @@ const reducer = (family = [], action) => {
         case FAMILY:
             return action.family
         case NEWFAM:
-            family.push(action.family)
+            family.push(action.fam)
             return family
         case REMOVEFAM:
             return action.family

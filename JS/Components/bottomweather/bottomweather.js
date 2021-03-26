@@ -9,7 +9,7 @@ import Geocoder from 'react-native-geocoder-reborn'
 export default Bottomweather = (props) => {
 
     const[wther,setweather] = useState({ temp:0, icon:''})
-    //const[position,setPosition] = useState({latitude:0,longitude:0})
+    const[position,setPosition] = useState({latitude:0,longitude:0})
     const[currentCity,setCurrentCity] = useState({city:'',display:'',date:''})
     const[temp,setTemp] = useState('F°')
     const[email,setEmail] = useState('')
@@ -44,6 +44,7 @@ export default Bottomweather = (props) => {
     }
 
     geocode = (position) => {
+        setPosition({latitude:position.lat,longitude:position.lng})
         lastCity = currentCity.city != '' ? currentCity.city : ''
         Geocoder.geocodePosition(position).then(res => {
             if(lastCity == '') lastCity = res[0].locality
@@ -81,7 +82,7 @@ export default Bottomweather = (props) => {
 
     return(
         <View>
-            <History email={props.email} current={{lat: currentCity.latitude, lng: currentCity.longitude}} speed={currentCity.speed}/>
+            <History email={props.email} current={{lat: position.latitude, lng: position.longitude}} speed={currentCity.speed}/>
             {email != '' ? <Checkbattery email={email}/> : null}
             {currentCity.city != '' ? <View style={{flexDirection:'row',width:'100%',alignItems:'center'}}>
                 <View style={{left:0,width:'77%'}}>
