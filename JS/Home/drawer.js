@@ -427,7 +427,7 @@ export default Drawerr = (props) => {
           </TouchableOpacity>
         </Animated.View>
         <Animated.View style={{height:bottomViewHeight,width:Dimensions.get('screen').width,opacity:bottomViewOpacity}}>
-          <Locationshare email={props.user.email} share={props.user.locationShare}/>
+          <Locationshare id={props.user.id} share={props.user.locationShare}/>
           <Animated.View style={{width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/1.75}}>
             <Animated.View style={{height:groupHeight,width:'100%',opacity:groupOpacity,justifyContent:'center',alignItems:'center'}}>
               <Families user={props.user}/>

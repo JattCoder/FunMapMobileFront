@@ -11,8 +11,8 @@ export default Locationshare = (props) => {
     const [ghostColor,setGhoftColor] = useState('#7F7FD5')
 
     useEffect(()=>{
-        //updateChange(props.share)
-    },[props.email,props.share])
+        updateChange(props.share)
+    },[props.id,props.share])
 
     selecType = (selection) => {
         if(selection == 'Public'){
@@ -31,15 +31,15 @@ export default Locationshare = (props) => {
     }
 
     updateProfile = (selection) => {
-        firebase.database().ref('Users/'+props.email.replace(punctuation,'').replace(spaceRE,'')+'/').update({
-            locationShare: selection == 'Public' ? true : false
+        firebase.database().ref('Users/'+props.id+'/').update({
+            locationShare: selection
         })
     }
 
     updateChange = (selection = '') => {
         if(selection == ''){
             selecType('Ghost')
-            updateProfile('Ghost')
+            setTimeout(()=>updateProfile('Ghost'),1000)
         }else{
             selecType(selection)
             updateProfile(selection)
