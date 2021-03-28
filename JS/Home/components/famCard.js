@@ -28,6 +28,7 @@ export default FamCard = (props) => {
     const[searchSize] = useState(new Animated.Value(30))
     const[searchColor] = useState(new Animated.Value(0))
     const[searchDisplay,setSearchDisplay] = useState('none')
+    const[members,setMembers] = useState([])
     const dispatch = useDispatch()
 
     openSearch = () => {
@@ -360,6 +361,10 @@ export default FamCard = (props) => {
         ]).start(()=>setSettingsDisplay('none'))
     }
 
+    useEffect(()=>{
+        setTimeout(()=>{if(props.Users) setMembers(props.Users)},1000)
+    },[props.Users])
+
     const leftButtonInterpolate = leftButtonMarginTop.interpolate({
         inputRange:[0,1,2],
         outputRange:['3%','2.5%','2%']
@@ -446,10 +451,10 @@ export default FamCard = (props) => {
                     <SearchUser groupId={props.ID} groupName={props.Name} senderName={props.UserName} senderEmail={props.UserEmail}/>
                 </Animated.View>
                 <Animated.View style={{height:usersHeightInterpolate,width:'100%',margin:20,opacity:usersOpacity}}>
-                    <ScrollView>
-                        {props.Users ? props.Users.map((member)=>{
-                            return <UserCard user={member}/>
-                        }) : null}
+                    <ScrollView >
+                        {members.map((member)=>{
+                            return <UserCard id={props.ID} user={member}/>
+                        })}
                     </ScrollView>
                 </Animated.View>
             </Animated.View>

@@ -6,11 +6,6 @@ const reducer = (family = [], action) => {
     switch(action.type){
         case FAMILY:
             return action.family
-        case NEWFAM:
-            family.push(action.fam)
-            return family
-        case REMOVEFAM:
-            return action.family
         default:
             return family
     }

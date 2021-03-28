@@ -25,39 +25,30 @@ export default Families = (props) => {
     const [showInvi,setShowInvi] = useState(false)
     const dispatch = useDispatch()
 
-    currentFamily = (email = '') => {
-        dispatch(famselection(email,fam.Name))
+    currentFamily = (families) => {
+        if(props.user.famSelection == '') setFam(families[0])
+        else{
+            families.map( famm => {
+                if(famm.id != props.user.famSelection) setFam(famm)
+            })
+            if(Object.keys(fam).length == 0) console.warn('No Fam Found')
+        }
+        setFams(families)
     }
 
-    useEffect(()=>{
-        if(props.user.families) {
-            dispatch(family(props.user.families))
-        }
-    },[props.user.families])
-
     useSelector((state)=>{
-        if(fams != state.family){
-            props.user.famSelection != '' ?
-            state.family.map(family => {
-                    if(family.id == props.user.famSelection) console.warn('true')
-                })
-            : setFam(state.family[0])
-            setFams(state.family)
-        }
-        //console.warn(props.user.famSelection)
-        // if(invis != state.invitations){
-        //     setInvis(state.invitations)
-        // }
+        console.warn(state.family)
+        if(state.family.length > 0 && fams != state.family) currentFamily(families)
     })
 
     nextFamily = () => {
         if((groupNumber + 1) < Object.keys(fams).length){
             setFam(fams[Object.keys(fams)[groupNumber+1]])
-            dispatch(famselection(props.user.id,fams[Object.keys(fams)[groupNumber+1]].name))
+            dispatch(famselection(props.user.id,fams[Object.keys(fams)[groupNumber+1]].id))
             setGroupNumber(groupNumber+1)
         }else {
             setFam(fams[Object.keys(fams)[0]])
-            dispatch(famselection(props.user.id,fams[Object.keys(fams)[0]].Name))
+            dispatch(famselection(props.user.id,fams[Object.keys(fams)[0]].id))
             setGroupNumber(0)
         }
     }
@@ -65,11 +56,11 @@ export default Families = (props) => {
     prevFamily = () => {
         if((groupNumber - 1) >= 0){
             setFam(fams[Object.keys(fams)[groupNumber-1]])
-            dispatch(famselection(props.user.id,fams[Object.keys(fams)[groupNumber-1]].name))
+            dispatch(famselection(props.user.id,fams[Object.keys(fams)[groupNumber-1]].id))
             setGroupNumber(groupNumber - 1)
         }else {
             setFam(fams[Object.keys(fams)[Object.keys(fams).length - 1]])
-            dispatch(famselection(props.user.id,fams[Object.keys(fams)[Object.keys(fams).length - 1]].Name))
+            dispatch(famselection(props.user.id,fams[Object.keys(fams)[Object.keys(fams).length - 1]].id))
             setGroupNumber(Object.keys(fams).length - 1)
         }
     }

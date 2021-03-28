@@ -39,17 +39,6 @@ const Home = (props) => {
     },[props.user])
     
     useSelector((state)=>{
-        if(regionPosition.latitude == 0 && regionPosition.longitude == 0 && state.mylocation.message == 'Allowed'){
-          setRegPosition({
-            latitude: state.mylocation.latitude,
-            longitude: state.mylocation.longitude,
-            accuracy: state.mylocation.accuracy,
-            altitude: state.mylocation.altitude,
-            altitudeAccuracy: state.mylocation.altitudeAccuracy,
-            heading: state.mylocation.heading,
-            speed: state.mylocation.speed,
-          })
-        }
         if(Object.keys(map).length > 0){
           if(navigation.path != state.navigation.path || navigation.active != state.navigation.active){
               setTimeout(()=>{
@@ -67,9 +56,26 @@ const Home = (props) => {
                 dispatch(bottomsheet('Search'))
               },500)
               setSelectedPlace(selectedPlace)
+          }else if(regionPosition.latitude == 0 && regionPosition.longitude == 0 && state.mylocation.message == 'Allowed'){
+            map.animateToRegion({latitude:state.mylocation.latitude,longitude:state.mylocation.longitude,latitudeDelta:0.019,longitudeDelta:0.019},500)
           }
         }
+        if(regionPosition.latitude == 0 && regionPosition.longitude == 0 && state.mylocation.message == 'Allowed'){
+          getLocation(state.mylocation)
+        }
     })
+
+    getLocation = (mylocation) => {
+      setRegPosition({
+        latitude: mylocation.latitude,
+        longitude: mylocation.longitude,
+        accuracy: mylocation.accuracy,
+        altitude: mylocation.altitude,
+        altitudeAccuracy: mylocation.altitudeAccuracy,
+        heading: mylocation.heading,
+        speed: mylocation.speed,
+      })
+    }
     
     return (
         <View style={{ height: dimensions.height, width: dimensions.width}}>

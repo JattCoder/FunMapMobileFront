@@ -1,30 +1,33 @@
 import React,{ useState, useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { member } from '../../../actions/famMembers/members'
+import { useSelector } from 'react-redux'
 import { View, TouchableOpacity, Text, Image, Dimensions, StyleSheet } from 'react-native'
 
 export default UserCard = (props) => {
 
-    const [members,setMembers] = useState([])
     const [user,setUser] = useState({
-        name: 'Harmandeep Mand',
-        location: 'Home',
-        locationShare: true,
-        battery: '100',
+        id: '',
+        name: '',
+        location: '',
+        locationShare: false,
+        battery: '',
         charging: false,
-        member: 'Member',
+        member: '',
         photo: ''
     })
-    const dispatch = useDispatch()
+    const [apply,setApply] = useState(false)
 
     useEffect(()=>{
-        if(props.user) memberInfo()
+        if(props.user) setUser({
+            name: props.user.name,
+            location: props.user.location.address,
+            locationShare: props.user.location.allowed,
+            battery: props.user.battery,
+            charging: props.user.charging,
+            member: props.user.member,
+            photo: props.user.photo
+        })
     },[props.user])
 
-    useSelector(state => {
-        if(members != state.members) setMembers(state.members),memberInfo()
-    })
-    //console.warn(props.user)
         return(
             <TouchableOpacity onPress={()=>alert('Pressed '+props.user.Name)} style={{width:Dimensions.get('window').width/1.10}}>
                 <View style={{flexDirection:'row',marginHorizontal:'7%',marginVertical:'2%',alignItems:'center'}}>

@@ -7,13 +7,6 @@ export default Location = (props) =>{
 
     const dispatch = useDispatch()
     let id = ''
-    const [lastLocation, setNewLocation] = useState({
-        complete: '',
-        street: '',
-        city: '',
-        state: '',
-        zip: '',
-    })
 
     updateLocation = (pos) => {
         dispatch(mylocation({
@@ -24,12 +17,6 @@ export default Location = (props) =>{
             altitude: pos.heading,
             altitudeAccuracy: pos.altitudeAccuracy,
             accuracy: pos.accuracy,
-            complete: lastLocation.complete,
-            street: lastLocation.street,
-            city: lastLocation.city,
-            state: lastLocation.state,
-            zip: lastLocation.zip,
-            permitted: '',
             message:'Allowed'
         }))
         Geolocation.clearWatch(id)
