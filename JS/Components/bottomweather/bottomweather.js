@@ -5,6 +5,7 @@ import { View, Text, Image } from 'react-native'
 import Weathericon from './weathericon'
 import History from '../../Home/components/history'
 import Geocoder from 'react-native-geocoder-reborn'
+import firebase from 'firebase'
 
 export default Bottomweather = (props) => {
 
@@ -41,6 +42,19 @@ export default Bottomweather = (props) => {
             })
             .catch(err => console.warn('Weather Error: ',err.message))
         }
+        updateLocation()
+    }
+
+    updateLocation = () => {
+        firebase.database().ref('Users/'+props.id+'/location/').update({
+            address: currentCity.display.replaceAll('null',''),
+            geo:{
+                latitude:position.latitude,
+                longitude:position.longitude
+            },
+            heading: props.position.heading,
+            speed: props.position.speed
+        }).catch(err => console.warn(err))
     }
 
     geocode = (position) => {
@@ -51,14 +65,10 @@ export default Bottomweather = (props) => {
             setCurrentCity({city:res[0].locality?res[0].locality:res[0].feature,display:res[0].streetName || res[0].locality || res[0].adminArea ? `${res[0].streetName != null ? res[0].streetName+', ':null}${res[0].locality != null ? res[0].locality+', ':null}${res[0].adminArea != null?res[0].adminArea:null}`:res[0].feature,date:currentCity.date})
             updateWeather(lastCity == '' ? res[0].locality : lastCity)
         }).catch(err => {
-            //SECOND SOURCE
             fetch(`https://revgeocode.search.hereapi.com/v1/revgeocode?at=${position.lat},${position.lng}&lang=en-US&apiKey=tOzyGAv3qnNge0QzSmXnwD54zKsR4xCZY3M5yMC22OM`)
             .then(res => {return res.json()})
             .then(info => {
                 if(lastCity == '') lastCity = info.items[0].address.city
-                // if(info.items){
-                //     setCurrentCity({city:info.items[0].address.city,display:`${info.items[0].address.street != null ? info.items[0].address.street+', ':''}${info.items[0].address.city != null ? info.items[0].address.city+', ':''}${info.items[0].address.stateCode != null ? info.items[0].address.stateCode:''}`,date:currentCity.date})
-                // }
                 updateWeather(lastCity)
             })
             .catch(err => {
@@ -66,13 +76,6 @@ export default Bottomweather = (props) => {
             })
         })
     }
-
-    // useSelector(state => {
-    //     if(position.latitude != state.mylocation.latitude || position.longitude != state.mylocation.longitude){
-    //         setPosition({latitude:state.mylocation.latitude,longitude:state.mylocation.longitude})
-    //         geocode()
-    //     }
-    // })
 
     useEffect(()=>{
         setEmail(props.email)
@@ -82,7 +85,7 @@ export default Bottomweather = (props) => {
 
     return(
         <View>
-            <History email={props.email} current={{lat: position.latitude, lng: position.longitude}} speed={currentCity.speed}/>
+            <History id={props.id} email={props.email} current={{lat: position.latitude, lng: position.longitude}} speed={currentCity.speed}/>
             {email != '' ? <Checkbattery email={email}/> : null}
             {currentCity.city != '' ? <View style={{flexDirection:'row',width:'100%',alignItems:'center'}}>
                 <View style={{left:0,width:'77%'}}>

@@ -421,8 +421,8 @@ export default Drawerr = (props) => {
             <TouchableOpacity onPress={()=>props.followMe()} style={[Styles.ImageBox,{height:45,width:45}]}>
               {props.user.photo != '' ? <Image source={{ uri: props.user.image }} /> : <Uimage name={props.user.name} />}
             </TouchableOpacity>
-            <View> 
-              {props.user.settings ? <Bottomweather name={props.user.name} email={props.user.email} temp={props.user.settings.temperature} position={props.position}/> : null}
+            <View>
+              {props.user.settings ? <Bottomweather id={props.user.id} name={props.user.name} email={props.user.email} temp={props.user.settings.temperature} position={props.position}/> : null}
             </View>
           </TouchableOpacity>
         </Animated.View>

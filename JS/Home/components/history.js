@@ -7,7 +7,7 @@ const spaceRE = /\s+/g
 export default History = (props) => {
 
     const[positionList,setPositionList] = useState([])
-    const[email,setEmail] = useState('')
+    const[id,setId] = useState('')
     const[todaY,setToday] = useState({
         string:'',
         timestamp:0
@@ -21,7 +21,7 @@ export default History = (props) => {
     }
 
     sendResults = () => {
-        firebase.database().ref('History/'+email.replace(punctuation,'').replace(spaceRE,'')+'/'+todaY.string).set({
+        firebase.database().ref('History/'+id+'/'+todaY.string).set({
             positionList: polyline.encode(positionList)
         })
         .catch(err => console.warn(err))
@@ -34,15 +34,15 @@ export default History = (props) => {
         let yyyy = today.getFullYear();
         td = mm + '-' + dd + '-' + yyyy
         if(todaY.string != td) setToday({string:td, timestamp:today})
-        if(email != '' && props.current.lat != 0 && props.current.lng != 0){
+        if(id != '' && props.current.lat != 0 && props.current.lng != 0){
             setPositionList([...positionList,[props.current.lat,props.current.lng]])
             setTimeout(()=>{sendResults()},20000)
         }
     }
 
     useEffect(()=>{
-        if(props.email && props.current.lat != 0 && props.current.lng != 0){
-            setEmail(props.email)
+        if(props.id && props.current.lat != 0 && props.current.lng != 0){
+            setId(props.id)
             Info()
         }
     },[props.current])
