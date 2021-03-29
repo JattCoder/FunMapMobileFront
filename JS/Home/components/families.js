@@ -201,7 +201,7 @@ export default Families = (props) => {
                 </View>
             </View>
             <Animated.View style={{position:'absolute',width:Dimensions.get('window').width,height:Dimensions.get('screen').height/2.3,opacity:familyCardOpacity,zIndex:familyPopUp,transform: [{ rotateY: rotateCardInterpolate}]}}>
-                {Object.keys(fams).length > 0 ? <FamCard UserName={props.user.name} UserEmail={props.user.email} ID={fam.id} Name={fam.name} Message={fam.message} Users={fam.members} gettogether={fam.GetTogether} locShare={props.user.locationShare} next={()=>nextFamily()} prev={()=>prevFamily()} size={Object.keys(fams).length}/>
+                {Object.keys(fams).length > 0 ? <FamCard UserId={props.user.id} UserName={props.user.name} UserEmail={props.user.email} ID={fam.id} Name={fam.name} Message={fam.message} Users={fam.members} gettogether={fam.GetTogether} locShare={props.user.locationShare} next={()=>nextFamily()} prev={()=>prevFamily()} size={Object.keys(fams).length}/>
                 : <NoFamInvi message={'Family'}/>}
             </Animated.View>
             <Animated.View style={{position:'absolute',width:Dimensions.get('window').width,height:Dimensions.get('screen').height/2.3,opacity:invitationCardOpacity,zIndex:InviPopUp,transform: [{ rotateY: rotateInvitaionsInterpolate}]}}>

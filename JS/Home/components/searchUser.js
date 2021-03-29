@@ -19,27 +19,26 @@ export default SearchUser = (props) => {
         arr = []
         firebase.database().ref('Users/').on('value',snapShot => {
             for(let i in snapShot.val()){
-                arr.push(snapShot.val()[i])
+                if(i != 'undefined') arr.push(snapShot.val()[i])
             }
             setAllUsers(arr)
         })
     }
-
+    
     searchUser = (input) => {
         usrs = []
         if(input.length > 0){
-            allUsers.forEach(usr => {
-                if(usr.name.toLowerCase() == input.toLowerCase() || usr.email.toLowerCase() == input.toLowerCase()){
-                    usrs.push(usr)
+            allUsers.map(usr => {
+                if(usr.name.toLowerCase() == input.toLowerCase() || usr.email.toLowerCase() == input.toLowerCase() || usr.name.toLowerCase().includes(input.toLowerCase())){
+                    if(!usrs.includes(usr) && usr.id != props.myId) usrs.push(usr)
                 }
             })
-            setUsers(arr)
+            setUsers(usrs)
         }else{
             setSearch(input)
             setUsers([])
         }
     }
-
     sendInvitation = (input) => {
         firebase.database().ref('Invitations/'+selectedUID+'/'+props.groupId).set({
             gid:props.groupId,
@@ -84,12 +83,12 @@ export default SearchUser = (props) => {
                                     <Text style={{fontSize:20,color:'white'}}>{user.name}</Text>
                                     <Text style={{fontSize:13,color:'white'}}>{user.email}</Text>
                                 </View>
-                                <View style={{position:'absolute',right:5}}>
+                                {!props.members.includes(user.id) ? <View style={{position:'absolute',right:5}}>
                                     <TouchableOpacity onPress={()=>sendInvitation(user.email)} style={{right:0,width:Dimensions.get('screen').width/10.3,height:Dimensions.get('screen').height/31.2,borderRadius:5,backgroundColor:'grey',justifyContent:'center',alignItems:'center'}}>
                                         {action == '' ? <Image style={{height:15,width:15}} source={require('../../settingsIcons/plus.png')}/>
                                         : <ActivityIndicator size='small'/>}
                                     </TouchableOpacity>
-                                </View>
+                                </View> : null}
                             </View>
                         })}
                     </View>

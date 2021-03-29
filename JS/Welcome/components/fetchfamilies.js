@@ -19,32 +19,7 @@ export default Fetchfamilies = (props) => {
                 famInfo.id = fam
                 famInfo.name = info.child('Name').val()
                 famInfo.message = info.child('Message').val()
-                info.child('Members').val().map(member => {
-                    mem = []
-                    firebase.database().ref('Users/'+member.id).on('value', usr => {
-                        usrinfo = {
-                            id: member.id,
-                            name: usr.child('name').val(),
-                            battery: usr.child('settings').child('batteryLevel').val(),
-                            charging: usr.child('settings').child('charging').val(),
-                            member: member.member,
-                            photo: usr.child('photo').val(),
-                            location: {
-                                address: usr.child('settings').child('locationShare').val() != 'Ghost' ? usr.child('location').child('address').val() : 'Ghost',
-                                allowed: usr.child('settings').child('locationShare').val() != 'Ghost' ? true : false,
-                                geo: {
-                                    latitude: usr.child('location').child('geo').child('latitude').val(),
-                                    longitude: usr.child('location').child('geo').child('latitude').val()
-                                },
-                                heading: usr.child('location').child('heading').val(),
-                                speed: usr.child('location').child('speed').val()
-                            }
-                        }
-                        famInfo.members.length > 0 ? famInfo.members.map(member => {
-                            if(member.id != usr.child('id').val()) famInfo.members.push(usrinfo)
-                        }) : famInfo.members.push(usrinfo)
-                    })
-                })
+                famInfo.members = info.child('Members').val()
                 families.push(famInfo)
             })
         })

@@ -448,7 +448,7 @@ export default FamCard = (props) => {
                     <GroupSettings />
                 </Animated.View>
                 <Animated.View style={{height:searchHeightInterpolate,width:'100%',margin:20,opacity:searchOpacity,display:searchDisplay}}>
-                    <SearchUser groupId={props.ID} groupName={props.Name} senderName={props.UserName} senderEmail={props.UserEmail}/>
+                    <SearchUser myId={props.UserId} groupId={props.ID} groupName={props.Name} senderName={props.UserName} senderEmail={props.UserEmail} members={members.map(member=>{return member.id})}/>
                 </Animated.View>
                 <Animated.View style={{height:usersHeightInterpolate,width:'100%',margin:20,opacity:usersOpacity}}>
                     <ScrollView >

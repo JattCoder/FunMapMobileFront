@@ -1,5 +1,6 @@
 import React,{ useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
+import firebase from 'firebase'
 import { View, TouchableOpacity, Text, Image, Dimensions, StyleSheet } from 'react-native'
 
 export default UserCard = (props) => {
@@ -7,6 +8,7 @@ export default UserCard = (props) => {
     const [user,setUser] = useState({
         id: '',
         name: '',
+        email: '',
         location: '',
         locationShare: false,
         battery: '',
@@ -14,18 +16,25 @@ export default UserCard = (props) => {
         member: '',
         photo: ''
     })
-    const [apply,setApply] = useState(false)
+
+    getUserInfo = () => {
+        firebase.database().ref('Users/'+props.user.id).on('value', info => {
+            setUser({
+                id: props.user.id,
+                name: info.child('name').val(),
+                email: info.child('email').val(),
+                location: info.child('location').child('address').val(),
+                locationShare: info.child('locationShare').val(),
+                battery: info.child('settings').child('batteryLevel').val(),
+                charging: info.child('settings').child('charging').val(),
+                member: props.user.member,
+                photo: info.child('photo').val()
+            })
+        })
+    }
 
     useEffect(()=>{
-        if(props.user) setUser({
-            name: props.user.name,
-            location: props.user.location.address,
-            locationShare: props.user.location.allowed,
-            battery: props.user.battery,
-            charging: props.user.charging,
-            member: props.user.member,
-            photo: props.user.photo
-        })
+        if(props.user.id != '') getUserInfo()
     },[props.user])
 
         return(
@@ -36,7 +45,7 @@ export default UserCard = (props) => {
                     </View>
                     <View style={{marginHorizontal:'2%'}}>
                         <Text style={{fontSize:20,color:'#7F7FD5'}}>{user.name}</Text>
-                        <Text style={{color:'#7F7FD5',width:Dimensions.get('screen').width/1.9}}>{user.location}</Text>
+                        <Text style={{color:'#7F7FD5',width:Dimensions.get('screen').width/1.9}}>{user.locationShare != 'Ghost' ? user.location : 'Ghost'}</Text>
                     </View>
                     <View style={{position:'absolute',right:0,width:'10%'}}>
                         { user.charging ? <View style={Style.battery}>
