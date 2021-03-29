@@ -10,7 +10,6 @@ export default SearchUser = (props) => {
     const [users,setUsers] = useState([])
     const [allUsers,setAllUsers] = useState([])
     const [search,setSearch] = useState('')
-    const [senderId,setSenderId] = useState('')
     const [action,setAction] = useState('')
     const [resultsHeight] = useState(new Animated.Value(0))
     const [resultsOpacity] = useState(new Animated.Value(0))
@@ -39,12 +38,12 @@ export default SearchUser = (props) => {
             setUsers([])
         }
     }
-    sendInvitation = (input) => {
-        firebase.database().ref('Invitations/'+selectedUID+'/'+props.groupId).set({
+    sendInvitation = (uid) => {
+        firebase.database().ref('Invitations/'+uid+'/'+props.groupId).set({
             gid:props.groupId,
             gname:props.groupName,
-            gcode:props.groupCode,
-            sender:senderId
+            sender:props.myId,
+            members:props.members
         }).then((data)=>{
             //success callback
             setAction('')
@@ -84,7 +83,7 @@ export default SearchUser = (props) => {
                                     <Text style={{fontSize:13,color:'white'}}>{user.email}</Text>
                                 </View>
                                 {!props.members.includes(user.id) ? <View style={{position:'absolute',right:5}}>
-                                    <TouchableOpacity onPress={()=>sendInvitation(user.email)} style={{right:0,width:Dimensions.get('screen').width/10.3,height:Dimensions.get('screen').height/31.2,borderRadius:5,backgroundColor:'grey',justifyContent:'center',alignItems:'center'}}>
+                                    <TouchableOpacity onPress={()=>sendInvitation(user.id)} style={{right:0,width:Dimensions.get('screen').width/10.3,height:Dimensions.get('screen').height/31.2,borderRadius:5,backgroundColor:'grey',justifyContent:'center',alignItems:'center'}}>
                                         {action == '' ? <Image style={{height:15,width:15}} source={require('../../settingsIcons/plus.png')}/>
                                         : <ActivityIndicator size='small'/>}
                                     </TouchableOpacity>

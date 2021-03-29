@@ -31,9 +31,9 @@ export default Locationshare = (props) => {
     }
 
     updateProfile = (selection) => {
-        firebase.database().ref('Users/'+props.id+'/').update({
+        props.id ? firebase.database().ref('Users/'+props.id+'/').update({
             locationShare: selection
-        })
+        }) : null
     }
 
     updateChange = (selection = '') => {
