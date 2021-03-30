@@ -33,7 +33,7 @@ export default Settings = (props) => {
     // "highways": false, "id": 1, "permitted": "Ghost", "temperature": "F°", "tolls": false, "user_id": 1}
 
     saveAndExit = () => {
-        firebase.database().ref('Users/'+props.user.email.replace(punctuation,'').replace(spaceRE,'')+'/settings').update({
+        props.user.id ? firebase.database().ref('Users/'+props.user.id+'/settings').update({
             drivingMode: drivingMode == false ? 'driving' : 'walking',
             highways: avoidHighways,
             tolls: avoidTolls,
@@ -53,7 +53,7 @@ export default Settings = (props) => {
                 })
             ]).start(()=>props.close())
         })
-        .catch(err => console.warn(err))
+        .catch(err => console.warn(err)) : null
     }
 
     openBackgroundColor = () => {

@@ -95,7 +95,10 @@ export default Welcome = (props) => {
     }
 
     useSelector(state => {
-        if(families != true && state.family.length > 0) setFamilies(true)
+        if(!families && state.family.length > 0) {
+            console.warn('Got Families')
+            setFamilies(true)
+        }
         if(state.mylocation.latitude != 0 && state.mylocation.longitude != 0 && !location) setLocation(true)
     })
 

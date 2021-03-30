@@ -46,63 +46,34 @@ export default Drawerr = (props) => {
   const [navigateOpacity] = useState(new Animated.Value(0))
   const [navigateHeight] = useState(new Animated.Value(1))
   const [addStop,setAddStop] = useState(false)
+  const [sheetOpen,setSheetOpen] = useState(false) 
   const dispatch = useDispatch()
 
-  const bringUpActionSheet = () => {
+  slideSheet = (open) => {
     Animated.parallel([
       Animated.timing(alignment, {
-        toValue:1,
+        toValue:open?1:0,
         duration:500,
         useNativeDriver:false
       }),
       Animated.timing(sheetHeight,{
-        toValue:height/1.2,
+        toValue:open?height/1.2:height/7.4,
         duration:500,
         useNativeDriver:false
       }),
       Animated.timing(headingMargin,{
-        toValue:-10,
+        toValue:open?-10:40,
         duration:500,
         useNativeDriver:false
       }),
       Animated.timing(bottomViewOpacity,{
-        toValue:1,
+        toValue:open?1:0,
         duration:500,
         useNativeDriver:false
       }),
       Animated.timing(bottomViewHeight,{
-        toValue:Dimensions.get('window').height/1.4,
+        toValue:open?Dimensions.get('window').height/1.4:0,
         duration:500,
-        useNativeDriver:false
-      })
-    ]).start()
-  }
-
-  const hideTheActionSheet = () => {
-    Animated.parallel([
-      Animated.timing(alignment,{
-        toValue:0,
-        duration:500,
-        useNativeDriver:false
-      }).start(),
-      Animated.timing(sheetHeight,{
-        toValue:height/7.4,
-        duration:500,
-        useNativeDriver:false
-      }),
-      Animated.timing(headingMargin,{
-        toValue:40,
-        duration:500,
-        useNativeDriver:false
-      }),
-      Animated.timing(bottomViewOpacity,{
-        toValue:0,
-        duration:500,
-        useNativeDriver:false
-      }),
-      Animated.timing(bottomViewHeight,{
-        toValue:0,
-        duration:550,
         useNativeDriver:false
       }),
       Animated.timing(searchResultsOpacity,{
@@ -118,118 +89,82 @@ export default Drawerr = (props) => {
     ]).start()
   }
 
-  const showButtons = () => {
-    if(menuOpen) {
-      if(closeButtonsTimeout) clearTimeout(closeButtonsTimeout)
-      hideButtons()
-    }
-    else{
-      setMenuOpen(true)
-      Animated.parallel([
-        Animated.timing(menuButtonSize,{
-          toValue:25,
-          duration:500,
-          useNativeDriver:false
-        }),
-        Animated.timing(settingSize,{
-          toValue:50,
-          duration:500,
-          useNativeDriver:false
-        }),
-        Animated.timing(settingOpacity,{
-          toValue:1,
-          duration:500,
-          useNativeDriver:false
-        }),
-        Animated.timing(newGroupButtonSize,{
-          toValue:50,
-          duration:500,
-          useNativeDriver:false
-        }),
-        Animated.timing(newGroupButtonOpacity,{
-          toValue:1,
-          duration:500,
-          useNativeDriver:false
-        })
-      ]).start(()=>{
-        closeButtonsTimeout = setTimeout(()=>{
-          hideButtons()
-        },30000)
-      })
-    }
-  }
-
-  const hideButtons = () => {
-    setMenuOpen(false)
+  actionButtons = (open) => {
+    setMenuOpen(menuOpen ? false : true)
     Animated.parallel([
       Animated.timing(menuButtonSize,{
-        toValue:50,
+        toValue:open?25:50,
         duration:500,
         useNativeDriver:false
       }),
       Animated.timing(settingSize,{
-        toValue:0,
+        toValue:open?50:0,
         duration:500,
         useNativeDriver:false
       }),
       Animated.timing(settingOpacity,{
-        toValue:0,
+        toValue:open?1:0,
         duration:500,
         useNativeDriver:false
       }),
       Animated.timing(newGroupButtonSize,{
-        toValue:0,
+        toValue:open?50:0,
         duration:500,
         useNativeDriver:false
       }),
       Animated.timing(newGroupButtonOpacity,{
-        toValue:0,
+        toValue:open?1:0,
         duration:500,
         useNativeDriver:false
       })
+    ]).start(()=>menuOpen ? setTimeout(()=>actionButtons(menuOpen ? false : true),15000) : null)
+  }
+
+  actionForm = (open) => {
+    Animated.parallel([
+      Animated.timing(groupOpacity,{
+        toValue:open?0:1,
+        duration:500,
+        useNativeDriver:false
+      }),
+      Animated.timing(groupHeight,{
+        toValue:open?0:Dimensions.get('window').height/1.7,
+        duration:500,
+        useNativeDriver:false
+      }),
+      Animated.timing(newGroupFormHeight,{
+        toValue:open?Dimensions.get('window').height/1.7:0,
+        duration:500,
+        useNativeDriver:false
+      }),
+      Animated.timing(newGroupFormOpacity,{
+        toValue:open?1:0,
+        duration:500,
+        useNativeDriver:false
+      }),
+      Animated.timing(settingsOpacity,{
+        toValue:0,
+        duration:500,
+        useNativeDriver:false
+      }),
     ]).start()
   }
 
-  const openForm = () => {
-    setnewGroupFormDisplay('')
+  actionSettings = (open) => {
+    setSettingsDisplay(open ? '' : 'none')
     Animated.parallel([
-      Animated.timing(groupOpacity,{
-        toValue:0,
-        duration:500,
-        useNativeDriver:false
-      }),
-      Animated.timing(groupHeight,{
-        toValue:0,
-        duration:500,
-        useNativeDriver:false
-      }),
-      Animated.timing(newGroupFormHeight,{
-        toValue:Dimensions.get('window').height/1.7,
-        duration:500,
-        useNativeDriver:false
-      }),
-      Animated.timing(newGroupFormOpacity,{
-        toValue:1,
-        duration:500,
-        useNativeDriver:false
-      }),
       Animated.timing(settingsOpacity,{
-        toValue:0,
-        duration:500,
-        useNativeDriver:false
-      }),
-    ]).start(()=>setSettingsDisplay('none'))
-  }
-
-  const closeForm = () => {
-    Animated.parallel([
-      Animated.timing(groupOpacity,{
-        toValue:1,
+        toValue:open?1:0,
         duration:500,
         useNativeDriver:false
       }),
       Animated.timing(groupHeight,{
-        toValue:Dimensions.get('window').height/1.7,
+        toValue:open?0:Dimensions.get('window').height/1.7,
+        duration:500,
+        useNativeDriver:false
+      }),
+      Animated.timing(groupOpacity,{
+        toValue:open?0:1,
         duration:500,
         useNativeDriver:false
       }),
@@ -243,59 +178,10 @@ export default Drawerr = (props) => {
         duration:500,
         useNativeDriver:false
       })
-    ]).start(()=>setnewGroupFormDisplay('none'))
+    ]).start(()=>setSettingsDisplay(open ? '' : 'none'))
   }
 
-  openSettings = () => {
-    setSettingsDisplay('')
-    Animated.parallel([
-      Animated.timing(settingsOpacity,{
-        toValue:1,
-        duration:500,
-        useNativeDriver:false
-      }),
-      Animated.timing(groupHeight,{
-        toValue:0,
-        duration:500,
-        useNativeDriver:false
-      }),
-      Animated.timing(groupOpacity,{
-        toValue:0,
-        duration:500,
-        useNativeDriver:false
-      }),
-      Animated.timing(newGroupFormHeight,{
-        toValue:0,
-        duration:500,
-        useNativeDriver:false
-      }),
-      Animated.timing(newGroupFormOpacity,{
-        toValue:0,
-        duration:500,
-        useNativeDriver:false
-      })
-    ]).start(()=>setnewGroupFormDisplay('none'))
-  }
-
-  closeSettings = () => {
-    Animated.parallel([
-      Animated.timing(settingsOpacity,{
-        toValue:0,
-        duration:100,
-        useNativeDriver:false
-      }),
-      Animated.timing(groupHeight,{
-        toValue:Dimensions.get('window').height/1.7,
-        duration:500,
-        useNativeDriver:false
-      }),
-      Animated.timing(groupOpacity,{
-        toValue:1,
-        duration:500,
-        useNativeDriver:false
-      })
-    ]).start(()=>setSettingsDisplay('none'))
-  }
+  //STARTING HERE WITH NAVIGATION ACTIVE DIRECTION...
 
   navigatingActiveDirection = () => {
     Animated.parallel([
@@ -337,18 +223,9 @@ export default Drawerr = (props) => {
     ]).start()
   }
 
-  navigatingAddStop = () => {
-    setAddStop(true)
-  }
-
   const actionSheetIntropolate = alignment.interpolate({
     inputRange: [0,1],
     outputRange: [-height/12.7+60, 0]
-  })
-
-  const navigateHeightInterpolate = navigateHeight.interpolate({
-    inputRange: [0,1],
-    outputRange: ['0%','56%']
   })
 
   const actionSheetStyle = {
@@ -356,12 +233,53 @@ export default Drawerr = (props) => {
   }
 
   guestureHandler = (e) => {
-    if(e > 0) navigating ? navigatingAddStop() : bringUpActionSheet()
-    else if(e < 0) navigating ? navigatingActiveDirection() : hideTheActionSheet(),dispatch(bottomsheet('')),dispatch(clemarker()),setMenuOpen(false)
+    if(e > 0) slideSheet(true)
+    else if(e < 0) slideSheet(false)
   }
 
   navigateClose = () => {
     hideTheActionSheet(),dispatch(bottomsheet('')),setMenuOpen(false)
+  }
+
+  searchSheet = () => {
+    setSheetOpen(true)
+    Animated.parallel([
+      Animated.timing(alignment, {
+        toValue:1,
+        duration:500,
+        useNativeDriver:false
+      }),
+      Animated.timing(sheetHeight,{
+        toValue:height/2.4,
+        duration:500,
+        useNativeDriver:false
+      }),
+      Animated.timing(headingMargin,{
+        toValue:5,
+        duration:500,
+        useNativeDriver:false
+      }),
+      Animated.timing(searchResultsOpacity,{
+        toValue:1,
+        duration:500,
+        useNativeDriver:false
+      }),
+      Animated.timing(searchResultsHeight,{
+        toValue:Dimensions.get('window').height/3.1,
+        duration:500,
+        useNativeDriver:false
+      }),
+      Animated.timing(bottomViewOpacity,{
+        toValue:0,
+        duration:500,
+        useNativeDriver:false
+      }),
+      Animated.timing(bottomViewHeight,{
+        toValue:0,
+        duration:550,
+        useNativeDriver:false
+      }),
+    ]).start()
   }
 
   useSelector((state)=>{
@@ -370,45 +288,8 @@ export default Drawerr = (props) => {
     }else if(state.navigation.active){
       navigating != state.navigation.active ? setNavigating(state.navigation.active) : null
       navigatingActiveDirection()
-    }
-    else if(state.sheet == 'Search'){
-      Animated.parallel([
-        Animated.timing(alignment, {
-          toValue:1,
-          duration:500,
-          useNativeDriver:false
-        }),
-        Animated.timing(sheetHeight,{
-          toValue:height/2.4,
-          duration:500,
-          useNativeDriver:false
-        }),
-        Animated.timing(headingMargin,{
-          toValue:5,
-          duration:500,
-          useNativeDriver:false
-        }),
-        Animated.timing(searchResultsOpacity,{
-          toValue:1,
-          duration:500,
-          useNativeDriver:false
-        }),
-        Animated.timing(searchResultsHeight,{
-          toValue:Dimensions.get('window').height/3.1,
-          duration:500,
-          useNativeDriver:false
-        }),
-        Animated.timing(bottomViewOpacity,{
-          toValue:0,
-          duration:500,
-          useNativeDriver:false
-        }),
-        Animated.timing(bottomViewHeight,{
-          toValue:0,
-          duration:550,
-          useNativeDriver:false
-        }),
-      ]).start()
+    }else if(state.sheet == 'Search'){
+      if(!sheetOpen) searchSheet()
     }else if(state.sheet == '') hideTheActionSheet()
   })
 
@@ -433,36 +314,36 @@ export default Drawerr = (props) => {
               <Families user={props.user}/>
             </Animated.View>
             <Animated.View style={{width:settingsWidth,height:settingsHeight,opacity:settingsOpacity,justifyContent:'center',alignItems:'center',display:settingsDisplay}}>
-              <Settings close={()=>closeSettings()} user={props.user} logout={props.logout}/>
+              <Settings close={()=>actionSettings(false)} user={props.user} logout={props.logout}/>
             </Animated.View>
             <Animated.View style={{height:newGroupFormHeight,width:'100%',opacity:newGroupFormOpacity,justifyContent:'center',alignItems:'center'}}>
-              <TouchableOpacity onPress={()=>closeForm()} style={{width:-Dimensions.get('screen').width,height:'8%',borderRadius:10,position:'absolute',top:20,right:25,zIndex:100,display:newGroupFormDisplay}}>
+              <TouchableOpacity onPress={()=>actionForm(false)} style={{width:-Dimensions.get('screen').width,height:'8%',borderRadius:10,position:'absolute',top:20,right:25,zIndex:100,display:newGroupFormDisplay}}>
                   <Image style={{height:30,width:30}} source={require('../settingsIcons/close.png')}/>
               </TouchableOpacity>
-              <NewFamily user={props.user} finish={()=>closeForm()}/>
+              <NewFamily user={props.user} finish={()=>actionForm(false)}/>
             </Animated.View>
           </Animated.View>
           <Animated.View style={{position:'absolute',bottom:0,right:0,left:0,width:Dimensions.get('screen').width,height:Dimensions.get('screen').height/9.3,justifyContent:'center'}}>
               <Animated.View style={{height:menuButtonSize,width:menuButtonSize,position:'absolute',right:20,justifyContent:'center',alignItems:'center',zIndex:100}}>
-                <TouchableOpacity style={{height:'100%',width:'100%',justifyContent:'center',alignItems:'center'}} onPress={()=>showButtons()}>
+                <TouchableOpacity style={{height:'100%',width:'100%',justifyContent:'center',alignItems:'center'}} onPress={()=>actionButtons(menuOpen ? false : true)}>
                   {menuOpen ? <View style={{height:'100%',width:'100%',backgroundColor:'red',borderRadius:50,justifyContent:'center',alignItems:'center'}}><Image style={{height:20,width:20}} source={require('../settingsIcons/close.png')}/></View>
                   : <View style={{height:'100%',width:'100%',backgroundColor:'#7F7FD5',borderRadius:50,justifyContent:'center',alignItems:'center'}}><Image style={{height:20,width:20}} source={require('../settingsIcons/plus.png')}/></View>}
                 </TouchableOpacity>
               </Animated.View>
               <Animated.View style={{opacity:settingOpacity,height:settingSize,width:settingSize,borderRadius:50,position:'absolute',backgroundColor:'#f7797d',right:20*3,justifyContent:'center',alignItems:'center'}}>
-                <TouchableOpacity style={{height:'100%',width:'100%',justifyContent:'center',alignItems:'center'}} onPress={()=>openSettings()}>
+                <TouchableOpacity style={{height:'100%',width:'100%',justifyContent:'center',alignItems:'center'}} onPress={()=>actionSettings(true)}>
                   <Image style={{height:20,width:20}} source={require('../settingsIcons/setting.png')}/>
                 </TouchableOpacity>
               </Animated.View>
               <Animated.View style={{opacity:newGroupButtonOpacity,height:newGroupButtonSize,width:newGroupButtonSize,borderRadius:50,position:'absolute',backgroundColor:'#FBD786',right:20*6,justifyContent:'center',alignItems:'center'}}>
-                <TouchableOpacity style={{height:'100%',width:'100%',justifyContent:'center',alignItems:'center'}} onPress={()=>openForm()}>
+                <TouchableOpacity style={{height:'100%',width:'100%',justifyContent:'center',alignItems:'center'}} onPress={()=>actionForm(true)}>
                   <Image style={{height:20,width:20}} source={require('../settingsIcons/plus.png')}/>
                 </TouchableOpacity>
               </Animated.View>
           </Animated.View>
         </Animated.View>
         <Animated.View style={{height:searchResultsHeight,width:Dimensions.get('screen').width,opacity:searchResultsOpacity}}>
-          <PlaceSearchResults position={props.regionPosition} user={props.user} hide={()=>navigateClose()} />
+          <PlaceSearchResults position={props.position} user={props.user} hide={()=>navigateClose()} />
         </Animated.View>
       </LinearGradient>
      </Animated.View>

@@ -8,23 +8,32 @@ import { View, Text, Dimensions, TouchableOpacity, TextInput } from 'react-nativ
 export default NewFamily = (props) => {
 
     const [name,setName] = useState('')
+    const [fams,setFams] = useState([])
+    const [received,setReceived] = useState(false)
     const dispatch = useDispatch()
 
     create = () => {
         dispatch(newfam(props.user.id,props.user.email,name,props.user.families))
-        //props.finish()
     }
-    console.warn(props.user)
+
     useSelector((state)=>{
-        if(Object.keys(state.family) > 0){
-            for(let i in state.family){
-                if(name == i){
-                    setName('')
-                    props.finish()
-                }
+        !received && name != '' ? state.family.map(fam=>{
+            if(fam.name == name){
+                firebase.database().ref('Users/'+props.user.id+'/settings/').update({
+                    famSelection: fam.id
+                }).then(res => {
+                    closeIt()
+                }).catch((err => {
+                    closeIt()
+                }))
             }
-        }
+        }) : null
     })
+
+    closeIt = () => {
+        setName('')
+        props.finish()
+    }
 
     return(
         <View style={{width:Dimensions.get('screen').width,height:'100%',justifyContent:'center',alignItems:'center'}}>

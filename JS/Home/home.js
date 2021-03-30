@@ -37,6 +37,18 @@ const Home = (props) => {
     useEffect(() => {
         setuser(props.user)
     },[props.user])
+
+    getLocation = (mylocation) => {
+      setRegPosition({
+        latitude: mylocation.latitude,
+        longitude: mylocation.longitude,
+        accuracy: mylocation.accuracy,
+        altitude: mylocation.altitude,
+        altitudeAccuracy: mylocation.altitudeAccuracy,
+        heading: mylocation.heading,
+        speed: mylocation.speed,
+      })
+    }
     
     useSelector((state)=>{
         if(Object.keys(map).length > 0){
@@ -57,25 +69,11 @@ const Home = (props) => {
               },500)
               setSelectedPlace(selectedPlace)
           }else if(regionPosition.latitude == 0 && regionPosition.longitude == 0 && state.mylocation.message == 'Allowed'){
-            map.animateToRegion({latitude:state.mylocation.latitude,longitude:state.mylocation.longitude,latitudeDelta:0.019,longitudeDelta:0.019},500)
+            getLocation(state.mylocation)
+            map.animateCamera({center: { latitude: state.mylocation.latitude, longitude: state.mylocation.longitude,},altitude: 500,heading: 0,pitch: 0,zoom: 17,})
           }
         }
-        if(regionPosition.latitude == 0 && regionPosition.longitude == 0 && state.mylocation.message == 'Allowed'){
-          getLocation(state.mylocation)
-        }
     })
-
-    getLocation = (mylocation) => {
-      setRegPosition({
-        latitude: mylocation.latitude,
-        longitude: mylocation.longitude,
-        accuracy: mylocation.accuracy,
-        altitude: mylocation.altitude,
-        altitudeAccuracy: mylocation.altitudeAccuracy,
-        heading: mylocation.heading,
-        speed: mylocation.speed,
-      })
-    }
     
     return (
         <View style={{ height: dimensions.height, width: dimensions.width}}>
@@ -111,16 +109,6 @@ const Home = (props) => {
                               pitch: 0,
                               zoom: 17,
                             })
-                          // dispatch(mylocation({
-                          //   latitude: loc.latitude,
-                          //   longitude: loc.longitude,
-                          //   speed: loc.speed,
-                          //   heading: loc.heading,
-                          //   altitude: loc.altitude,
-                          //   altitudeAccuracy: loc.altitudeAccuracy,
-                          //   accuracy: loc.accuracy,
-                          //   permitted: false
-                          // }))
                     }}
                     customMapStyle={mapStyle}
                     style={{ height: '100%', width: '100%'}}
@@ -132,7 +120,7 @@ const Home = (props) => {
                     }}>
                         {navigation.path.length > 0 ? <Polyline coordinates={navigation.path} strokeColor={'#2C5364'} geodesic={true} strokeWidth={7} tappable={true} onPress={(e)=>console.warn(e)}/> : null}
                         {search.map((place)=>{
-                            return <Marker onPress={()=>console.warn(place)} coordinate={{latitude: place.location.lat, longitude: place.location.lng}}>
+                            return <Marker onPress={()=>dispatch(selmarker(place))} coordinate={{latitude: place.location.lat, longitude: place.location.lng}}>
                                 <SearchMarker plc={place}/>
                             </Marker>
                         })}

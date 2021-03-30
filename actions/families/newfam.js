@@ -19,10 +19,10 @@ export const newfam = (id,email,name,fams = []) => {
         }).then(resp => {
             key = resp.replace('https://maps-8a2af.firebaseio.com/FamilyGroups/','')
             fams.push(key)
-            firebase.database().ref('Users/'+email.replace(punctuation,'').replace(spaceRE,'')).update({
+            firebase.database().ref('Users/'+id+'/').update({
                 families: fams
             }).then(res => {
-                dispatch({type:NEWFAM,fam})
+                dispatch({type:NEWFAM,fam,key})
             })
             .catch(err => console.warn(err))
         })
