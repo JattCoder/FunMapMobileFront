@@ -8,10 +8,8 @@ import Location from '../FindMe/location'
 import Drawerr from './drawer'
 import Search from './components/search'
 import polyline from '@mapbox/polyline'
-import { bottomsheet } from '../../actions/animation/bottomsheet'
 import SearchMarker from './components/searchMarker'
-import { mylocation } from '../../actions/mylocation/mylocation'
-import { set } from 'react-native-reanimated'
+import DestinationIcon from './components/destinationIcon'
 
 const dimensions = Dimensions.get('screen')
 
@@ -53,21 +51,23 @@ const Home = (props) => {
     useSelector((state)=>{
         if(Object.keys(map).length > 0){
           if(navigation.path != state.navigation.path || navigation.active != state.navigation.active){
+              console.warn('Checking on Navigation Active? ',state.navigation.active)
               setTimeout(()=>{
                 map.fitToCoordinates(state.navigation.active ? polyline.decode(state.navigation.path) : state.navigation.path,{animated:true,edgePadding: { top: dimensions.height/4, right: 60, bottom: dimensions.height/2, left:60 }})
               },500)
               setNavigation({path:state.navigation.path,active:state.navigation.active})
           }else if(search != state.placesearch){
-              setTimeout(()=>{
-                map.fitToCoordinates(state.placesearch.map(plc=>{return{latitude:plc.location.lat,longitude:plc.location.lng}}),{animated:true,edgePadding: { top: 30, right: 10, bottom: 10, left: 30 }})
-              },500)
+              if(state.placesearch.length > 0)
+                setTimeout(()=>{
+                  map.fitToCoordinates(state.placesearch.map(plc=>{return{latitude:plc.location.lat,longitude:plc.location.lng}}),{animated:true,edgePadding: { top: 30, right: 10, bottom: 10, left: 30 }})
+                },500)
               setsearch(state.placesearch)
           }else if(state.marker.placeid != selectedPlace){
-              setTimeout(()=>{
-                map.animateToRegion({latitude:state.marker.location.lat,longitude:state.marker.location.lng,latitudeDelta:0.019,longitudeDelta:0.019},500)
-                dispatch(bottomsheet('Search'))
-              },500)
-              setSelectedPlace(selectedPlace)
+              if(state.marker.placeid != '')
+                setTimeout(()=>{
+                  map.animateToRegion({latitude:state.marker.location.lat,longitude:state.marker.location.lng,latitudeDelta:0.019,longitudeDelta:0.019},500)
+                },500)
+              setSelectedPlace(state.marker.placeid)
           }else if(regionPosition.latitude == 0 && regionPosition.longitude == 0 && state.mylocation.message == 'Allowed'){
             getLocation(state.mylocation)
             map.animateCamera({center: { latitude: state.mylocation.latitude, longitude: state.mylocation.longitude,},altitude: 500,heading: 0,pitch: 0,zoom: 17,})
@@ -118,7 +118,12 @@ const Home = (props) => {
                       latitudeDelta: 100.009,
                       longitudeDelta: 20.0009,
                     }}>
-                        {navigation.path.length > 0 ? <Polyline coordinates={navigation.path} strokeColor={'#2C5364'} geodesic={true} strokeWidth={7} tappable={true} onPress={(e)=>console.warn(e)}/> : null}
+                        <Marker coordinate={{latitude: navigation.path[navigation.path.length - 1].latitude, longitude: navigation.path[navigation.path.length - 1].longitude}}>
+                            <DestinationIcon pathLength={navigation.path.length} active={navigation.active}/>
+                        </Marker>
+                        {navigation.path.length > 0 ? 
+                          <Polyline coordinates={navigation.path} strokeColor={'#2C5364'} geodesic={true} strokeWidth={7} tappable={true} onPress={(e)=>console.warn(e)}/>
+                        : null}
                         {search.map((place)=>{
                             return <Marker onPress={()=>dispatch(selmarker(place))} coordinate={{latitude: place.location.lat, longitude: place.location.lng}}>
                                 <SearchMarker plc={place}/>

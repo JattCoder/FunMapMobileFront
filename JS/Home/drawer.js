@@ -283,14 +283,7 @@ export default Drawerr = (props) => {
   }
 
   useSelector((state)=>{
-    if(addStop) {
-      console.warn('Add Stop or Look at Steps')
-    }else if(state.navigation.active){
-      navigating != state.navigation.active ? setNavigating(state.navigation.active) : null
-      navigatingActiveDirection()
-    }else if(state.sheet == 'Search'){
-      if(!sheetOpen) searchSheet()
-    }else if(state.sheet == '') hideTheActionSheet()
+    if(state.marker.placeid != '' && !sheetOpen) searchSheet()
   })
 
   return(

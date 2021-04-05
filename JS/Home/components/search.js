@@ -1,10 +1,6 @@
 import React,{ useState, useEffect } from 'react'
-import { bottomsheet } from '../../../actions/animation/bottomsheet'
 import { useDispatch, useSelector } from 'react-redux'
-import Geocoder from 'react-native-geocoder-reborn'
 import { submitsearch } from '../../../actions/submitsearch/submitsearch'
-import { clearsearch } from '../../../actions/submitsearch/clearsearch'
-import { clearnavigation } from '../../../actions/navigation/clearnavigation'
 import LinearGradient from 'react-native-linear-gradient'
 import { Animated, Image, TextInput, Dimensions, TouchableOpacity, StyleSheet, View, ScrollView } from 'react-native'
 
@@ -32,6 +28,7 @@ export default Search = (props) => {
     const [hotelColor] = useState(new Animated.Value(0))
     const [carRentalColor] = useState(new Animated.Value(0))
     const [carServiceColor] = useState(new Animated.Value(0))
+    const [driving,setDriving] = useState(false)
     const [drivingMode] = useState(new Animated.Value(0))
     const [drivingModeOpacity] = useState(new Animated.Value(0))
     const [location,setLocation] = useState({
@@ -151,7 +148,7 @@ export default Search = (props) => {
             closeShortCuts()
         }else if(saction == 'Open'){
             closePlaceSearch()
-            dispatch(clearsearch())
+            dispatch(submitsearch())
             setAction('')
         }else{
             Animated.parallel([
@@ -185,11 +182,7 @@ export default Search = (props) => {
             })
         ]).start(()=>{
             setSaction('')
-            dispatch(clearsearch())
-            if(!navigating){
-                dispatch(clearnavigation())
-                dispatch(bottomsheet(''))
-            }else changeTodrivingMode()
+            changeTodrivingMode()
         })
     }
 
@@ -228,7 +221,7 @@ export default Search = (props) => {
         if(e == ''){
             setAction('')
             closeSrc = setTimeout(()=>{
-                dispatch(clearsearch())
+                dispatch(submitsearch())
                 closePlaceSearch()
             },5000)
         }else{
@@ -273,16 +266,18 @@ export default Search = (props) => {
     }
 
     useSelector(state => {
-        if(location.lat != state.mylocation.latitude || location.lng != state.mylocation.longitude) {
-            setLocation({lat:state.mylocation.latitude,lng:state.mylocation.longitude})
-        }
-        if(state.navigation.path.length > 0){
+        if(state.navigation.active != driving){
             closeShortCuts()
             setTimeout(()=>{
                 closePlaceSearch()
             },250)
+            setDriving(state.navigation.active)
         }
     })
+
+    useEffect(()=>{
+        setLocation({lat:props.position.latitude,lng:props.position.longitude})
+    },[props.position,props.user])
 
     const openSearchHeightInterpolate = openQuickSearchHeight.interpolate({
         inputRange:[0,1],
@@ -343,8 +338,6 @@ export default Search = (props) => {
         inputRange:[0,1],
         outputRange:['#f3ebe1','#4169e1']
     })
-
-    useEffect(()=>{},[])
 
     return(
         <Animated.View style={{width:Dimensions.get('screen').width/1.12,height:55,position:'absolute',right:slide,alignItems:'center',flexDirection:'row'}}>

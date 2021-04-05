@@ -2,6 +2,7 @@ import React,{ useState, useEffect } from 'react'
 import { View, Text, Dimensions, Image, StyleSheet, TouchableOpacity, Animated } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import { navigation } from '../../../actions/navigation/navigation'
+import { submitsearch } from '../../../actions/submitsearch/submitsearch'
 import { clearnavigation } from '../../../actions/navigation/clearnavigation'
 import polyline from '@mapbox/polyline'
 import Navigating from '../components/navigating'
@@ -34,56 +35,55 @@ export default PlaceSearcgResults = (props) => {
     }
 
     getRoute = (finalize) => {
-        console.warn('Navigate: ',props.user.highways)
-        // fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${props.position.latitude},${props.position.longitude}&destination=${placeInfo.location.lat},${placeInfo.location.lng}&avoid=${props.user.highways?'highways':''}|${props.user.ferries?'ferries':''}|${props.user.tolls?'tolls':''}&mode=${props.user.drivingMode}&key=AIzaSyDMCLs_nBIfA8Bw9l50nSRwLOUByiDel9U`)
-        // .then(res => {return res.json()})
-        // .then(result => {
-        //     if(result.status === 'ZERO_RESULTS') {
-        //         alert('No Route')
-        //     }else{
-        //         path = []
-        //         completeInfo = {
-        //             duration: result.routes[0].legs[0].duration.text,
-        //             durationVal: result.routes[0].legs[0].duration.value,
-        //             distance: result.routes[0].legs[0].distance.text,
-        //             destination: {latitude:result.routes[0].legs[0].end_location.lat,longitude:result.routes[0].legs[0].end_location.lng},
-        //             steps: []
-        //         }
-        //         result.routes[0].legs[0].steps.map(step => {
-        //             polyline.decode(step.polyline.points).map(step => {
-        //                 path.push({latitude:step[0],longitude:step[1]})
-        //             })
-        //             completeInfo.steps.push({
-        //                 distance: step.distance.text,
-        //                 duration: step.duration.text,
-        //                 durationVal: step.duration.value,
-        //                 instruction: step.html_instructions,
-        //                 polyline: step.polyline.points
-        //             })
-        //         })
-        //         setRouteInfo({
-        //             pth: path,
-        //             info: completeInfo
-        //         })
-        //         dispatch(navigation(finalize,path))
-        //         setDisplayNavigation(true)
-        //         setActive(true)
-        //         displayNaviAnim()
-        //     }
-        // })
-        // .catch(err => console.warn('Directions Error: ',err))
+        fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${props.position.latitude},${props.position.longitude}&destination=${placeInfo.location.lat},${placeInfo.location.lng}&avoid=${props.user.settings.highways?'highways':''}|${props.user.settings.ferries?'ferries':''}|${props.user.settings.tolls?'tolls':''}&mode=${props.user.settings.drivingMode}&key=AIzaSyDMCLs_nBIfA8Bw9l50nSRwLOUByiDel9U`)
+        .then(res => {return res.json()})
+        .then(result => {
+            if(result.status === 'ZERO_RESULTS') {
+                alert('No Route')
+            }else{
+                path = []
+                completeInfo = {
+                    duration: result.routes[0].legs[0].duration.text,
+                    durationVal: result.routes[0].legs[0].duration.value,
+                    distance: result.routes[0].legs[0].distance.text,
+                    destination: {latitude:result.routes[0].legs[0].end_location.lat,longitude:result.routes[0].legs[0].end_location.lng},
+                    steps: []
+                }
+                result.routes[0].legs[0].steps.map(step => {
+                    polyline.decode(step.polyline.points).map(step => {
+                        path.push({latitude:step[0],longitude:step[1]})
+                    })
+                    completeInfo.steps.push({
+                        distance: step.distance.text,
+                        duration: step.duration.text,
+                        durationVal: step.duration.value,
+                        instruction: step.html_instructions,
+                        polyline: step.polyline.points
+                    })
+                })
+                dispatch(submitsearch([]))
+                if(path.length > 0) dispatch(navigation(finalize,path))
+                setDisplayNavigation(true)
+                displayNaviAnim()
+                setRouteInfo({
+                    pth: path,
+                    info: completeInfo
+                })
+                // setActive(true)
+                // displayNaviAnim()
+            }
+        })
+        .catch(err => console.warn('Directions Error: ',err))
     }
 
     useSelector((state)=>{
         if(state.marker != placeInfo){
-            console.warn(state.marker)
             // hideNaviAnim()
             // state.navigation.path.length > 0 && !state.navigation.active ? dispatch(clearnavigation()) : null
             // setDisplayNavigation(false)
             setPlaceInfo(state.marker)
         }
-        if(state.navigation.active && !active) setActive(state.navigation.active)
-        else if(!state.navigation.active && active) setActive(state.navigation.active)
+        
     })
 
     const naviColorInterpolate = naviColor.interpolate({
