@@ -4,9 +4,11 @@ import { CLEARMARKER } from '../actions/marker/clemarker'
 let initialState = {
     name: '',
     rating: '',
-    placeid: '',
-    lat: 0.00,
-    lng: 0.00,
+    placeID: '',
+    location:{
+        lat: 0.00,
+        lng: 0.00,
+    },
     formatted_address: '',
     formatted_phone_number: '',
     opening_hours: [],
@@ -18,7 +20,7 @@ let initialState = {
 const marker = (mrker = initialState, action) => {
     switch(action.type){
         case MARKER:
-            return action.marker != {} ? action.marker : mrker
+            return action.marker
         case CLEARMARKER:
             return action.marker
         default:

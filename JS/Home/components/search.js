@@ -182,7 +182,7 @@ export default Search = (props) => {
             })
         ]).start(()=>{
             setSaction('')
-            changeTodrivingMode()
+            driving ? changeTodrivingMode() : changeToNonDrivingMode()
         })
     }
 
@@ -210,6 +210,33 @@ export default Search = (props) => {
             })
         ]).start(()=>{
             setSaction('Voice')
+        })
+    }
+
+    changeToNonDrivingMode = () => {
+        Animated.parallel([
+            Animated.timing(openQuickSearchHeight,{
+                toValue:1,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(openQuickSearchOpacity,{
+                toValue:1,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(drivingMode,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(drivingModeOpacity,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            })
+        ]).start(()=>{
+            setSaction('')
         })
     }
 

@@ -9,16 +9,14 @@ import PlaceSearchResults from './components/placeSearchResults'
 import LinearGradient from 'react-native-linear-gradient'
 import Settings from './components/settings'
 import { bottomsheet } from '../../actions/animation/bottomsheet'
+import { navigation } from '../../actions/navigation/navigation'
 import { clemarker } from '../../actions/marker/clemarker'
-import Navigating from './components/navigating'
 import { StyleSheet, Animated, View, ScrollView, TouchableOpacity, Image, Dimensions, Text } from 'react-native'
 const { width, height } = Dimensions.get('screen')
 let closeButtonsTimeout
 
 export default Drawerr = (props) => {
 
-  const [backColor,setBackColor] = useState(['#00B4DB','#1CB5E0','#000046'])
-  const [action,setAction] = useState('')
   const [alignment] = useState(new Animated.Value(0))
   const [sheetHeight] = useState(new Animated.Value(height/7.4))
   const [headingMargin] = useState(new Animated.Value(40))
@@ -39,6 +37,7 @@ export default Drawerr = (props) => {
   const [searchResultsHeight] = useState(new Animated.Value(0))
   const [settingsHeight] = useState(new Animated.Value(Dimensions.get('screen').height/1.7))
   const [settingsWidth] = useState(new Animated.Value(Dimensions.get('screen').width))
+  const [navSettings,setNavSettings] = useState({active:false,path:0})
   const [settingsOpacity] = useState(new Animated.Value(0))
   const [settingsDisplay,setSettingsDisplay] = useState('none')
   const [menuOpen,setMenuOpen] = useState(false)
@@ -50,6 +49,11 @@ export default Drawerr = (props) => {
   const dispatch = useDispatch()
 
   slideSheet = (open) => {
+    if(navSettings.path > 0){
+      dispatch(navigation(false,[]))
+    }
+    setTimeout(()=>{setSheetOpen(false)},500)
+    dispatch(clemarker())
     Animated.parallel([
       Animated.timing(alignment, {
         toValue:open?1:0,
@@ -283,8 +287,13 @@ export default Drawerr = (props) => {
   }
 
   useSelector((state)=>{
-    console.warn('Pressed navigate button: ',state.marker)
-    if(state.marker.placeid != '' && !sheetOpen) searchSheet()
+    if(state.marker.placeID != '' && !sheetOpen) searchSheet()
+    if(state.navigation.path.length != navSettings.path || state.navigation.active != navSettings.active)
+      setNavSettings({
+        path: state.navigation.path.length,
+        active: state.navigation.active
+      })
+    //else if(state.marker.placeid == '' && state.navigation.active) navigatingActiveDirection() 
   })
 
   return(

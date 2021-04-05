@@ -3,9 +3,11 @@ export const CLEARMARKER = 'MARKER'
 let initialState = {
     name: '',
     rating: '',
-    placeid: '',
-    lat: 0.00,
-    lng: 0.00,
+    placeID: '',
+    location:{
+        lat: 0.00,
+        lng: 0.00,
+    },
     formatted_address: '',
     formatted_phone_number: '',
     opening_hours: [],

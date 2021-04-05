@@ -21,6 +21,7 @@ const Home = (props) => {
     const [navigation,setNavigation] = useState({path:[],active:false})
     const [freeSearch,setFreeSearch] = useState(false)
     const [selectedPlace,setSelectedPlace] = useState('')
+    const [followMe,setFollowMe] = useState(false)
     const [regionPosition, setRegPosition] = useState({
         latitude: 0,
         longitude: 0,
@@ -51,15 +52,16 @@ const Home = (props) => {
     useSelector((state)=>{
         if(Object.keys(map).length > 0){
           if(navigation.path != state.navigation.path || navigation.active != state.navigation.active){
-            if(state.navigation.active && state.marker.placeid != '') dispatch(selmarker({}))
             setTimeout(()=>{
               !navigation.active ? 
                 map.fitToCoordinates(state.navigation.path,{animated:true,edgePadding: { top: dimensions.height/4, right: 60, bottom: dimensions.height/2, left:60 }})
               : regionPosition.speed <= 0 ? 
-                map.animateCamera({center: { latitude: regionPosition.latitude, longitude: regionPosition.longitude,},altitude: regionPosition.altitude,heading: regionPosition.heading ,pitch: 0,zoom: 17,}) 
+                setTimeout(()=>{
+                  map.animateCamera({center: { latitude: regionPosition.latitude, longitude: regionPosition.longitude,},altitude: regionPosition.altitude,heading: regionPosition.heading ,pitch: 0,zoom: 17,})
+                },500) 
               : null
             },500)
-
+            console.warn(regionPosition.speed)
 
             
             setNavigation({path:state.navigation.path,active:state.navigation.active})
@@ -81,6 +83,8 @@ const Home = (props) => {
           }
         }
     })
+
+    
     
     return (
         <View style={{ height: dimensions.height, width: dimensions.width}}>
@@ -90,7 +94,7 @@ const Home = (props) => {
                     ref={ref => { setmap(ref) }}
                     paddingAdjustmentBehavior={'always'}
                     onLongPress={()=>alert('Need Urgent Help?')}
-                    followsUserLocation={search.length > 0 ? false : navigation.path.length > 0 && navigation.active ? true : freeSearch ? false : true}
+                    followsUserLocation={regionPosition.speed > 10 ? true : false}
                     showsUserLocation={regionPosition.latitude != 0 && regionPosition.longitude != 0 ? true : false}
                     showsBuildings={true}
                     showsPointsOfInterest={false}
