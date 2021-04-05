@@ -283,6 +283,7 @@ export default Drawerr = (props) => {
   }
 
   useSelector((state)=>{
+    console.warn('Pressed navigate button: ',state.marker)
     if(state.marker.placeid != '' && !sheetOpen) searchSheet()
   })
 

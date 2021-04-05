@@ -18,7 +18,7 @@ let initialState = {
 const marker = (mrker = initialState, action) => {
     switch(action.type){
         case MARKER:
-            return action.marker
+            return action.marker != {} ? action.marker : mrker
         case CLEARMARKER:
             return action.marker
         default:

@@ -113,7 +113,7 @@ export default PlaceSearcgResults = (props) => {
         </View>
         <View style={{width:'100%',height:'10%',justifyContent:'center'}}>
             <Animated.View style={{width:'40%', height:'70%',marginLeft:'5%',backgroundColor:naviColorInterpolate,borderRadius:50}}>
-                <TouchableOpacity onPress={()=> !displayNavigation ? getRoute(false) : dispatch(navigation(true,routeInfo.pth))} style={{width:'100%',height:'100%',borderRadius:50,justifyContent:'center',alignItems:'center'}}>
+                <TouchableOpacity onPress={()=> !displayNavigation ? getRoute(false) : dispatch(navigation(true,routeInfo.pth)),dispatch()} style={{width:'100%',height:'100%',borderRadius:50,justifyContent:'center',alignItems:'center'}}>
                     {!displayNavigation ? <Text style={{color:'white',fontWeight:'bold',fontSize:15}}>Navigate</Text>
                     : <Text style={{color:'white',fontWeight:'bold',fontSize:15}}>Start - {routeInfo.info.distance}</Text>}
                 </TouchableOpacity>

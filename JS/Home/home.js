@@ -51,11 +51,18 @@ const Home = (props) => {
     useSelector((state)=>{
         if(Object.keys(map).length > 0){
           if(navigation.path != state.navigation.path || navigation.active != state.navigation.active){
-              console.warn('Checking on Navigation Active? ',state.navigation.active)
-              setTimeout(()=>{
-                map.fitToCoordinates(state.navigation.active ? polyline.decode(state.navigation.path) : state.navigation.path,{animated:true,edgePadding: { top: dimensions.height/4, right: 60, bottom: dimensions.height/2, left:60 }})
-              },500)
-              setNavigation({path:state.navigation.path,active:state.navigation.active})
+            if(state.navigation.active && state.marker.placeid != '') dispatch(selmarker({}))
+            setTimeout(()=>{
+              !navigation.active ? 
+                map.fitToCoordinates(state.navigation.path,{animated:true,edgePadding: { top: dimensions.height/4, right: 60, bottom: dimensions.height/2, left:60 }})
+              : regionPosition.speed <= 0 ? 
+                map.animateCamera({center: { latitude: regionPosition.latitude, longitude: regionPosition.longitude,},altitude: regionPosition.altitude,heading: regionPosition.heading ,pitch: 0,zoom: 17,}) 
+              : null
+            },500)
+
+
+            
+            setNavigation({path:state.navigation.path,active:state.navigation.active})
           }else if(search != state.placesearch){
               if(state.placesearch.length > 0)
                 setTimeout(()=>{
@@ -118,9 +125,9 @@ const Home = (props) => {
                       latitudeDelta: 100.009,
                       longitudeDelta: 20.0009,
                     }}>
-                        <Marker coordinate={{latitude: navigation.path[navigation.path.length - 1].latitude, longitude: navigation.path[navigation.path.length - 1].longitude}}>
+                        {navigation.path.length > 0 ? <Marker coordinate={{latitude: navigation.path[navigation.path.length-1].latitude, longitude: navigation.path[navigation.path.length-1].longitude}}>
                             <DestinationIcon pathLength={navigation.path.length} active={navigation.active}/>
-                        </Marker>
+                        </Marker> : null}
                         {navigation.path.length > 0 ? 
                           <Polyline coordinates={navigation.path} strokeColor={'#2C5364'} geodesic={true} strokeWidth={7} tappable={true} onPress={(e)=>console.warn(e)}/>
                         : null}

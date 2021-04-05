@@ -63,6 +63,7 @@ export default Navigating = (props) => {
     }
 
     useEffect(()=>{
+        console.warn('Hello from navigation.js')
         setRouteInfo({
             position:{
                 latitude:props.position.latitude,
@@ -91,13 +92,13 @@ export default Navigating = (props) => {
             <TouchableOpacity onPress={reRoute()}><Text>Re-Routing</Text></TouchableOpacity>
         </View>
     }
-
-    return routeInfo.position.latitude != 0 && routeInfo.position.longitude != 0 ? 
-        geolib.isPointInLine(
-            routeInfo.position,
-            routeInfo.path[0],
-            routeInfo.path[1]) || geolib.getDistanceFromLine(routeInfo.position,routeInfo.path[0],routeInfo.path[1]) <= 4 ? returnNavigatingMessage() : returnReRouteMessage()
-    : null
+    return null
+    // return routeInfo.position.latitude != 0 && routeInfo.position.longitude != 0 ? 
+    //     geolib.isPointInLine(
+    //         routeInfo.position,
+    //         routeInfo.path[0],
+    //         routeInfo.path[1]) || geolib.getDistanceFromLine(routeInfo.position,routeInfo.path[0],routeInfo.path[1]) <= 4 ? returnNavigatingMessage() : returnReRouteMessage()
+    // : null
 }
 
 const Styles = StyleSheet.create({

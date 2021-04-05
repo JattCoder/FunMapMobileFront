@@ -14,8 +14,8 @@ export default DestinationIcon = (props) => {
     },[props.pathLength,props.active])
 
     return(
-        <View style={{backgroundColor:'red',marginTop:10}}>
-            {navigation ? !driving ? <Image style={{height:40,width:40}} source={require('../../settingsIcons/destinationicon.png')}/> : console.warn('will display icon without frame') : null}
+        <View>
+            {navigation ? !driving ? <Image style={{height:30,width:30}} source={require('../../settingsIcons/destinationicon.png')}/> : console.warn('will display icon without frame') : null}
         </View>
     )
 
