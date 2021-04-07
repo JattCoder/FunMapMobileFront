@@ -4,6 +4,7 @@ import SearchUser from './searchUser'
 import GetTogether from './getTogether'
 import { useDispatch } from 'react-redux'
 import GroupSettings from './groupSettings'
+import Meetnow from './meetnow'
 import { View, Text, TouchableOpacity, Image, Dimensions, ScrollView, Animated } from 'react-native'
 
 export default FamCard = (props) => {
@@ -28,6 +29,11 @@ export default FamCard = (props) => {
     const[searchSize] = useState(new Animated.Value(30))
     const[searchColor] = useState(new Animated.Value(0))
     const[searchDisplay,setSearchDisplay] = useState('none')
+    const[nowHeight] = useState(new Animated.Value(0))
+    const[nowOpacity] = useState(new Animated.Value(0))
+    const[nowSize] = useState(new Animated.Value(30))
+    const[nowColor] = useState(new Animated.Value(0))
+    const[nowDisplay,setNowDisplay] = useState('none')
     const[members,setMembers] = useState([])
     const dispatch = useDispatch()
 
@@ -102,8 +108,28 @@ export default FamCard = (props) => {
                 toValue:1,
                 duration:250,
                 useNativeDriver:false
+            }),,
+            Animated.timing(nowSize,{
+                toValue:30,
+                duration:250,
+                useNativeDriver:false
             }),
-        ]).start(()=>setGetTogetherDisplay('none'),setSettingsDisplay('none'),setSearchDisplay(''))
+            Animated.timing(nowColor,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(nowHeight,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(nowOpacity,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+        ]).start(()=>setGetTogetherDisplay('none'),setSettingsDisplay('none'),setSearchDisplay(''),setNowDisplay('none'))
     }
 
     closeSearch = () => {
@@ -134,6 +160,26 @@ export default FamCard = (props) => {
                 useNativeDriver:false
             }),
             Animated.timing(searchColor,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(nowSize,{
+                toValue:30,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(nowColor,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(nowHeight,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(nowOpacity,{
                 toValue:0,
                 duration:250,
                 useNativeDriver:false
@@ -213,7 +259,27 @@ export default FamCard = (props) => {
                 duration:250,
                 useNativeDriver:false
             }),
-        ]).start(()=>setGetTogetherDisplay(''),setSettingsDisplay('none'),setSearchDisplay('none'))
+            Animated.timing(nowSize,{
+                toValue:30,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(nowColor,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(nowHeight,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(nowOpacity,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+        ]).start(()=>setGetTogetherDisplay(''),setSettingsDisplay('none'),setSearchDisplay('none'),setNowDisplay('none'))
     }
 
     closeGetTopethers = () => {
@@ -249,6 +315,156 @@ export default FamCard = (props) => {
                 useNativeDriver:false
             }),
         ]).start(()=>setGetTogetherDisplay('none'))
+    }
+
+    openNow = () => {
+        Animated.parallel([
+            Animated.timing(usersHeight,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(usersOpacity,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(getTogetherHeight,{
+                toValue:1,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(getTogetherOpacity,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(getTogetherSize,{
+                toValue:30,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(getTogetherColor,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(gsettingsOpacity,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(gsettingsHeight,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(gsettingsSize,{
+                toValue:30,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(settingsColor,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(searchHeight,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(searchOpacity,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(searchSize,{
+                toValue:30,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(searchColor,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(nowSize,{
+                toValue:40,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(nowColor,{
+                toValue:1,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(nowHeight,{
+                toValue:1,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(nowOpacity,{
+                toValue:1,
+                duration:250,
+                useNativeDriver:false
+            }),
+        ]).start(()=>setGetTogetherDisplay('none'),setSettingsDisplay('none'),setSearchDisplay('none'),setNowDisplay(''))
+    }
+
+    closeNow = () => {
+        Animated.parallel([
+            Animated.timing(usersHeight,{
+                toValue:1,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(usersOpacity,{
+                toValue:1,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(getTogetherHeight,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(getTogetherOpacity,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(getTogetherSize,{
+                toValue:30,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(getTogetherColor,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(nowSize,{
+                toValue:30,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(nowColor,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(nowHeight,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(nowOpacity,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+        ]).start(()=>setNowDisplay('none'))
     }
 
     openGSettings = () => {
@@ -323,7 +539,27 @@ export default FamCard = (props) => {
                 duration:250,
                 useNativeDriver:false
             }),
-        ]).start(()=>setGetTogetherDisplay('none'),setSettingsDisplay(''),setSearchDisplay('none'))
+            Animated.timing(nowSize,{
+                toValue:30,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(nowColor,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(nowHeight,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+            Animated.timing(nowOpacity,{
+                toValue:0,
+                duration:250,
+                useNativeDriver:false
+            }),
+        ]).start(()=>setGetTogetherDisplay('none'),setSettingsDisplay(''),setSearchDisplay('none'),setNowDisplay('none'))
     }
 
     closeGSettings = () => {
@@ -395,6 +631,11 @@ export default FamCard = (props) => {
         outputRange:['0%','75%']
     })
 
+    const nowHeightInterpolate = nowHeight.interpolate({
+        inputRange:[0,1],
+        outputRange:['0%','75%']
+    })
+
     const getTogetherColorOpacity = getTogetherColor.interpolate({
         inputRange:[0,1],
         outputRange:['rgba(0,0,0,0)','#7F7FD5']
@@ -406,6 +647,11 @@ export default FamCard = (props) => {
     })
 
     const searchColorOpacity = searchColor.interpolate({
+        inputRange:[0,1],
+        outputRange:['rgba(0,0,0,0)','#7F7FD5']
+    })
+
+    const nowColorOpacity = nowColor.interpolate({
         inputRange:[0,1],
         outputRange:['rgba(0,0,0,0)','#7F7FD5']
     })
@@ -430,14 +676,19 @@ export default FamCard = (props) => {
                             <Image style={{width:20,height:20}} source={require('../../settingsIcons/plus.png')} />
                         </TouchableOpacity>
                     </Animated.View>
-                    <Animated.View style={{height:gsettingsSize,width:gsettingsSize,backgroundColor:gsettingsColorOpacity,borderRadius:50,marginHorizontal:'2%'}}>
+                    <Animated.View style={{height:gsettingsSize,width:gsettingsSize,backgroundColor:gsettingsColorOpacity,borderRadius:50,marginLeft:'2%'}}>
                         <TouchableOpacity onPress={()=>settingsDisplay == '' ? closeGSettings() : openGSettings()} style={{alignItems:'center',borderWidth:1,borderRadius:50,borderColor:'#7F7FD5',justifyContent:'center',alignItems:'center',height:'100%',width:'100%'}}>
                             <Image style={{width:20,height:20}} source={require('../../settingsIcons/setting.png')} />
                         </TouchableOpacity>
                     </Animated.View>
-                    <Animated.View style={{height:getTogetherSize,width:getTogetherSize,backgroundColor:getTogetherColorOpacity,borderRadius:50}}>
+                    <Animated.View style={{height:getTogetherSize,width:getTogetherSize,backgroundColor:getTogetherColorOpacity,borderRadius:50,marginLeft:'2%'}}>
                         <TouchableOpacity onPress={()=>getTogetherDisplay == '' ? closeGetTopethers() : openGetTopethers()} style={{alignItems:'center',borderWidth:1,borderRadius:50,borderColor:'#7F7FD5',justifyContent:'center',alignItems:'center',height:'100%',width:'100%'}}>
                             <Image style={{width:20,height:20}} source={require('../../settingsIcons/mail.png')} />
+                        </TouchableOpacity>
+                    </Animated.View>
+                    <Animated.View style={{height:nowSize,width:nowSize,backgroundColor:nowColorOpacity,borderRadius:50,marginLeft:'2%'}}>
+                        <TouchableOpacity onPress={()=>nowDisplay == '' ? closeNow() : openNow()} style={{alignItems:'center',borderWidth:1,borderRadius:50,borderColor:'#7F7FD5',justifyContent:'center',alignItems:'center',height:'100%',width:'100%'}}>
+                            <Image style={{width:20,height:20}} source={require('../../settingsIcons/now.png')} />
                         </TouchableOpacity>
                     </Animated.View>
                 </View>
@@ -449,6 +700,9 @@ export default FamCard = (props) => {
                 </Animated.View>
                 <Animated.View style={{height:searchHeightInterpolate,width:'100%',margin:20,opacity:searchOpacity,display:searchDisplay}}>
                     <SearchUser myId={props.UserId} groupId={props.ID} groupName={props.Name} senderName={props.UserName} senderEmail={props.UserEmail} members={members.map(member=>{return member.id})}/>
+                </Animated.View>
+                <Animated.View style={{height:nowHeightInterpolate,width:'100%',margin:20,opacity:nowOpacity,display:nowDisplay}}>
+                    <Meetnow myId={props.UserId} groupId={props.ID} groupName={props.Name} senderName={props.UserName} senderEmail={props.UserEmail} members={members.map(member=>{return member.id})}/>
                 </Animated.View>
                 <Animated.View style={{height:usersHeightInterpolate,width:'100%',margin:20,opacity:usersOpacity}}>
                     <ScrollView >

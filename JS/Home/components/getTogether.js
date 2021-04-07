@@ -128,7 +128,9 @@ export default GetTogether = (props) => {
                             </View>
                         </View>
                     })}
-                </ScrollView> : <Text>No Get Togethers</Text>}
+                </ScrollView> : <View style={{height:'100%',width:'100%',justifyContent:'center',alignItems:'center'}}>
+                    <Text style={{fontSize:20,fontWeight:'bold',color:'#2C5364'}}>No Events</Text>
+                </View>}
             </View>
             <View style={{width:'100%',height:'20%',justifyContent:'center',alignItems:'center'}}>
                 <TouchableOpacity onPress={()=>openNewForm()} style={{backgroundColor:'#7F7FD5',width:'40%',height:'70%',borderRadius:10,borderWidth:1.5,borderColor:'#7F7FD5',justifyContent:'center',alignItems:'center',shadowColor: "rgba(211,204,227,0.1)",shadowOffset: {width: 0,height: 5,},shadowOpacity: 10.36,shadowRadius: 5.68,elevation: 11,}}>
@@ -137,10 +139,10 @@ export default GetTogether = (props) => {
             </View>
             <Animated.View style={{position:'absolute',height:'100%',width:'95%',backgroundColor:'rgba(255,255,255,0.6)',borderRadius:10,right:7,left:7,zIndex:newGetTogetherIndex,opacity:newGetTogetherOpacity,justifyContent:'center',alignItems:'center',display:newGetTogetherDisplay}}>
                 <View style={{width:'100%',height:'13%',marginTop:'3%',justifyContent:'center',alignItems:'center'}}>
-                    <TextInput placeholder='Title' onChangeText={(e)=>setTitle(e)} value={title} placeholderTextColor='grey' style={{backgroundColor:'rgba(255,255,255,0.3)',color:'white',width:'70%',height:'100%',borderRadius:10,paddingHorizontal:'3%'}}/>
+                    <TextInput placeholder='Title' onChangeText={(e)=>setTitle(e)} value={title} placeholderTextColor='grey' style={{backgroundColor:'rgba(255,255,255,0.3)',color:'#2C5364',width:'70%',height:'100%',borderRadius:10,paddingHorizontal:'3%'}}/>
                 </View>
                 <View style={{width:'100%',height:'13%',justifyContent:'center',alignItems:'center',marginTop:'2%'}}>
-                    <TextInput placeholder='Address' onChangeText={(e)=>setAddress(e)} value={address} placeholderTextColor='grey' style={{backgroundColor:'rgba(255,255,255,0.3)',color:'white',width:'70%',height:'100%',borderRadius:10,paddingHorizontal:'3%'}}/>
+                    <TextInput placeholder='Address' onChangeText={(e)=>setAddress(e)} value={address} placeholderTextColor='grey' style={{backgroundColor:'rgba(255,255,255,0.3)',color:'#2C5364',width:'70%',height:'100%',borderRadius:10,paddingHorizontal:'3%'}}/>
                 </View>
                 <View style={{height:'50%',width:'85%'}}>
                     <DatePicker date={date} is24hourSource="locale" locale='en' mode='datetime' onDateChange={setDate} textColor={'black'} style={{height:180,width:320}}/>

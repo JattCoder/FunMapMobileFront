@@ -35,6 +35,7 @@ const Home = (props) => {
 
     useEffect(() => {
         setuser(props.user)
+        setFollowMe(true)
     },[props.user])
 
     getLocation = (mylocation) => {
@@ -52,18 +53,11 @@ const Home = (props) => {
     useSelector((state)=>{
         if(Object.keys(map).length > 0){
           if(navigation.path != state.navigation.path || navigation.active != state.navigation.active){
-            setTimeout(()=>{
-              !navigation.active ? 
-                map.fitToCoordinates(state.navigation.path,{animated:true,edgePadding: { top: dimensions.height/4, right: 60, bottom: dimensions.height/2, left:60 }})
-              : regionPosition.speed <= 0 ? 
-                setTimeout(()=>{
-                  map.animateCamera({center: { latitude: regionPosition.latitude, longitude: regionPosition.longitude,},altitude: regionPosition.altitude,heading: regionPosition.heading ,pitch: 0,zoom: 17,})
-                },500) 
-              : null
-            },500)
-            console.warn(regionPosition.speed)
-
-            
+            console.warn('Pressed to navigate')
+            if(!state.navigation.active)
+              map.fitToCoordinates(state.navigation.path,{animated:true,edgePadding: { top: dimensions.height/4, right: 60, bottom: dimensions.height/2, left:60 }})
+            else if(regionPosition.speed <= 0)
+              map.animateCamera({center: { latitude: regionPosition.latitude, longitude: regionPosition.longitude,},altitude: regionPosition.altitude,heading: regionPosition.heading ,pitch: 0,zoom: 17,},{duration:1300})
             setNavigation({path:state.navigation.path,active:state.navigation.active})
           }else if(search != state.placesearch){
               if(state.placesearch.length > 0)
@@ -74,7 +68,7 @@ const Home = (props) => {
           }else if(state.marker.placeid != selectedPlace){
               if(state.marker.placeid != '')
                 setTimeout(()=>{
-                  map.animateToRegion({latitude:state.marker.location.lat,longitude:state.marker.location.lng,latitudeDelta:0.019,longitudeDelta:0.019},500)
+                  map.animateToRegion({latitude:state.marker.location.lat,longitude:state.marker.location.lng,latitudeDelta:0.019,longitudeDelta:0.019},700)
                 },500)
               setSelectedPlace(state.marker.placeid)
           }else if(regionPosition.latitude == 0 && regionPosition.longitude == 0 && state.mylocation.message == 'Allowed'){
@@ -94,7 +88,7 @@ const Home = (props) => {
                     ref={ref => { setmap(ref) }}
                     paddingAdjustmentBehavior={'always'}
                     onLongPress={()=>alert('Need Urgent Help?')}
-                    followsUserLocation={regionPosition.speed > 10 ? true : false}
+                    followsUserLocation={false}
                     showsUserLocation={regionPosition.latitude != 0 && regionPosition.longitude != 0 ? true : false}
                     showsBuildings={true}
                     showsPointsOfInterest={false}
@@ -110,16 +104,18 @@ const Home = (props) => {
                           heading: loc.heading,
                           speed: loc.speed,
                         })
-                            map.animateCamera(
-                              {center: {
-                                latitude: loc.latitude,
-                                longitude: loc.longitude,
-                              },
-                              altitude: 500,
-                              heading: loc.heading,
-                              pitch: 0,
-                              zoom: 17,
-                            })
+                        if(followMe){
+                          map.animateCamera(
+                            {center: {
+                              latitude: loc.latitude,
+                              longitude: loc.longitude,
+                            },
+                            altitude: 500,
+                            heading: loc.heading,
+                            pitch: 0,
+                            zoom: 17,
+                          })
+                        }
                     }}
                     customMapStyle={mapStyle}
                     style={{ height: '100%', width: '100%'}}
@@ -129,9 +125,6 @@ const Home = (props) => {
                       latitudeDelta: 100.009,
                       longitudeDelta: 20.0009,
                     }}>
-                        {navigation.path.length > 0 ? <Marker coordinate={{latitude: navigation.path[navigation.path.length-1].latitude, longitude: navigation.path[navigation.path.length-1].longitude}}>
-                            <DestinationIcon pathLength={navigation.path.length} active={navigation.active}/>
-                        </Marker> : null}
                         {navigation.path.length > 0 ? 
                           <Polyline coordinates={navigation.path} strokeColor={'#2C5364'} geodesic={true} strokeWidth={7} tappable={true} onPress={(e)=>console.warn(e)}/>
                         : null}

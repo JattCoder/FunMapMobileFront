@@ -296,6 +296,8 @@ export default Drawerr = (props) => {
     //else if(state.marker.placeid == '' && state.navigation.active) navigatingActiveDirection() 
   })
 
+  if(navSettings.path > 0 && navSettings.active) navigatingActiveDirection()
+
   return(
      <Animated.View style={[Styles.Bottom,actionSheetStyle,{height:sheetHeight}]}>
        <LinearGradient colors={['rgba(255,255,255,0.7)','white','white']} style={{height:'100%',width:'100%',alignItems:'center',borderTopLeftRadius:25,borderTopRightRadius:25,}}>

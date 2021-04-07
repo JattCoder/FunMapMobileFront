@@ -144,7 +144,9 @@ export default Search = (props) => {
     }
 
     openPlaceSearch = () => {
-        if(saction == 'Menu'){
+        if(saction == 'Voice'){
+            console.warn('Please say Hello Funmap')
+        }else if(saction == 'Menu'){
             closeShortCuts()
         }else if(saction == 'Open'){
             closePlaceSearch()

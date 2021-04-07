@@ -69,8 +69,6 @@ export default PlaceSearcgResults = (props) => {
                     pth: path,
                     info: completeInfo
                 })
-                // setActive(true)
-                // displayNaviAnim()
             }
         })
         .catch(err => console.warn('Directions Error: ',err))
@@ -78,12 +76,11 @@ export default PlaceSearcgResults = (props) => {
 
     useSelector((state)=>{
         if(state.marker != placeInfo){
-            // hideNaviAnim()
-            // state.navigation.path.length > 0 && !state.navigation.active ? dispatch(clearnavigation()) : null
-            // setDisplayNavigation(false)
             setPlaceInfo(state.marker)
         }
-        
+        if(state.navigation.active && !active){
+            setActive(true)
+        }
     })
 
     const naviColorInterpolate = naviColor.interpolate({
