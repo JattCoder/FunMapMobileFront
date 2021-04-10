@@ -638,32 +638,32 @@ export default FamCard = (props) => {
 
     const getTogetherColorOpacity = getTogetherColor.interpolate({
         inputRange:[0,1],
-        outputRange:['rgba(0,0,0,0)','#7F7FD5']
+        outputRange:['rgba(0,0,0,0)','#3b5998']
     })
 
     const gsettingsColorOpacity = settingsColor.interpolate({
         inputRange:[0,1],
-        outputRange:['rgba(0,0,0,0)','#7F7FD5']
+        outputRange:['rgba(0,0,0,0)','#ff6f69']
     })
 
     const searchColorOpacity = searchColor.interpolate({
         inputRange:[0,1],
-        outputRange:['rgba(0,0,0,0)','#7F7FD5']
+        outputRange:['rgba(0,0,0,0)','#ffcc5c']
     })
 
     const nowColorOpacity = nowColor.interpolate({
         inputRange:[0,1],
-        outputRange:['rgba(0,0,0,0)','#7F7FD5']
+        outputRange:['rgba(0,0,0,0)','#88d8b0']
     })
 
     return(
         <View style={{width:Dimensions.get('window').width,height:'100%',alignItems:'center',justifyContent:'center',marginTop:'5%'}}>
-            <Animated.View style={{opacity:famOpacity,width:Dimensions.get('screen').width/1.07,height:famHeight,shadowColor: "#000",shadowOffset: { width: 0,height: 4 },shadowOpacity: 0.30,shadowRadius: 4.65,elevation: 8,backgroundColor:'rgba(211,204,227,1)',borderRadius:10,alignItems:'center'}}>
+            <Animated.View style={{opacity:famOpacity,width:Dimensions.get('screen').width/1.07,height:famHeight,shadowColor: "#000",shadowOffset: { width: 0,height: 4 },shadowOpacity: 0.30,shadowRadius: 4.65,elevation: 8,backgroundColor:'rgba(0,0,0,0.1)',borderRadius:10,alignItems:'center'}}>
                 <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
                     {props.size > 1 ? <Animated.View style={{marginTop:leftButtonInterpolate,marginHorizontal:'4%',height:13,width:13}}>
                         <TouchableOpacity activeOpacity={1} onPress={()=>{props.prev()}} style={{backgroundColor:'rgba(0,0,0,0.5)',borderRadius:50,width:'170%',justifyContent:'center',alignItems:'center',width:'100%',height:'100%'}}/>
                     </Animated.View> : null}
-                    <View style={{marginTop:'3%',borderRadius:10,backgroundColor:'#7F7FD5',justifyContent:'center',alignItems:'center'}}>
+                    <View style={{marginTop:'3%',borderRadius:10,backgroundColor:'rgba(0,0,0,0.5)',justifyContent:'center',alignItems:'center'}}>
                         <Text style={{margin:5,fontSize:20,justifyContent:'center',color:'white'}}>{props.Name}</Text>
                     </View>
                     {props.size > 1 ? <Animated.View style={{marginTop:RightButtonInterpolate,marginHorizontal:'4%',height:13,width:13}}>

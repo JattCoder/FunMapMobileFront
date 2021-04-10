@@ -48,6 +48,7 @@ export default Bottomweather = (props) => {
     updateLocation = () => {
         firebase.database().ref('Users/'+props.id+'/location/').update({
             address: currentCity.display.replaceAll('null',''),
+            country: currentCity.country,
             geo:{
                 latitude:position.latitude,
                 longitude:position.longitude
@@ -62,7 +63,8 @@ export default Bottomweather = (props) => {
         lastCity = currentCity.city != '' ? currentCity.city : ''
         Geocoder.geocodePosition(position).then(res => {
             if(lastCity == '') lastCity = res[0].locality
-            setCurrentCity({city:res[0].locality?res[0].locality:res[0].feature,display:res[0].streetName || res[0].locality || res[0].adminArea ? `${res[0].streetName != null ? res[0].streetName+', ':null}${res[0].locality != null ? res[0].locality+', ':null}${res[0].adminArea != null?res[0].adminArea:null}`:res[0].feature,date:currentCity.date})
+            country: res[0].country
+            setCurrentCity({city:res[0].locality?res[0].locality:res[0].feature,display:res[0].streetName || res[0].locality || res[0].adminArea ? `${res[0].streetName != null ? res[0].streetName+', ':null}${res[0].locality != null ? res[0].locality+', ':null}${res[0].adminArea != null?res[0].adminArea:null}`:res[0].feature,date:currentCity.date,country:res[0].country})
             updateWeather(lastCity == '' ? res[0].locality : lastCity)
         }).catch(err => {
             fetch(`https://revgeocode.search.hereapi.com/v1/revgeocode?at=${position.lat},${position.lng}&lang=en-US&apiKey=tOzyGAv3qnNge0QzSmXnwD54zKsR4xCZY3M5yMC22OM`)
